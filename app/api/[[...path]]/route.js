@@ -229,6 +229,138 @@ async function syncEngagement(request) {
   }
 }
 
+// GET /api/admin/dashboard
+async function getAdminDashboard(request) {
+  try {
+    // Mock admin stats
+    return NextResponse.json({
+      success: true,
+      stats: {
+        totalMembers: 847,
+        newMembersThisWeek: 23,
+        totalPaidOut: 2450,
+        completedPools: 5,
+        engagementScore: 8.7,
+        engagementGrowth: 15.3,
+        activeStreaks: 126,
+        totalPosts: 1243,
+        totalComments: 3421,
+        totalLikes: 5678,
+        avgEngagement: 12.3
+      },
+      prizePools: [
+        {
+          id: 'pool_1',
+          amount: 500,
+          period_start: '2025-01-20',
+          period_end: '2025-01-26',
+          status: 'active'
+        },
+        {
+          id: 'pool_2',
+          amount: 750,
+          period_start: '2025-01-13',
+          period_end: '2025-01-19',
+          status: 'completed'
+        }
+      ],
+      payouts: [
+        {
+          id: '1',
+          username: 'Sarah Chen',
+          amount: 300,
+          rank: 1,
+          status: 'completed',
+          paid_at: '2025-01-19'
+        },
+        {
+          id: '2',
+          username: 'Alex Rivera',
+          amount: 225,
+          rank: 2,
+          status: 'completed',
+          paid_at: '2025-01-19'
+        },
+        {
+          id: '3',
+          username: 'Jordan Park',
+          amount: 150,
+          rank: 3,
+          status: 'processing',
+          paid_at: '2025-01-19'
+        }
+      ]
+    });
+  } catch (error) {
+    console.error('Admin dashboard error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/admin/prize-pool
+async function createAdminPrizePool(request) {
+  try {
+    const body = await request.json();
+    const { amount, communityId } = body;
+
+    // TODO: Implement Supabase insert
+    // Calculate period dates (current week)
+    const now = new Date();
+    const periodStart = new Date(now);
+    periodStart.setDate(now.getDate() - now.getDay()); // Start of week
+    const periodEnd = new Date(periodStart);
+    periodEnd.setDate(periodStart.getDate() + 6); // End of week
+
+    return NextResponse.json({
+      success: true,
+      prizePool: {
+        id: 'new_pool_' + Date.now(),
+        community_id: communityId,
+        amount,
+        period_start: periodStart.toISOString().split('T')[0],
+        period_end: periodEnd.toISOString().split('T')[0],
+        status: 'active'
+      }
+    });
+  } catch (error) {
+    console.error('Create prize pool error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/admin/process-payouts
+async function processPayouts(request) {
+  try {
+    const body = await request.json();
+    const { prizePoolId } = body;
+
+    // TODO: Implement payout processing
+    // 1. Get top 10 users from leaderboard for the prize pool period
+    // 2. Calculate payout amounts based on distribution (40%, 30%, 20%, 10%)
+    // 3. Create payout records in Supabase
+    // 4. Call Whop payment API to send payments
+    // 5. Update prize pool status to 'paid_out'
+
+    return NextResponse.json({
+      success: true,
+      message: 'Payouts processed successfully',
+      payoutsCreated: 10
+    });
+  } catch (error) {
+    console.error('Process payouts error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
 // Main route handler
 export async function GET(request) {
   const pathname = new URL(request.url).pathname;
