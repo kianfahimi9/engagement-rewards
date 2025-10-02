@@ -166,62 +166,62 @@ export default function AdminDashboard() {
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <Card className="border-2 border-blue-200">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Members</CardTitle>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Members</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">{stats?.totalMembers || 0}</div>
-                <Users className="h-8 w-8 text-blue-500" />
+                <div className="text-4xl font-bold text-gray-900 dark:text-white">{stats?.totalMembers || 0}</div>
+                <Users className="h-10 w-10 text-gray-400 dark:text-gray-600" />
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                <span className="text-green-600 font-semibold">+{stats?.newMembersThisWeek || 0}</span> this week
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                <span className="text-green-600 dark:text-green-400 font-semibold">+{stats?.newMembersThisWeek || 0}</span> this week
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-green-200">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid Out</CardTitle>
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Paid Out</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">${stats?.totalPaidOut || 0}</div>
-                <DollarSign className="h-8 w-8 text-green-500" />
+                <div className="text-4xl font-bold text-gray-900 dark:text-white">${stats?.totalPaidOut || 0}</div>
+                <DollarSign className="h-10 w-10 text-gray-400 dark:text-gray-600" />
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
                 Across {stats?.completedPools || 0} prize pools
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-orange-200">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Engagement Score</CardTitle>
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">Engagement Score</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">{stats?.engagementScore || 0}</div>
-                <Activity className="h-8 w-8 text-orange-500" />
+                <div className="text-4xl font-bold text-gray-900 dark:text-white">{stats?.engagementScore || 0}</div>
+                <Activity className="h-10 w-10 text-gray-400 dark:text-gray-600" />
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                <span className="text-green-600 font-semibold">↑ {stats?.engagementGrowth || 0}%</span> vs last week
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                <span className="text-green-600 dark:text-green-400 font-semibold">↑ {stats?.engagementGrowth || 0}%</span> vs last week
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-purple-200">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Active Streaks</CardTitle>
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-gray-500 dark:text-gray-400">Active Streaks</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">{stats?.activeStreaks || 0}</div>
-                <TrendingUp className="h-8 w-8 text-purple-500" />
+                <div className="text-4xl font-bold text-gray-900 dark:text-white">{stats?.activeStreaks || 0}</div>
+                <TrendingUp className="h-10 w-10 text-gray-400 dark:text-gray-600" />
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
                 Members with 7+ day streaks
               </p>
             </CardContent>
