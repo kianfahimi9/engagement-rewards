@@ -228,15 +228,15 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Prize Pools */}
-          <Card className="border-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-blue-500" />
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <Trophy className="h-5 w-5" />
                 Prize Pools
               </CardTitle>
-              <CardDescription>Manage active and past prize pools</CardDescription>
+              <CardDescription className="text-gray-500 dark:text-gray-400">Manage active and past prize pools</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
