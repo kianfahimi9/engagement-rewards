@@ -342,20 +342,20 @@ export default function AdminDashboard() {
             </CardTitle>
             <CardDescription className="text-gray-500 dark:text-gray-400">Track engagement trends and member activity</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
               {[
-                { label: 'Total Posts', value: stats?.totalPosts || 0, icon: '📝', color: 'blue' },
-                { label: 'Total Comments', value: stats?.totalComments || 0, icon: '💬', color: 'purple' },
-                { label: 'Total Likes', value: stats?.totalLikes || 0, icon: '❤️', color: 'pink' },
-                { label: 'Avg. Engagement/User', value: stats?.avgEngagement || 0, icon: '📊', color: 'green' },
+                { label: 'Total Posts', value: stats?.totalPosts || 0, icon: '📝' },
+                { label: 'Total Comments', value: stats?.totalComments || 0, icon: '💬' },
+                { label: 'Total Likes', value: stats?.totalLikes || 0, icon: '❤️' },
+                { label: 'Avg. Engagement', value: stats?.avgEngagement || 0, icon: '📊' },
               ].map((metric, i) => (
-                <div key={i} className="p-4 rounded-xl border bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-2xl">{metric.icon}</span>
-                    <div className="text-3xl font-bold">{metric.value}</div>
+                <div key={i} className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-3xl">{metric.icon}</span>
+                    <div className="text-4xl font-bold text-gray-900 dark:text-white">{metric.value}</div>
                   </div>
-                  <p className="text-sm font-medium text-muted-foreground">{metric.label}</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.label}</p>
                 </div>
               ))}
             </div>
