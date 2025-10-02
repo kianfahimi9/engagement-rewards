@@ -57,7 +57,7 @@ export default function UserStatsPage() {
               </Button>
             </Link>
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-2 rounded-xl">
+              <div className="bg-gradient-to-br from-blue-500 to-amber-500 p-2 rounded-xl">
                 <Star className="h-6 w-6 text-white" />
               </div>
               <div>
