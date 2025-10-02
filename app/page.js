@@ -150,7 +150,7 @@ export default function CommunityLeaderboard() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-2xl flex items-center gap-2">
-                  <Trophy className="h-6 w-6 text-purple-500" />
+                  <Trophy className="h-6 w-6 text-blue-500" />
                   Top Performers
                 </CardTitle>
                 <CardDescription>The most engaged members of the community</CardDescription>
