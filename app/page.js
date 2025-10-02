@@ -50,11 +50,11 @@ export default function CommunityLeaderboard() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-2 rounded-xl">
+              <div className="bg-gradient-to-br from-blue-500 to-amber-500 p-2 rounded-xl">
                 <Trophy className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-amber-600 bg-clip-text text-transparent">
                   Community Leaderboard
                 </h1>
                 <p className="text-sm text-muted-foreground">Compete & earn rewards!</p>
@@ -68,7 +68,7 @@ export default function CommunityLeaderboard() {
                 </Button>
               </Link>
               <Link href="/admin">
-                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                <Button className="bg-gradient-to-r from-blue-500 to-amber-500 hover:from-blue-600 hover:to-amber-600">
                   Admin Panel
                 </Button>
               </Link>
