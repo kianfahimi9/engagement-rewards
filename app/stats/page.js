@@ -267,7 +267,7 @@ export default function UserStatsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-purple-500" />
+                  <Target className="h-5 w-5 text-blue-500" />
                   Activity Breakdown
                 </CardTitle>
               </CardHeader>
