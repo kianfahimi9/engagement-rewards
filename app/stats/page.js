@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Calendar, Target, Star, Crown } from 'lucide-react';
+import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -35,8 +35,8 @@ export default function UserStatsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-amber-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-amber-900/20 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white"></div>
       </div>
     );
   }
@@ -45,24 +45,24 @@ export default function UserStatsPage() {
   const progressToNextLevel = ((stats?.totalPoints || 0) % 100);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-amber-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-amber-900/20">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       {/* Header */}
-      <header className="border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className="bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <Button variant="ghost" className="gap-2">
+              <Button variant="ghost" className="gap-2 text-gray-700 dark:text-gray-300">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Leaderboard
+                Back
               </Button>
             </Link>
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-500 to-amber-500 p-2 rounded-xl">
-                <Star className="h-6 w-6 text-white" />
+            <div className="flex items-center gap-4">
+              <div className="bg-black dark:bg-white p-2.5 rounded-2xl">
+                <Star className="h-6 w-6 text-white dark:text-black" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">My Stats</h1>
-                <p className="text-sm text-muted-foreground">Track your progress</p>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">My Stats</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Track your progress</p>
               </div>
             </div>
             <div className="w-24"></div>
@@ -70,98 +70,99 @@ export default function UserStatsPage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Profile Card */}
+      <div className="container mx-auto px-6 py-10 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Profile Sidebar */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="border-2 border-blue-300 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-blue-900/20">
-              <CardContent className="pt-6">
+            {/* Profile Card */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardContent className="pt-8 pb-8">
                 <div className="text-center">
-                  <Avatar className="h-24 w-24 mx-auto ring-4 ring-blue-300 mb-4">
+                  <Avatar className="h-24 w-24 mx-auto ring-4 ring-gray-100 dark:ring-gray-800 mb-5">
                     <AvatarImage src={stats?.avatar_url} />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-amber-500 text-white text-3xl">
+                    <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-3xl font-semibold">
                       {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
                     </AvatarFallback>
                   </Avatar>
-                  <h2 className="text-2xl font-bold mb-2">{stats?.username || 'Your Name'}</h2>
-                  <Badge className="bg-gradient-to-r from-blue-500 to-amber-500 text-white text-lg px-4 py-1">
+                  <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">{stats?.username || 'Your Name'}</h2>
+                  <Badge className="bg-black dark:bg-white text-white dark:text-black text-base px-5 py-1.5 border-0">
                     Level {Math.floor((stats?.totalPoints || 0) / 100)}
                   </Badge>
                 </div>
 
-                <Separator className="my-6" />
+                <Separator className="my-8 bg-gray-100 dark:bg-gray-800" />
 
                 {/* Level Progress */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Progress to Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}</span>
-                    <span className="font-bold text-blue-600">
+                    <span className="font-medium text-gray-700 dark:text-gray-300">Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
                       {stats?.totalPoints || 0} / {nextLevelPoints}
                     </span>
                   </div>
-                  <Progress value={progressToNextLevel} className="h-3" />
-                  <p className="text-xs text-muted-foreground text-center">
+                  <Progress value={progressToNextLevel} className="h-2 bg-gray-100 dark:bg-gray-800" />
+                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                     {100 - progressToNextLevel} points to next level
                   </p>
                 </div>
 
-                <Separator className="my-6" />
+                <Separator className="my-8 bg-gray-100 dark:bg-gray-800" />
 
                 {/* Quick Stats */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-yellow-500" />
-                      <span className="font-medium">Rank</span>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <Trophy className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                      <span className="font-medium text-gray-900 dark:text-white">Rank</span>
                     </div>
-                    <span className="text-xl font-bold">#{stats?.rank || '-'}</span>
+                    <span className="text-xl font-bold text-gray-900 dark:text-white">#{stats?.rank || '-'}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-blue-500" />
-                      <span className="font-medium">Total Points</span>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <Zap className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                      <span className="font-medium text-gray-900 dark:text-white">Points</span>
                     </div>
-                    <span className="text-xl font-bold">{stats?.totalPoints || 0}</span>
+                    <span className="text-xl font-bold text-gray-900 dark:text-white">{stats?.totalPoints || 0}</span>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="h-5 w-5 text-green-500" />
-                      <span className="font-medium">Engagement</span>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                      <span className="font-medium text-gray-900 dark:text-white">Engagement</span>
                     </div>
-                    <span className="text-xl font-bold">{stats?.engagementGenerated || 0}</span>
+                    <span className="text-xl font-bold text-gray-900 dark:text-white">{stats?.engagementGenerated || 0}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Streak Card */}
-            <Card className="border-2 border-orange-300 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Flame className="h-5 w-5 text-orange-500" />
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30">
+              <CardHeader className="border-b border-orange-100 dark:border-orange-900">
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                   Streak Status
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-center mb-4">
-                  <div className="text-6xl mb-2">🔥</div>
-                  <div className="text-4xl font-bold text-orange-600 mb-1">
-                    {stats?.currentStreak || 0} Days
+              <CardContent className="pt-6">
+                <div className="text-center mb-6">
+                  <div className="text-6xl mb-3">🔥</div>
+                  <div className="text-5xl font-bold text-orange-600 dark:text-orange-400 mb-2">
+                    {stats?.currentStreak || 0}
                   </div>
-                  <p className="text-sm text-muted-foreground">Current Streak</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Day Streak</p>
                 </div>
-                <Separator className="my-4" />
+                <Separator className="my-6 bg-orange-100 dark:bg-orange-900" />
                 <div className="flex justify-between text-center">
                   <div>
-                    <p className="text-2xl font-bold">{stats?.longestStreak || 0}</p>
-                    <p className="text-xs text-muted-foreground">Longest Streak</p>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats?.longestStreak || 0}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Best Streak</p>
                   </div>
-                  <Separator orientation="vertical" />
+                  <Separator orientation="vertical" className="bg-orange-100 dark:bg-orange-900" />
                   <div>
-                    <p className="text-2xl font-bold">
+                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
                       {stats?.currentStreak >= 7 ? '✅' : Math.max(0, 7 - (stats?.currentStreak || 0))}
                     </p>
-                    <p className="text-xs text-muted-foreground">Days to Bonus</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">To Bonus</p>
                   </div>
                 </div>
               </CardContent>
@@ -170,46 +171,46 @@ export default function UserStatsPage() {
 
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Earnings Card */}
-            <Card className="border-2 border-green-300">
-              <CardHeader>
+            {/* Earnings */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2 text-2xl">
-                      <DollarSign className="h-6 w-6 text-green-500" />
-                      Earnings Overview
+                    <CardTitle className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white">
+                      <DollarSign className="h-6 w-6" />
+                      Earnings
                     </CardTitle>
-                    <CardDescription>Your rewards from prize pools</CardDescription>
+                    <CardDescription className="text-gray-500 dark:text-gray-400">Your rewards from prize pools</CardDescription>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground mb-1">Total Earned</p>
-                    <p className="text-3xl font-bold text-green-600">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Earned</p>
+                    <p className="text-4xl font-bold text-gray-900 dark:text-white">
                       ${earnings.reduce((sum, e) => sum + (e.amount || 0), 0).toFixed(2)}
                     </p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {earnings.length > 0 ? (
                   <div className="space-y-3">
                     {earnings.map((earning, i) => (
-                      <div key={i} className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-green-500 p-3 rounded-xl">
-                            {earning.rank === 1 ? <Crown className="h-5 w-5 text-white" /> : <Trophy className="h-5 w-5 text-white" />}
+                      <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-black dark:bg-white p-3 rounded-2xl">
+                            {earning.rank === 1 ? <Crown className="h-5 w-5 text-white dark:text-black" /> : <Trophy className="h-5 w-5 text-white dark:text-black" />}
                           </div>
                           <div>
-                            <p className="font-bold">
+                            <p className="font-semibold text-gray-900 dark:text-white">
                               {earning.rank === 1 ? '🥇' : earning.rank === 2 ? '🥈' : earning.rank === 3 ? '🥉' : '🏆'} Rank #{earning.rank}
                             </p>
-                            <p className="text-sm text-muted-foreground">
-                              {new Date(earning.date).toLocaleDateString()} • {earning.period}
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {new Date(earning.date).toLocaleDateString()} · {earning.period}
                             </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-2xl font-bold text-green-600">${earning.amount}</p>
-                          <Badge className={earning.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'}>
+                          <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">${earning.amount}</p>
+                          <Badge className={earning.status === 'completed' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' : 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 border-0'}>
                             {earning.status}
                           </Badge>
                         </div>
@@ -217,12 +218,12 @@ export default function UserStatsPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12">
-                    <DollarSign className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-semibold mb-2">No earnings yet</h3>
-                    <p className="text-muted-foreground mb-4">Climb the leaderboard to win prizes!</p>
+                  <div className="text-center py-16">
+                    <DollarSign className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No earnings yet</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">Climb the leaderboard to win prizes!</p>
                     <Link href="/">
-                      <Button className="bg-gradient-to-r from-blue-500 to-amber-500">
+                      <Button className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100">
                         View Leaderboard
                       </Button>
                     </Link>
@@ -231,31 +232,31 @@ export default function UserStatsPage() {
               </CardContent>
             </Card>
 
-            {/* Badges & Achievements */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Award className="h-5 w-5 text-blue-500" />
-                  Badges & Achievements
+            {/* Badges */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Award className="h-5 w-5" />
+                  Achievements
                 </CardTitle>
-                <CardDescription>Unlock rewards by hitting milestones</CardDescription>
+                <CardDescription className="text-gray-500 dark:text-gray-400">Unlock rewards by hitting milestones</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {stats?.badges?.map((badge, i) => (
                     <div
                       key={i}
-                      className={`p-4 rounded-xl border-2 text-center transition-all ${
+                      className={`p-5 rounded-2xl text-center transition-all ${
                         badge.unlocked
-                          ? 'bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-blue-300 hover:scale-105'
-                          : 'bg-gray-100 dark:bg-gray-800 border-gray-300 opacity-50'
+                          ? 'bg-gray-50 dark:bg-gray-900 border-2 border-black dark:border-white hover:scale-105'
+                          : 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 opacity-40'
                       }`}
                     >
-                      <div className="text-4xl mb-2">{badge.icon}</div>
-                      <p className="font-bold text-sm mb-1">{badge.name}</p>
-                      <p className="text-xs text-muted-foreground">{badge.description}</p>
+                      <div className="text-4xl mb-3">{badge.icon}</div>
+                      <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">{badge.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{badge.description}</p>
                       {badge.unlocked && (
-                        <Badge className="mt-2 bg-green-500">Unlocked ✓</Badge>
+                        <Badge className="mt-3 bg-black dark:bg-white text-white dark:text-black border-0">Unlocked</Badge>
                       )}
                     </div>
                   ))}
@@ -263,28 +264,28 @@ export default function UserStatsPage() {
               </CardContent>
             </Card>
 
-            {/* Activity Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-blue-500" />
-                  Activity Breakdown
+            {/* Activity */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Target className="h-5 w-5" />
+                  Activity
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: 'Total Logins', value: stats?.totalLogins || 0, icon: '📅', color: 'blue' },
-                    { label: 'Likes Received', value: stats?.likesReceived || 0, icon: '❤️', color: 'pink' },
-                    { label: 'Comments Received', value: stats?.commentsReceived || 0, icon: '💬', color: 'purple' },
-                    { label: 'Shares Received', value: stats?.sharesReceived || 0, icon: '🔄', color: 'green' },
+                    { label: 'Logins', value: stats?.totalLogins || 0, icon: '📅' },
+                    { label: 'Likes', value: stats?.likesReceived || 0, icon: '❤️' },
+                    { label: 'Comments', value: stats?.commentsReceived || 0, icon: '💬' },
+                    { label: 'Shares', value: stats?.sharesReceived || 0, icon: '🔄' },
                   ].map((stat, i) => (
-                    <div key={i} className={`p-4 rounded-xl bg-gradient-to-br from-${stat.color}-50 to-${stat.color}-100 dark:from-${stat.color}-900/20 dark:to-${stat.color}-900/30 border`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-2xl">{stat.icon}</span>
-                        <span className="text-3xl font-bold">{stat.value}</span>
+                    <div key={i} className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-3xl">{stat.icon}</span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{stat.value}</span>
                       </div>
-                      <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.label}</p>
                     </div>
                   ))}
                 </div>
