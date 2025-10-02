@@ -373,6 +373,10 @@ export async function GET(request) {
     return getUserStats(request);
   }
 
+  if (pathname.startsWith('/api/admin/dashboard')) {
+    return getAdminDashboard(request);
+  }
+
   return NextResponse.json({ message: 'API Route' });
 }
 
@@ -385,6 +389,14 @@ export async function POST(request) {
 
   if (pathname.startsWith('/api/sync-engagement')) {
     return syncEngagement(request);
+  }
+
+  if (pathname.startsWith('/api/admin/prize-pool')) {
+    return createAdminPrizePool(request);
+  }
+
+  if (pathname.startsWith('/api/admin/process-payouts')) {
+    return processPayouts(request);
   }
 
   return NextResponse.json(
