@@ -222,7 +222,7 @@ export default function UserStatsPage() {
                     <h3 className="text-lg font-semibold mb-2">No earnings yet</h3>
                     <p className="text-muted-foreground mb-4">Climb the leaderboard to win prizes!</p>
                     <Link href="/">
-                      <Button className="bg-gradient-to-r from-purple-500 to-pink-500">
+                      <Button className="bg-gradient-to-r from-blue-500 to-amber-500">
                         View Leaderboard
                       </Button>
                     </Link>
