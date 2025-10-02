@@ -231,7 +231,7 @@ export default function CommunityLeaderboard() {
                     {/* Level Badge */}
                     <div className="text-right">
                       <div className="text-sm text-muted-foreground mb-1">Level</div>
-                      <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-2xl font-bold text-blue-600">
                         {Math.floor(user.points / 100)}
                       </div>
                     </div>
