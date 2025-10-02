@@ -74,17 +74,17 @@ export default function UserStatsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Profile Card */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="border-2 border-purple-300 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-purple-900/20">
+            <Card className="border-2 border-blue-300 bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-blue-900/20">
               <CardContent className="pt-6">
                 <div className="text-center">
-                  <Avatar className="h-24 w-24 mx-auto ring-4 ring-purple-300 mb-4">
+                  <Avatar className="h-24 w-24 mx-auto ring-4 ring-blue-300 mb-4">
                     <AvatarImage src={stats?.avatar_url} />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-3xl">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-amber-500 text-white text-3xl">
                       {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
                     </AvatarFallback>
                   </Avatar>
                   <h2 className="text-2xl font-bold mb-2">{stats?.username || 'Your Name'}</h2>
-                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-lg px-4 py-1">
+                  <Badge className="bg-gradient-to-r from-blue-500 to-amber-500 text-white text-lg px-4 py-1">
                     Level {Math.floor((stats?.totalPoints || 0) / 100)}
                   </Badge>
                 </div>
@@ -95,7 +95,7 @@ export default function UserStatsPage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">Progress to Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}</span>
-                    <span className="font-bold text-purple-600">
+                    <span className="font-bold text-blue-600">
                       {stats?.totalPoints || 0} / {nextLevelPoints}
                     </span>
                   </div>
