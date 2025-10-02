@@ -291,29 +291,29 @@ export default function AdminDashboard() {
               </CardTitle>
               <CardDescription className="text-gray-500 dark:text-gray-400">Payment history and status</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <div className="space-y-3">
                 {payouts.length > 0 ? (
                   payouts.map((payout, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg">
+                    <div key={i} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-2xl bg-gray-50 dark:bg-gray-900">
+                      <div className="flex items-center gap-4">
+                        <div className="bg-black dark:bg-white p-3 rounded-xl text-2xl">
                           {payout.rank === 1 ? '🥇' : payout.rank === 2 ? '🥈' : payout.rank === 3 ? '🥉' : '🏆'}
                         </div>
                         <div>
-                          <p className="font-semibold">{payout.username}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Rank #{payout.rank} • {new Date(payout.paid_at).toLocaleDateString()}
+                          <p className="font-semibold text-gray-900 dark:text-white">{payout.username}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Rank #{payout.rank} · {new Date(payout.paid_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-green-600">${payout.amount}</p>
+                        <p className="font-bold text-gray-900 dark:text-white text-xl mb-1">${payout.amount}</p>
                         <Badge variant="outline" className={
-                          payout.status === 'completed' ? 'border-green-500 text-green-600' :
-                          payout.status === 'processing' ? 'border-yellow-500 text-yellow-600' :
-                          payout.status === 'failed' ? 'border-red-500 text-red-600' :
-                          'border-gray-500 text-gray-600'
+                          payout.status === 'completed' ? 'border-0 bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400' :
+                          payout.status === 'processing' ? 'border-0 bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400' :
+                          payout.status === 'failed' ? 'border-0 bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400' :
+                          'border-0 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400'
                         }>
                           {payout.status === 'completed' && <CheckCircle className="h-3 w-3 mr-1" />}
                           {payout.status === 'failed' && <XCircle className="h-3 w-3 mr-1" />}
@@ -323,9 +323,9 @@ export default function AdminDashboard() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8">
-                    <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                    <p className="text-muted-foreground">No payouts yet</p>
+                  <div className="text-center py-12">
+                    <DollarSign className="h-12 w-12 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
+                    <p className="text-gray-500 dark:text-gray-400">No payouts yet</p>
                   </div>
                 )}
               </div>
@@ -334,13 +334,13 @@ export default function AdminDashboard() {
         </div>
 
         {/* Engagement Analytics */}
-        <Card className="mt-6 border-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-blue-500" />
-              Community Engagement Analytics
+        <Card className="mt-8 border-0 shadow-lg bg-white dark:bg-gray-950">
+          <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+            <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+              <BarChart3 className="h-5 w-5" />
+              Community Analytics
             </CardTitle>
-            <CardDescription>Track engagement trends and member activity</CardDescription>
+            <CardDescription className="text-gray-500 dark:text-gray-400">Track engagement trends and member activity</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
