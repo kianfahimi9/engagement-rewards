@@ -238,22 +238,22 @@ export default function AdminDashboard() {
               </CardTitle>
               <CardDescription className="text-gray-500 dark:text-gray-400">Manage active and past prize pools</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <div className="space-y-3">
                 {prizePools.length > 0 ? (
                   prizePools.map((pool, i) => (
-                    <div key={i} className="p-4 border rounded-xl bg-gradient-to-r from-blue-50 to-amber-50 dark:from-blue-900/20 dark:to-amber-900/20">
-                      <div className="flex items-center justify-between mb-3">
+                    <div key={i} className="p-5 border border-gray-200 dark:border-gray-800 rounded-2xl bg-gray-50 dark:bg-gray-900">
+                      <div className="flex items-center justify-between mb-4">
                         <div>
-                          <div className="text-2xl font-bold text-blue-600">${pool.amount}</div>
-                          <p className="text-sm text-muted-foreground">
+                          <div className="text-3xl font-bold text-gray-900 dark:text-white">${pool.amount}</div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {new Date(pool.period_start).toLocaleDateString()} - {new Date(pool.period_end).toLocaleDateString()}
                           </p>
                         </div>
                         <Badge className={
-                          pool.status === 'active' ? 'bg-green-500' :
-                          pool.status === 'completed' ? 'bg-blue-500' :
-                          'bg-gray-500'
+                          pool.status === 'active' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' :
+                          pool.status === 'completed' ? 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 border-0' :
+                          'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 border-0'
                         }>
                           {pool.status === 'active' ? <Clock className="h-3 w-3 mr-1" /> : 
                            pool.status === 'paid_out' ? <CheckCircle className="h-3 w-3 mr-1" /> : null}
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
                       {pool.status === 'completed' && (
                         <Button 
                           onClick={() => handleProcessPayouts(pool.id)}
-                          className="w-full bg-gradient-to-r from-blue-500 to-amber-500"
+                          className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100"
                           size="sm"
                         >
                           Process Payouts via Whop
@@ -272,10 +272,10 @@ export default function AdminDashboard() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8">
-                    <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                    <p className="text-muted-foreground">No prize pools yet</p>
-                    <p className="text-sm text-muted-foreground mb-4">Create your first pool to reward members</p>
+                  <div className="text-center py-12">
+                    <Trophy className="h-12 w-12 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
+                    <p className="text-gray-500 dark:text-gray-400">No prize pools yet</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500 mb-4">Create your first pool to reward members</p>
                   </div>
                 )}
               </div>
@@ -283,13 +283,13 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Recent Payouts */}
-          <Card className="border-2">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-green-500" />
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <DollarSign className="h-5 w-5" />
                 Recent Payouts
               </CardTitle>
-              <CardDescription>Payment history and status</CardDescription>
+              <CardDescription className="text-gray-500 dark:text-gray-400">Payment history and status</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
