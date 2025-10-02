@@ -193,7 +193,7 @@ export default function CommunityLeaderboard() {
                     <Avatar className="h-14 w-14 ring-2 ring-white dark:ring-gray-800">
                       <AvatarImage src={user.avatar_url} />
                       <AvatarFallback className={`text-lg ${
-                        user.rank <= 3 ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white' : 'bg-gray-300'
+                        user.rank <= 3 ? 'bg-gradient-to-br from-blue-500 to-amber-500 text-white' : 'bg-gray-300'
                       }`}>
                         {user.username?.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
@@ -210,7 +210,7 @@ export default function CommunityLeaderboard() {
                           </Badge>
                         )}
                         {user.rank <= 3 && (
-                          <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                          <Badge className="bg-gradient-to-r from-blue-500 to-amber-500 text-white">
                             Top {user.rank}
                           </Badge>
                         )}
