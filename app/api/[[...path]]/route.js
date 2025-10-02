@@ -148,17 +148,44 @@ async function getUserStats(request) {
     return NextResponse.json({
       success: true,
       stats: {
+        username: 'You',
+        avatar_url: null,
         totalPoints: 743,
         rank: 12,
         currentStreak: 5,
         longestStreak: 8,
         engagementGenerated: 54,
+        totalLogins: 45,
+        likesReceived: 123,
+        commentsReceived: 87,
+        sharesReceived: 12,
         badges: [
           { id: '1', name: 'Hot Streak', icon: '🔥', description: '7 day streak', unlocked: true },
           { id: '2', name: 'Chatterbox', icon: '💬', description: '100 comments', unlocked: true },
           { id: '3', name: 'Rising Star', icon: '⭐', description: 'Top 10 rank', unlocked: false },
+          { id: '4', name: 'Engagement King', icon: '👑', description: '500+ engagement', unlocked: false },
+          { id: '5', name: 'Consistent', icon: '📅', description: '30 day streak', unlocked: false },
+          { id: '6', name: 'Influencer', icon: '✨', description: '1000+ engagement', unlocked: false },
         ]
-      }
+      },
+      earnings: [
+        {
+          id: '1',
+          amount: 200,
+          rank: 2,
+          date: '2025-01-12',
+          period: 'Weekly',
+          status: 'completed'
+        },
+        {
+          id: '2',
+          amount: 75,
+          rank: 7,
+          date: '2025-01-05',
+          period: 'Weekly',
+          status: 'completed'
+        }
+      ]
     });
   } catch (error) {
     console.error('User stats error:', error);
