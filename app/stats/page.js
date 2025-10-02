@@ -118,7 +118,7 @@ export default function UserStatsPage() {
                   </div>
                   <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-purple-500" />
+                      <Zap className="h-5 w-5 text-blue-500" />
                       <span className="font-medium">Total Points</span>
                     </div>
                     <span className="text-xl font-bold">{stats?.totalPoints || 0}</span>
