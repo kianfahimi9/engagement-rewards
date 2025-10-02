@@ -84,29 +84,29 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-amber-50 to-orange-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-amber-900/20">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       {/* Header */}
-      <header className="border-b bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className="bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <Button variant="ghost" className="gap-2">
+              <Button variant="ghost" className="gap-2 text-gray-700 dark:text-gray-300">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Leaderboard
+                Back
               </Button>
             </Link>
-            <div className="flex items-center gap-3">
-              <div className="bg-gradient-to-br from-blue-500 to-amber-500 p-2 rounded-xl">
-                <BarChart3 className="h-6 w-6 text-white" />
+            <div className="flex items-center gap-4">
+              <div className="bg-black dark:bg-white p-2.5 rounded-2xl">
+                <BarChart3 className="h-6 w-6 text-white dark:text-black" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">Admin Dashboard</h1>
-                <p className="text-sm text-muted-foreground">Manage your community rewards</p>
+                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Admin Dashboard</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Manage your community rewards</p>
               </div>
             </div>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-gradient-to-r from-blue-500 to-amber-500 hover:from-blue-600 hover:to-amber-600">
+                <Button className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100">
                   <Plus className="h-4 w-4 mr-2" />
                   New Prize Pool
                 </Button>
