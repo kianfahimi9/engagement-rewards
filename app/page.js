@@ -108,13 +108,13 @@ export default function CommunityLeaderboard() {
 
         {/* Your Rank Card */}
         {currentUser && (
-          <Card className="mb-6 border-2 border-purple-300 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
+          <Card className="mb-6 border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-amber-50 dark:from-blue-900/20 dark:to-amber-900/20">
             <CardContent className="py-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 ring-4 ring-purple-300">
+                  <Avatar className="h-16 w-16 ring-4 ring-blue-300">
                     <AvatarImage src={currentUser.avatar_url} />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-pink-500 text-white text-xl">
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-amber-500 text-white text-xl">
                       {currentUser.username?.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -134,7 +134,7 @@ export default function CommunityLeaderboard() {
                   </div>
                 </div>
                 <Link href="/stats">
-                  <Button size="lg" className="bg-gradient-to-r from-purple-500 to-pink-500">
+                  <Button size="lg" className="bg-gradient-to-r from-blue-500 to-amber-500">
                     View Details
                     <ChevronRight className="h-4 w-4 ml-2" />
                   </Button>
