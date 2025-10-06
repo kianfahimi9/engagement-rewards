@@ -196,8 +196,8 @@ export default function UserStatsPage() {
                     {earnings.map((earning, i) => (
                       <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
                         <div className="flex items-center gap-4">
-                          <div className="bg-black dark:bg-white p-3 rounded-2xl">
-                            {earning.rank === 1 ? <Crown className="h-5 w-5 text-white dark:text-black" /> : <Trophy className="h-5 w-5 text-white dark:text-black" />}
+                          <div className="bg-[#FA4616] p-3 rounded-2xl">
+                            {earning.rank === 1 ? <Crown className="h-5 w-5 text-white" /> : <Trophy className="h-5 w-5 text-white" />}
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900 dark:text-white">
