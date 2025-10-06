@@ -223,7 +223,7 @@ export default function UserStatsPage() {
                     <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No earnings yet</h3>
                     <p className="text-gray-500 dark:text-gray-400 mb-6">Climb the leaderboard to win prizes!</p>
                     <Link href="/">
-                      <Button className="bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100">
+                      <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white">
                         View Leaderboard
                       </Button>
                     </Link>
