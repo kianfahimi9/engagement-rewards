@@ -298,7 +298,7 @@ export default function AdminDashboard() {
                   payouts.map((payout, i) => (
                     <div key={i} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-2xl bg-gray-50 dark:bg-gray-900">
                       <div className="flex items-center gap-4">
-                        <div className="bg-black dark:bg-white p-3 rounded-xl text-2xl">
+                        <div className="bg-[#FA4616] p-3 rounded-xl text-2xl">
                           {payout.rank === 1 ? '🥇' : payout.rank === 2 ? '🥈' : payout.rank === 3 ? '🥉' : '🏆'}
                         </div>
                         <div>
