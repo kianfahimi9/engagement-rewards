@@ -84,7 +84,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
+    <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212]">
       {/* Header */}
       <header className="bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-5">
