@@ -256,7 +256,7 @@ export default function UserStatsPage() {
                       <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">{badge.name}</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{badge.description}</p>
                       {badge.unlocked && (
-                        <Badge className="mt-3 bg-black dark:bg-white text-white dark:text-black border-0">Unlocked</Badge>
+                        <Badge className="mt-3 bg-[#FA4616] text-white border-0 text-xs">Unlocked</Badge>
                       )}
                     </div>
                   ))}
