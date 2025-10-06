@@ -153,7 +153,7 @@ export default function AdminDashboard() {
                   </div>
                   <Button 
                     onClick={handleCreatePrizePool} 
-                    className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100"
+                    className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
                     disabled={!newPoolAmount || parseFloat(newPoolAmount) <= 0}
                   >
                     Create Prize Pool
