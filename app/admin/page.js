@@ -264,7 +264,7 @@ export default function AdminDashboard() {
                       {pool.status === 'completed' && (
                         <Button 
                           onClick={() => handleProcessPayouts(pool.id)}
-                          className="w-full bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-100"
+                          className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
                           size="sm"
                         >
                           Process Payouts via Whop
