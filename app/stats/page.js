@@ -78,14 +78,14 @@ export default function UserStatsPage() {
             <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
               <CardContent className="pt-8 pb-8">
                 <div className="text-center">
-                  <Avatar className="h-24 w-24 mx-auto ring-4 ring-gray-100 dark:ring-gray-800 mb-5">
+                  <Avatar className="h-20 w-20 md:h-24 md:w-24 mx-auto ring-4 ring-gray-100 dark:ring-gray-800 mb-4 md:mb-5">
                     <AvatarImage src={stats?.avatar_url} />
-                    <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-3xl font-semibold">
+                    <AvatarFallback className="bg-[#FA4616] text-white text-2xl md:text-3xl font-semibold">
                       {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
                     </AvatarFallback>
                   </Avatar>
-                  <h2 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">{stats?.username || 'Your Name'}</h2>
-                  <Badge className="bg-black dark:bg-white text-white dark:text-black text-base px-5 py-1.5 border-0">
+                  <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-gray-900 dark:text-white">{stats?.username || 'Your Name'}</h2>
+                  <Badge className="bg-[#FA4616] text-white text-sm md:text-base px-4 md:px-5 py-1 md:py-1.5 border-0">
                     Level {Math.floor((stats?.totalPoints || 0) / 100)}
                   </Badge>
                 </div>
