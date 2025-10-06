@@ -47,25 +47,25 @@ export default function UserStatsPage() {
   return (
     <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212]">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-5">
+      <header className="bg-white/90 dark:bg-[#141212]/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div className="container mx-auto px-4 md:px-6 py-4 md:py-5">
           <div className="flex items-center justify-between">
             <Link href="/">
-              <Button variant="ghost" className="gap-2 text-gray-700 dark:text-gray-300">
-                <ArrowLeft className="h-4 w-4" />
+              <Button variant="ghost" className="gap-2 text-gray-700 dark:text-gray-300 text-xs md:text-sm px-2 md:px-4">
+                <ArrowLeft className="h-3 w-3 md:h-4 md:w-4" />
                 Back
               </Button>
             </Link>
-            <div className="flex items-center gap-4">
-              <div className="bg-black dark:bg-white p-2.5 rounded-2xl">
-                <Star className="h-6 w-6 text-white dark:text-black" />
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="bg-[#FA4616] p-2 md:p-2.5 rounded-xl md:rounded-2xl">
+                <Star className="h-4 w-4 md:h-6 md:w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 dark:text-white">My Stats</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Track your progress</p>
+                <h1 className="text-base md:text-xl font-semibold text-gray-900 dark:text-white">My Stats</h1>
+                <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 hidden sm:block">Track your progress</p>
               </div>
             </div>
-            <div className="w-24"></div>
+            <div className="w-0 md:w-24"></div>
           </div>
         </div>
       </header>
