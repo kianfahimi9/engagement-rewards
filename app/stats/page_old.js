@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown } from 'lucide-react';
+import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -35,8 +35,8 @@ export default function UserStatsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FA4616]"></div>
+      <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white"></div>
       </div>
     );
   }
@@ -189,115 +189,117 @@ export default function UserStatsPage() {
 
         {/* Below the Fold Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          {/* Recent Earnings */}
-          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
-                <Trophy className="h-5 w-5 text-[#FA4616]" />
-                Recent Earnings
-              </CardTitle>
-              <CardDescription className="text-gray-500 dark:text-gray-400">Your prize pool winnings</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              {earnings.length > 0 ? (
-                <div className="space-y-3">
-                  {earnings.map((earning, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
-                      <div className="flex items-center gap-4">
-                        <div className="bg-[#FA4616] p-3 rounded-2xl">
-                          {earning.rank === 1 ? <Crown className="h-5 w-5 text-white" /> : <Trophy className="h-5 w-5 text-white" />}
+            {/* Recent Earnings */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Trophy className="h-5 w-5 text-[#FA4616]" />
+                  Recent Earnings
+                </CardTitle>
+                <CardDescription className="text-gray-500 dark:text-gray-400">Your prize pool winnings</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                {earnings.length > 0 ? (
+                  <div className="space-y-3">
+                    {earnings.map((earning, i) => (
+                      <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-[#FA4616] p-3 rounded-2xl">
+                            {earning.rank === 1 ? <Crown className="h-5 w-5 text-white" /> : <Trophy className="h-5 w-5 text-white" />}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-white">
+                              {earning.rank === 1 ? '🥇' : earning.rank === 2 ? '🥈' : earning.rank === 3 ? '🥉' : '🏆'} Rank #{earning.rank}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {new Date(earning.date).toLocaleDateString()} · {earning.period}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">
-                            {earning.rank === 1 ? '🥇' : earning.rank === 2 ? '🥈' : earning.rank === 3 ? '🥉' : '🏆'} Rank #{earning.rank}
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {new Date(earning.date).toLocaleDateString()} · {earning.period}
-                          </p>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">${earning.amount}</p>
+                          <Badge className={earning.status === 'completed' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' : 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 border-0'}>
+                            {earning.status}
+                          </Badge>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">${earning.amount}</p>
-                        <Badge className={earning.status === 'completed' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' : 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400 border-0'}>
-                          {earning.status}
-                        </Badge>
-                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-16">
+                    <DollarSign className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No earnings yet</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-6">Climb the leaderboard to win prizes!</p>
+                    <Link href="/">
+                      <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white">
+                        View Leaderboard
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Badges */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Award className="h-5 w-5" />
+                  Achievements
+                </CardTitle>
+                <CardDescription className="text-gray-500 dark:text-gray-400">Unlock rewards by hitting milestones</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {stats?.badges?.map((badge, i) => (
+                    <div
+                      key={i}
+                      className={`p-5 rounded-2xl text-center transition-all ${
+                        badge.unlocked
+                          ? 'bg-gray-50 dark:bg-gray-900 border-2 border-black dark:border-white hover:scale-105'
+                          : 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 opacity-40'
+                      }`}
+                    >
+                      <div className="text-4xl mb-3">{badge.icon}</div>
+                      <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">{badge.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{badge.description}</p>
+                      {badge.unlocked && (
+                        <Badge className="mt-3 bg-[#FA4616] text-white border-0 text-xs">Unlocked</Badge>
+                      )}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-16">
-                  <DollarSign className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No earnings yet</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">Climb the leaderboard to win prizes!</p>
-                  <Link href="/">
-                    <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white">
-                      View Leaderboard
-                    </Button>
-                  </Link>
+              </CardContent>
+            </Card>
+
+            {/* Activity */}
+            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Target className="h-5 w-5" />
+                  Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { label: 'Logins', value: stats?.totalLogins || 0, icon: '📅' },
+                    { label: 'Likes', value: stats?.likesReceived || 0, icon: '❤️' },
+                    { label: 'Comments', value: stats?.commentsReceived || 0, icon: '💬' },
+                    { label: 'Shares', value: stats?.sharesReceived || 0, icon: '🔄' },
+                  ].map((stat, i) => (
+                    <div key={i} className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-3xl">{stat.icon}</span>
+                        <span className="text-3xl font-bold text-gray-900 dark:text-white">{stat.value}</span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.label}</p>
+                    </div>
+                  ))}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Achievements */}
-          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
-                <Award className="h-5 w-5 text-[#FA4616]" />
-                Achievements
-              </CardTitle>
-              <CardDescription className="text-gray-500 dark:text-gray-400">Unlock rewards by hitting milestones</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {stats?.badges?.map((badge, i) => (
-                  <div
-                    key={i}
-                    className={`p-5 rounded-2xl text-center transition-all ${
-                      badge.unlocked
-                        ? 'bg-gray-50 dark:bg-gray-900 border-2 border-[#FA4616] hover:scale-105'
-                        : 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 opacity-40'
-                    }`}
-                  >
-                    <div className="text-4xl mb-3">{badge.icon}</div>
-                    <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">{badge.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{badge.description}</p>
-                    {badge.unlocked && (
-                      <Badge className="mt-3 bg-[#FA4616] text-white border-0 text-xs">Unlocked</Badge>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Activity Breakdown - Full Width */}
-          <Card className="lg:col-span-2 border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
-                <Target className="h-5 w-5 text-[#FA4616]" />
-                Activity Breakdown
-              </CardTitle>
-              <CardDescription className="text-gray-500 dark:text-gray-400">Your engagement metrics</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { label: 'Total Logins', value: stats?.totalLogins || 0, icon: '📅' },
-                  { label: 'Likes Received', value: stats?.likesReceived || 0, icon: '❤️' },
-                  { label: 'Comments Received', value: stats?.commentsReceived || 0, icon: '💬' },
-                  { label: 'Shares Received', value: stats?.sharesReceived || 0, icon: '🔄' },
-                ].map((stat, i) => (
-                  <div key={i} className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
-                    <div className="text-4xl mb-3">{stat.icon}</div>
-                    <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">{stat.value}</p>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
