@@ -97,104 +97,75 @@ export default function UserStatsPage() {
           </Card>
         </div>
 
-        {/* Level Progress & Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
-          {/* Level Progression with Streak - Takes 2 columns */}
-          <Card className="md:col-span-2 border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4 mb-6">
-                <Avatar className="h-16 w-16 md:h-20 md:w-20 ring-4 ring-gray-100 dark:ring-gray-800">
-                  <AvatarImage src={stats?.avatar_url} />
-                  <AvatarFallback className="bg-[#FA4616] text-white text-2xl md:text-3xl font-semibold">
-                    {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 truncate">
-                    {stats?.username || 'Your Name'}
-                  </h3>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge className="bg-[#FA4616] text-white border-0">
-                      Level {Math.floor((stats?.totalPoints || 0) / 100)}
-                    </Badge>
-                    <Badge variant="outline" className="border-orange-400 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 gap-1">
-                      <Flame className="h-3 w-3" />
-                      {stats?.currentStreak || 0} day streak
-                    </Badge>
-                  </div>
+        {/* Level Progress & Stats - All in One */}
+        <Card className="border-0 shadow-lg bg-white dark:bg-gray-950 mb-6 md:mb-8">
+          <CardContent className="p-6 md:p-8">
+            <div className="flex items-center gap-4 mb-6">
+              <Avatar className="h-16 w-16 md:h-20 md:w-20 ring-4 ring-gray-100 dark:ring-gray-800">
+                <AvatarImage src={stats?.avatar_url} />
+                <AvatarFallback className="bg-[#FA4616] text-white text-2xl md:text-3xl font-semibold">
+                  {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 truncate">
+                  {stats?.username || 'Your Name'}
+                </h3>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge className="bg-[#FA4616] text-white border-0">
+                    Level {Math.floor((stats?.totalPoints || 0) / 100)}
+                  </Badge>
+                  <Badge variant="outline" className="border-orange-400 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 gap-1">
+                    <Flame className="h-3 w-3" />
+                    {stats?.currentStreak || 0} day streak
+                  </Badge>
                 </div>
               </div>
-              
-              <div className="space-y-4">
-                {/* Level Progress */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      Progress to Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}
-                    </span>
-                    <span className="font-bold text-[#FA4616]">
-                      {stats?.totalPoints || 0} / {nextLevelPoints}
-                    </span>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Level Progress */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700 dark:text-gray-300">
+                    Progress to Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}
+                  </span>
+                  <span className="font-bold text-[#FA4616]">
+                    {stats?.totalPoints || 0} / {nextLevelPoints}
+                  </span>
+                </div>
+                <Progress value={progressToNextLevel} className="h-3 bg-gray-100 dark:bg-gray-800" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {100 - progressToNextLevel} points to next level
+                </p>
+              </div>
+
+              <Separator className="bg-gray-200 dark:bg-gray-800" />
+
+              {/* Rank & Points Stats */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Trophy className="h-4 w-4 text-[#FA4616]" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rank</span>
                   </div>
-                  <Progress value={progressToNextLevel} className="h-3 bg-gray-100 dark:bg-gray-800" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {100 - progressToNextLevel} points to next level
+                  <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                    #{stats?.rank || '-'}
                   </p>
                 </div>
-
-                <Separator className="bg-gray-200 dark:bg-gray-800" />
-
-                {/* Streak Stats */}
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="p-3 rounded-lg bg-orange-50 dark:bg-orange-950/20">
-                    <div className="text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">
-                      {stats?.currentStreak || 0}
-                    </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Current</p>
+                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="h-4 w-4 text-[#FA4616]" />
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Points</span>
                   </div>
-                  <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
-                    <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                      {stats?.longestStreak || 0}
-                    </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Best</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-900">
-                    <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                      {stats?.currentStreak >= 7 ? '✅' : Math.max(0, 7 - (stats?.currentStreak || 0))}
-                    </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">To Bonus</p>
-                  </div>
+                  <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                    {stats?.totalPoints || 0}
+                  </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Rank */}
-          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Trophy className="h-5 w-5 text-[#FA4616]" />
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rank</span>
-              </div>
-              <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-                #{stats?.rank || '-'}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Points */}
-          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Zap className="h-5 w-5 text-[#FA4616]" />
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Points</span>
-              </div>
-              <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-                {stats?.totalPoints || 0}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Below the Fold Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
