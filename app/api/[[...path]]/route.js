@@ -500,6 +500,10 @@ export async function POST(request) {
     return processPayouts(request);
   }
 
+  if (pathname.startsWith('/api/admin/level-names')) {
+    return updateLevelNames(request);
+  }
+
   return NextResponse.json(
     { error: 'Not found' },
     { status: 404 }
