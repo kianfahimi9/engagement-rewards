@@ -334,34 +334,83 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        {/* Engagement Analytics */}
-        <Card className="mt-8 border-0 shadow-lg bg-white dark:bg-gray-950">
-          <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-            <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
-              <BarChart3 className="h-5 w-5" />
-              Community Analytics
-            </CardTitle>
-            <CardDescription className="text-gray-500 dark:text-gray-400">Track engagement trends and member activity</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-              {[
-                { label: 'Total Posts', value: stats?.totalPosts || 0, icon: '📝' },
-                { label: 'Total Comments', value: stats?.totalComments || 0, icon: '💬' },
-                { label: 'Total Likes', value: stats?.totalLikes || 0, icon: '❤️' },
-                { label: 'Avg. Engagement', value: stats?.avgEngagement || 0, icon: '📊' },
-              ].map((metric, i) => (
-                <div key={i} className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-3xl">{metric.icon}</span>
-                    <div className="text-4xl font-bold text-gray-900 dark:text-white">{metric.value}</div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+          {/* Engagement Analytics */}
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <BarChart3 className="h-5 w-5" />
+                Community Analytics
+              </CardTitle>
+              <CardDescription className="text-gray-500 dark:text-gray-400">Track engagement trends</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { label: 'Total Posts', value: stats?.totalPosts || 0, icon: '📝' },
+                  { label: 'Total Comments', value: stats?.totalComments || 0, icon: '💬' },
+                  { label: 'Total Likes', value: stats?.totalLikes || 0, icon: '❤️' },
+                  { label: 'Avg. Engagement', value: stats?.avgEngagement || 0, icon: '📊' },
+                ].map((metric, i) => (
+                  <div key={i} className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-2xl">{metric.icon}</span>
+                      <div className="text-3xl font-bold text-gray-900 dark:text-white">{metric.value}</div>
+                    </div>
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">{metric.label}</p>
                   </div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.label}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Custom Level Names */}
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+              <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <Award className="h-5 w-5" />
+                Customize Level Names
+              </CardTitle>
+              <CardDescription className="text-gray-500 dark:text-gray-400">Personalize your community's level titles (Skool-style)</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-3">
+                {[
+                  { level: 1, points: 0, defaultName: 'Level 1', placeholder: 'e.g., Newbie' },
+                  { level: 2, points: 5, defaultName: 'Level 2', placeholder: 'e.g., Member' },
+                  { level: 3, points: 20, defaultName: 'Level 3', placeholder: 'e.g., Regular' },
+                  { level: 4, points: 65, defaultName: 'Level 4', placeholder: 'e.g., Contributor' },
+                  { level: 5, points: 155, defaultName: 'Level 5', placeholder: 'e.g., Active' },
+                  { level: 6, points: 515, defaultName: 'Level 6', placeholder: 'e.g., Veteran' },
+                  { level: 7, points: 2015, defaultName: 'Level 7', placeholder: 'e.g., Expert' },
+                  { level: 8, points: 8015, defaultName: 'Level 8', placeholder: 'e.g., Master' },
+                  { level: 9, points: 33015, defaultName: 'Level 9', placeholder: 'e.g., Legend' },
+                  { level: 10, points: 100000, defaultName: 'Level 10', placeholder: 'e.g., The GOAT' },
+                ].map((lvl) => (
+                  <div key={lvl.level} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                    <div className="flex-shrink-0 w-16 text-center">
+                      <Badge className="bg-[#FA4616] text-white border-0">
+                        Lvl {lvl.level}
+                      </Badge>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{lvl.points}pts</p>
+                    </div>
+                    <Input
+                      placeholder={lvl.placeholder}
+                      defaultValue={lvl.defaultName}
+                      className="flex-1 bg-white dark:bg-gray-950"
+                    />
+                  </div>
+                ))}
+              </div>
+              <Button className="w-full mt-6 bg-[#FA4616] hover:bg-[#FA4616]/90 text-white">
+                Save Level Names
+              </Button>
+              <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
+                Custom names will appear on leaderboard and member profiles
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
