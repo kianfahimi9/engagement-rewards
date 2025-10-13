@@ -388,6 +388,80 @@ async function processPayouts(request) {
   }
 }
 
+// GET /api/admin/level-names
+async function getLevelNames(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const communityId = searchParams.get('communityId');
+
+    // TODO: Get from Supabase
+    // const { data, error } = await supabase
+    //   .from('communities')
+    //   .select('level_names')
+    //   .eq('whop_community_id', communityId)
+    //   .single();
+
+    // Return default level names for now
+    return NextResponse.json({
+      success: true,
+      levelNames: {
+        "1": "Level 1",
+        "2": "Level 2",
+        "3": "Level 3",
+        "4": "Level 4",
+        "5": "Level 5",
+        "6": "Level 6",
+        "7": "Level 7",
+        "8": "Level 8",
+        "9": "Level 9",
+        "10": "Level 10"
+      }
+    });
+  } catch (error) {
+    console.error('Get level names error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/admin/level-names
+async function updateLevelNames(request) {
+  try {
+    const body = await request.json();
+    const { communityId, levelNames } = body;
+
+    // Validate levelNames object
+    if (!levelNames || typeof levelNames !== 'object') {
+      return NextResponse.json(
+        { success: false, error: 'Invalid level names format' },
+        { status: 400 }
+      );
+    }
+
+    // TODO: Update in Supabase
+    // const { data, error } = await supabase
+    //   .from('communities')
+    //   .update({ level_names: levelNames })
+    //   .eq('whop_community_id', communityId)
+    //   .select()
+    //   .single();
+
+    return NextResponse.json({
+      success: true,
+      message: 'Level names updated successfully',
+      levelNames
+    });
+  } catch (error) {
+    console.error('Update level names error:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
 // Main route handler
 export async function GET(request) {
   const pathname = new URL(request.url).pathname;
