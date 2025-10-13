@@ -133,7 +133,7 @@ export default function CommunityLeaderboard() {
               </div>
             ) : (
               <div className="space-y-2 md:space-y-3">
-                {leaderboardData.map((user) => (
+                {leaderboardData.slice(0, showAll ? 10 : 5).map((user) => (
                   <div
                     key={user.id}
                     className={`flex items-center gap-2 md:gap-5 p-3 md:p-5 rounded-xl md:rounded-2xl transition-all hover:scale-[1.01] cursor-pointer ${
