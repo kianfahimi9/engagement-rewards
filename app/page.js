@@ -16,6 +16,7 @@ export default function CommunityLeaderboard() {
   const [currentUser, setCurrentUser] = useState(null);
   const [prizePool, setPrizePool] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     fetchLeaderboardData();
