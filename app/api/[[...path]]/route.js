@@ -478,6 +478,10 @@ export async function GET(request) {
     return getAdminDashboard(request);
   }
 
+  if (pathname.startsWith('/api/admin/level-names')) {
+    return getLevelNames(request);
+  }
+
   return NextResponse.json({ message: 'API Route' });
 }
 
