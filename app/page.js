@@ -256,9 +256,9 @@ export default function CommunityLeaderboard() {
           <CardHeader className="border-b border-gray-100 dark:border-gray-800 px-4 md:px-6">
             <CardTitle className="flex items-center gap-2 md:gap-3 text-gray-900 dark:text-white text-base md:text-xl">
               <Sparkles className="h-4 w-4 md:h-5 md:w-5" />
-              How to Earn Points
+              Level System
             </CardTitle>
-            <CardDescription className="text-gray-500 dark:text-gray-400 text-xs md:text-sm">Climb through authentic engagement</CardDescription>
+            <CardDescription className="text-gray-500 dark:text-gray-400 text-xs md:text-sm">1 Like = 1 Point · Earn likes to level up!</CardDescription>
           </CardHeader>
           <CardContent className="p-4 md:p-6">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
