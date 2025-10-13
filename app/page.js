@@ -275,33 +275,76 @@ export default function CommunityLeaderboard() {
           </Card>
         )}
 
-        {/* How Points Work */}
+        {/* Level System */}
         <Card className="mt-6 md:mt-8 border-0 shadow-lg bg-white dark:bg-gray-950">
           <CardHeader className="border-b border-gray-100 dark:border-gray-800 px-4 md:px-6">
-            <CardTitle className="flex items-center gap-2 md:gap-3 text-gray-900 dark:text-white text-base md:text-xl">
-              <Sparkles className="h-4 w-4 md:h-5 md:w-5" />
-              Level System
-            </CardTitle>
-            <CardDescription className="text-gray-500 dark:text-gray-400 text-xs md:text-sm">1 Like = 1 Point · Earn likes to level up!</CardDescription>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <CardTitle className="flex items-center gap-2 md:gap-3 text-gray-900 dark:text-white text-base md:text-xl">
+                  <Sparkles className="h-4 w-4 md:h-5 md:w-5" />
+                  Level System
+                </CardTitle>
+                <CardDescription className="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-1">Climb through 10 levels based on engagement</CardDescription>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FA4616]/10 border border-[#FA4616]/20">
+                <span className="text-2xl">❤️</span>
+                <div className="text-left">
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Core Rule</p>
+                  <p className="text-sm font-bold text-[#FA4616]">1 Like = 1 Point</p>
+                </div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="p-4 md:p-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
               {[
-                { action: 'Level 2', points: 5, icon: '🙂', desc: '5 pts' },
-                { action: 'Level 3', points: 20, icon: '👍', desc: '20 pts' },
-                { action: 'Level 4', points: 65, icon: '🌟', desc: '65 pts' },
-                { action: 'Level 5', points: 155, icon: '⚡', desc: '155 pts' },
-                { action: 'Level 6', points: 515, icon: '🔥', desc: '515 pts' },
-                { action: 'Level 7', points: 2015, icon: '💎', desc: '2,015 pts' },
-              ].map((item, i) => (
-                <div key={i} className="p-3 md:p-5 rounded-xl md:rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
-                  <div className="flex items-center justify-between mb-2 md:mb-3">
-                    <span className="text-2xl md:text-3xl">{item.icon}</span>
+                { level: 1, points: 0, icon: '🌱', name: 'Level 1' },
+                { level: 2, points: 5, icon: '🙂', name: 'Level 2' },
+                { level: 3, points: 20, icon: '👍', name: 'Level 3' },
+                { level: 4, points: 65, icon: '🌟', name: 'Level 4' },
+                { level: 5, points: 155, icon: '⚡', name: 'Level 5' },
+                { level: 6, points: 515, icon: '🔥', name: 'Level 6' },
+                { level: 7, points: 2015, icon: '💎', name: 'Level 7' },
+                { level: 8, points: 8015, icon: '👑', name: 'Level 8' },
+                { level: 9, points: 33015, icon: '🏆', name: 'Level 9' },
+                { level: 10, points: 100000, icon: '⭐', name: 'Level 10' },
+              ].map((item) => (
+                <div key={item.level} className="p-3 md:p-4 rounded-xl bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 border border-gray-200 dark:border-gray-800 hover:border-[#FA4616] transition-colors">
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl mb-2">{item.icon}</div>
+                    <Badge className="bg-[#FA4616] text-white border-0 text-xs mb-2">
+                      Lvl {item.level}
+                    </Badge>
+                    <p className="text-xs font-semibold text-gray-900 dark:text-white mb-1">{item.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {item.points.toLocaleString()} pts
+                    </p>
                   </div>
-                  <p className="font-semibold text-gray-900 dark:text-white text-xs md:text-sm mb-1">{item.action}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{item.desc}</p>
                 </div>
               ))}
+            </div>
+            
+            <Separator className="my-6 bg-gray-200 dark:bg-gray-800" />
+            
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900">
+              <div className="flex items-start gap-3">
+                <div className="bg-blue-500 p-2 rounded-lg flex-shrink-0">
+                  <Award className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                    Custom Level Names
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Community admins can personalize level titles (e.g., "Newbie" → "The GOAT")
+                  </p>
+                </div>
+              </div>
+              <Link href="/admin" className="w-full sm:w-auto">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto border-blue-300 dark:border-blue-800">
+                  View Admin Settings
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
