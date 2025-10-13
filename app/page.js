@@ -209,6 +209,29 @@ export default function CommunityLeaderboard() {
                     <p className="text-sm md:text-base text-gray-500 dark:text-gray-400">Be the first to start engaging!</p>
                   </div>
                 )}
+
+                {/* Show More/Less Button */}
+                {leaderboardData.length > 5 && (
+                  <div className="pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowAll(!showAll)}
+                      className="w-full flex items-center justify-center gap-2 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900"
+                    >
+                      {showAll ? (
+                        <>
+                          <ChevronRight className="h-4 w-4 rotate-90" />
+                          Show Less
+                        </>
+                      ) : (
+                        <>
+                          View Top 10
+                          <ChevronRight className="h-4 w-4 -rotate-90" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>
