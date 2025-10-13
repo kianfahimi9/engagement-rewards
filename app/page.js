@@ -273,11 +273,9 @@ export default function CommunityLeaderboard() {
                 <div key={i} className="p-3 md:p-5 rounded-xl md:rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center justify-between mb-2 md:mb-3">
                     <span className="text-2xl md:text-3xl">{item.icon}</span>
-                    <Badge className="bg-[#FA4616] text-white border-0 text-xs">
-                      +{item.points}
-                    </Badge>
                   </div>
-                  <p className="font-medium text-gray-900 dark:text-white text-xs md:text-sm">{item.action}</p>
+                  <p className="font-semibold text-gray-900 dark:text-white text-xs md:text-sm mb-1">{item.action}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{item.desc}</p>
                 </div>
               ))}
             </div>
