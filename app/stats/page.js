@@ -70,107 +70,125 @@ export default function UserStatsPage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 md:px-6 py-6 md:py-10 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Profile Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Profile Card */}
-            <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-              <CardContent className="pt-8 pb-8">
-                <div className="text-center">
-                  <Avatar className="h-20 w-20 md:h-24 md:w-24 mx-auto ring-4 ring-gray-100 dark:ring-gray-800 mb-4 md:mb-5">
-                    <AvatarImage src={stats?.avatar_url} />
-                    <AvatarFallback className="bg-[#FA4616] text-white text-2xl md:text-3xl font-semibold">
-                      {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <h2 className="text-xl md:text-2xl font-bold mb-2 md:mb-3 text-gray-900 dark:text-white">{stats?.username || 'Your Name'}</h2>
-                  <Badge className="bg-[#FA4616] text-white text-sm md:text-base px-4 md:px-5 py-1 md:py-1.5 border-0">
+      <div className="container mx-auto px-4 md:px-6 py-6 md:py-10 max-w-7xl">
+        {/* Above the Fold Hero Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+          {/* Total Earnings - Most Prominent */}
+          <Card className="lg:col-span-2 border-0 shadow-xl bg-gradient-to-br from-[#FA4616] to-orange-600 text-white overflow-hidden relative">
+            <CardContent className="p-6 md:p-8">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <DollarSign className="h-6 w-6 md:h-8 md:w-8" />
+                    <p className="text-white/80 text-sm md:text-base font-medium">Total Earnings</p>
+                  </div>
+                  <h2 className="text-5xl md:text-7xl font-bold mb-4">
+                    ${earnings.reduce((sum, e) => sum + (e.amount || 0), 0).toFixed(2)}
+                  </h2>
+                  <p className="text-white/90 text-sm md:text-base">
+                    From {earnings.length} prize pool{earnings.length !== 1 ? 's' : ''}
+                  </p>
+                </div>
+                <div className="hidden md:block opacity-20">
+                  <Trophy className="h-32 w-32" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Streak Status - Compact */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30">
+            <CardContent className="p-6 md:p-8 text-center">
+              <div className="text-5xl md:text-6xl mb-3">🔥</div>
+              <div className="text-4xl md:text-5xl font-bold text-orange-600 dark:text-orange-400 mb-1">
+                {stats?.currentStreak || 0}
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Day Streak</p>
+              <Separator className="my-4 bg-orange-200 dark:bg-orange-900" />
+              <div className="grid grid-cols-2 gap-3 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats?.longestStreak || 0}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Best</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {stats?.currentStreak >= 7 ? '✅' : Math.max(0, 7 - (stats?.currentStreak || 0))}
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">To Bonus</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Level Progress & Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+          {/* Level Progression - Takes 2 columns */}
+          <Card className="md:col-span-2 border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <Avatar className="h-16 w-16 md:h-20 md:w-20 ring-4 ring-gray-100 dark:ring-gray-800">
+                  <AvatarImage src={stats?.avatar_url} />
+                  <AvatarFallback className="bg-[#FA4616] text-white text-2xl md:text-3xl font-semibold">
+                    {stats?.username?.slice(0, 2).toUpperCase() || 'ME'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1 truncate">
+                    {stats?.username || 'Your Name'}
+                  </h3>
+                  <Badge className="bg-[#FA4616] text-white border-0">
                     Level {Math.floor((stats?.totalPoints || 0) / 100)}
                   </Badge>
                 </div>
-
-                <Separator className="my-8 bg-gray-100 dark:bg-gray-800" />
-
-                {/* Level Progress */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-gray-700 dark:text-gray-300">Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      {stats?.totalPoints || 0} / {nextLevelPoints}
-                    </span>
-                  </div>
-                  <Progress value={progressToNextLevel} className="h-2 bg-gray-100 dark:bg-gray-800" />
-                  <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                    {100 - progressToNextLevel} points to next level
-                  </p>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700 dark:text-gray-300">
+                    Progress to Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}
+                  </span>
+                  <span className="font-bold text-[#FA4616]">
+                    {stats?.totalPoints || 0} / {nextLevelPoints}
+                  </span>
                 </div>
+                <Progress value={progressToNextLevel} className="h-3 bg-gray-100 dark:bg-gray-800" />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {100 - progressToNextLevel} points to next level
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-                <Separator className="my-8 bg-gray-100 dark:bg-gray-800" />
+          {/* Rank */}
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Trophy className="h-5 w-5 text-[#FA4616]" />
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rank</span>
+              </div>
+              <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                #{stats?.rank || '-'}
+              </p>
+            </CardContent>
+          </Card>
 
-                {/* Quick Stats */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <Trophy className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                      <span className="font-medium text-gray-900 dark:text-white">Rank</span>
-                    </div>
-                    <span className="text-xl font-bold text-gray-900 dark:text-white">#{stats?.rank || '-'}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <Zap className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                      <span className="font-medium text-gray-900 dark:text-white">Points</span>
-                    </div>
-                    <span className="text-xl font-bold text-gray-900 dark:text-white">{stats?.totalPoints || 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
-                    <div className="flex items-center gap-3">
-                      <TrendingUp className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                      <span className="font-medium text-gray-900 dark:text-white">Engagement</span>
-                    </div>
-                    <span className="text-xl font-bold text-gray-900 dark:text-white">{stats?.engagementGenerated || 0}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Points */}
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Zap className="h-5 w-5 text-[#FA4616]" />
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Points</span>
+              </div>
+              <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                {stats?.totalPoints || 0}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
-            {/* Streak Card */}
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30">
-              <CardHeader className="border-b border-orange-100 dark:border-orange-900">
-                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
-                  <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                  Streak Status
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-6">
-                <div className="text-center mb-6">
-                  <div className="text-6xl mb-3">🔥</div>
-                  <div className="text-5xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                    {stats?.currentStreak || 0}
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Day Streak</p>
-                </div>
-                <Separator className="my-6 bg-orange-100 dark:bg-orange-900" />
-                <div className="flex justify-between text-center">
-                  <div>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats?.longestStreak || 0}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Best Streak</p>
-                  </div>
-                  <Separator orientation="vertical" className="bg-orange-100 dark:bg-orange-900" />
-                  <div>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {stats?.currentStreak >= 7 ? '✅' : Math.max(0, 7 - (stats?.currentStreak || 0))}
-                    </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">To Bonus</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+        {/* Below the Fold Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             {/* Earnings */}
             <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800">
