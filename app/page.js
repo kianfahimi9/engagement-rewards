@@ -105,44 +105,6 @@ export default function CommunityLeaderboard() {
           </Card>
         )}
 
-        {/* Your Rank Card */}
-        {currentUser && (
-          <Card className="mb-6 md:mb-8 border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardContent className="py-5 md:py-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3 md:gap-6 w-full sm:w-auto">
-                  <Avatar className="h-14 w-14 md:h-20 md:w-20 ring-4 ring-gray-100 dark:ring-gray-800 flex-shrink-0">
-                    <AvatarImage src={currentUser.avatar_url} />
-                    <AvatarFallback className="bg-[#FA4616] text-white text-lg md:text-2xl font-semibold">
-                      {currentUser.username?.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">Your Current Rank</p>
-                    <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3">#{currentUser.rank}</h3>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                      <Badge variant="secondary" className="gap-1 md:gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-0 text-xs">
-                        <Zap className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                        {currentUser.points} pts
-                      </Badge>
-                      <Badge variant="outline" className="gap-1 md:gap-1.5 border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 text-xs">
-                        <Flame className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                        {currentUser.current_streak} day
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-                <Link href="/stats" className="w-full sm:w-auto">
-                  <Button size="lg" className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white w-full sm:w-auto text-sm md:text-base">
-                    View Details
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Leaderboard */}
         <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
           <CardHeader className="border-b border-gray-100 dark:border-gray-800 px-4 md:px-6">
