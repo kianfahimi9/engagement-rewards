@@ -189,24 +189,14 @@ export default function UserStatsPage() {
 
         {/* Below the Fold Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-            {/* Earnings */}
+            {/* Recent Earnings */}
             <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-3 text-2xl text-gray-900 dark:text-white">
-                      <DollarSign className="h-6 w-6" />
-                      Earnings
-                    </CardTitle>
-                    <CardDescription className="text-gray-500 dark:text-gray-400">Your rewards from prize pools</CardDescription>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Earned</p>
-                    <p className="text-4xl font-bold text-gray-900 dark:text-white">
-                      ${earnings.reduce((sum, e) => sum + (e.amount || 0), 0).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
+                <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                  <Trophy className="h-5 w-5 text-[#FA4616]" />
+                  Recent Earnings
+                </CardTitle>
+                <CardDescription className="text-gray-500 dark:text-gray-400">Your prize pool winnings</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 {earnings.length > 0 ? (
