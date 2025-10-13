@@ -263,12 +263,12 @@ export default function CommunityLeaderboard() {
           <CardContent className="p-4 md:p-6">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
               {[
-                { action: 'Daily Login', points: 5, icon: '📅' },
-                { action: 'Like', points: 2, icon: '❤️' },
-                { action: 'Comment', points: 3, icon: '💬' },
-                { action: 'Share', points: 5, icon: '🔄' },
-                { action: '7-Day', points: 50, icon: '🔥' },
-                { action: '30-Day', points: 200, icon: '💎' },
+                { action: 'Level 2', points: 5, icon: '🙂', desc: '5 pts' },
+                { action: 'Level 3', points: 20, icon: '👍', desc: '20 pts' },
+                { action: 'Level 4', points: 65, icon: '🌟', desc: '65 pts' },
+                { action: 'Level 5', points: 155, icon: '⚡', desc: '155 pts' },
+                { action: 'Level 6', points: 515, icon: '🔥', desc: '515 pts' },
+                { action: 'Level 7', points: 2015, icon: '💎', desc: '2,015 pts' },
               ].map((item, i) => (
                 <div key={i} className="p-3 md:p-5 rounded-xl md:rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center justify-between mb-2 md:mb-3">
