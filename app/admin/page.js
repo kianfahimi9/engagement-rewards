@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useIframeSdk } from "@whop/react";
 import Link from 'next/link';
 
 export default function AdminDashboard() {
@@ -18,6 +19,10 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [newPoolAmount, setNewPoolAmount] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
+  
+  const iframeSdk = useIframeSdk();
 
   useEffect(() => {
     fetchAdminData();
@@ -39,15 +44,57 @@ export default function AdminDashboard() {
   };
 
   const handleCreatePrizePool = async () => {
+    setPaymentLoading(true);
+    setPaymentError('');
+    
     try {
-      const response = await fetch('/api/admin/prize-pool', {
+      // Get current user from iframe SDK
+      const currentUser = await iframeSdk.getCurrentUser();
+      
+      if (!currentUser?.id) {
+        throw new Error('User not found');
+      }
+
+      // Step 1: Create charge on server
+      const response = await fetch('/api/payments/create-charge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          userId: currentUser.id,
           amount: parseFloat(newPoolAmount),
-          communityId: 'comm_1' // Will be dynamic with Whop integration
+          communityId: '2b7ecb03-7c43-4aca-ae53-c77cdf766d85', // Real community ID
+          periodStart: new Date().toISOString().split('T')[0],
+          periodEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          title: `Prize Pool - $${newPoolAmount}`,
         })
       });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.inAppPurchase) {
+        throw new Error(data.error || 'Failed to create charge');
+      }
+
+      // Step 2: Open Whop payment modal
+      const paymentResult = await iframeSdk.inAppPurchase(data.inAppPurchase);
+
+      if (paymentResult.status === 'ok') {
+        console.log('✅ Payment successful:', paymentResult.data.receipt_id);
+        setDialogOpen(false);
+        setNewPoolAmount('');
+        // Refresh data to show new prize pool
+        fetchAdminData();
+      } else {
+        throw new Error(paymentResult.error || 'Payment failed');
+      }
+
+    } catch (error) {
+      console.error('Error creating prize pool:', error);
+      setPaymentError(error.message);
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
       
       if (response.ok) {
         setNewPoolAmount('');
