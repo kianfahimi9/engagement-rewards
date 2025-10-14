@@ -163,10 +163,15 @@ export default function AdminDashboard() {
                 <DialogHeader>
                   <DialogTitle>Create New Prize Pool</DialogTitle>
                   <DialogDescription>
-                    Set up a weekly prize pool to reward your top community members
+                    Set up a weekly prize pool to reward your top community members via Whop Payments
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
+                  {paymentError && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 p-3 rounded-lg text-sm">
+                      ❌ {paymentError}
+                    </div>
+                  )}
                   <div className="space-y-2">
                     <Label htmlFor="amount">Prize Pool Amount ($)</Label>
                     <Input
@@ -175,6 +180,7 @@ export default function AdminDashboard() {
                       placeholder="500"
                       value={newPoolAmount}
                       onChange={(e) => setNewPoolAmount(e.target.value)}
+                      disabled={paymentLoading}
                     />
                   </div>
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
@@ -198,10 +204,13 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg text-sm text-yellow-800 dark:text-yellow-200">
+                    💳 You'll be redirected to Whop's secure payment page to complete the transaction.
+                  </div>
                   <Button 
                     onClick={handleCreatePrizePool} 
                     className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
-                    disabled={!newPoolAmount || parseFloat(newPoolAmount) <= 0}
+                    disabled={!newPoolAmount || parseFloat(newPoolAmount) <= 0 || paymentLoading}
                   >
                     Create Prize Pool
                   </Button>
