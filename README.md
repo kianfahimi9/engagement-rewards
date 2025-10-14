@@ -1,135 +1,160 @@
-# Whop Community Engagement Leaderboard
+# Community Engagement Leaderboard - Whop App
 
-A gamified community engagement tracking and reward system for the Whop ecosystem. Inspired by Skool's leaderboard system with enhanced gamification similar to Duolingo and Clash of Clans.
+A gamified community engagement platform built for Whop communities, rewarding active members through point-based leaderboards and prize pools.
 
-## Features
+## 🚀 Features
 
-### 🏆 Community Leaderboard
-- Real-time rankings (Weekly, Monthly, All-Time)
-- Beautiful gamified UI with dodger blue/amber theme
-- Top performer highlights with special badges
-- Active prize pool display
-- Personal rank tracking
+- **Real-time Leaderboard** - Track top performers by week, month, or all-time
+- **Engagement Tracking** - Points based on forum posts, replies, and views
+- **Prize Pools** - Community owners fund weekly/monthly prizes via Whop Payments
+- **Automated Payouts** - Distribute prizes to top 10 users automatically
+- **Level System** - 10 customizable levels with Skool-style progression
+- **Admin Dashboard** - Manage prize pools, view analytics, customize levels
 
-### 📊 User Stats Dashboard
-- Personal engagement metrics
-- Earning history and status
-- Badge/achievement system
-- Daily streak tracking
-- Level progression system
-- Activity breakdown
+## 🎯 Point System
 
-### 👑 Admin Dashboard (Community Owners)
-- Community analytics overview
-- Prize pool management
-- Payout processing via Whop
-- Engagement metrics tracking
-- Member activity monitoring
+**Forum Posts (Main Points):**
+- 0.1 points per view (minimum 5 views required)
+- 1 point per reply received
+- 10 point bonus for pinned posts
 
-## Tech Stack
+**Chat Messages (Light Tracking):**
+- 0.5 points per reply received
 
-- **Frontend**: Next.js 14, React, TailwindCSS, shadcn/ui
-- **Database**: Supabase (PostgreSQL)
-- **Payments**: Whop Native Payments (to be integrated)
-- **Authentication**: Whop OAuth (to be integrated)
+**Anti-Spam Filters:**
+- Minimum 10 characters per post
+- Minimum 5 views to earn points
+- No self-replies counted
+- Replies must be >30 seconds apart
 
-## Database Schema
+## 📋 Prerequisites
 
-### Core Tables:
-- `communities` - Whop community tracking
-- `users` - User profiles with whop_user_id
-- `community_members` - User-community relationships
-- `daily_streaks` - Track user daily activity streaks
-- `leaderboard_entries` - Computed rankings by period
-- `prize_pools` - Weekly/monthly reward pools
-- `payouts` - Payment records to users
+- Node.js 18+ and Yarn
+- Supabase account and project
+- Whop Developer account
+- Vercel account (for deployment)
 
-## Getting Started
+## 🛠️ Environment Variables
 
-1. **Install dependencies:**
+Create a `.env` file with the following:
+
 ```bash
-yarn install
-```
-
-2. **Configure environment variables:**
-Create a `.env` file with:
-```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# Whop (to be added)
+# Whop API
 WHOP_API_KEY=your_whop_api_key
-WHOP_CLIENT_ID=your_client_id
-WHOP_CLIENT_SECRET=your_client_secret
+NEXT_PUBLIC_WHOP_APP_ID=your_whop_app_id
+NEXT_PUBLIC_WHOP_AGENT_USER_ID=your_agent_user_id
+NEXT_PUBLIC_WHOP_COMPANY_ID=your_company_id
+WHOP_WEBHOOK_SECRET=your_webhook_secret
 ```
 
-3. **Start the development server:**
+## 🏗️ Deployment to Vercel
+
+### 1. Push to GitHub
+
 ```bash
-yarn dev
+git add .
+git commit -m "Deploy community leaderboard"
+git push origin main
 ```
 
-## Project Structure
+### 2. Deploy to Vercel
+
+1. Go to [Vercel Dashboard](https://vercel.com)
+2. Click "Import Project"
+3. Select your GitHub repository
+4. Add environment variables from `.env`
+5. Click "Deploy"
+
+### 3. Configure Whop Webhook
+
+After deployment:
+
+1. Go to [Whop Developer Dashboard](https://dash.whop.com)
+2. Navigate to Your App → Webhooks
+3. Add webhook:
+   - URL: `https://your-app.vercel.app/api/webhooks/whop`
+   - Events: `payment.succeeded`, `payment.failed`
+4. Copy webhook secret to Vercel environment variables as `WHOP_WEBHOOK_SECRET`
+5. Redeploy on Vercel
+
+### 4. Install App in Whop
+
+1. In Whop Dashboard → Your App → Settings
+2. Set iframe URL to your Vercel URL
+3. Install app in your community
+4. Access via community sidebar
+
+## 🔄 Syncing Engagement Data
+
+Set up automated sync using Vercel Cron:
+
+1. Create `/api/cron/sync/route.js`:
+```javascript
+export async function GET(request) {
+  // Call your sync endpoint
+  await fetch('https://your-app.vercel.app/api/sync-whop');
+  return Response.json({ success: true });
+}
+```
+
+2. Create `vercel.json`:
+```json
+{
+  "crons": [{
+    "path": "/api/cron/sync",
+    "schedule": "*/5 * * * *"
+  }]
+}
+```
+
+## 💰 Testing Payments
+
+**IMPORTANT:** Payments only work when:
+1. ✅ Deployed to Vercel (HTTPS required)
+2. ✅ Accessed inside Whop iframe
+3. ✅ Webhook secret configured
+4. ✅ User is authenticated via Whop
+
+**Test Flow:**
+1. Install app in test community
+2. Access `/admin` inside Whop
+3. Click "New Pool" → Enter amount
+4. Whop payment modal appears
+5. Complete payment
+6. Webhook activates pool automatically
+
+## 📁 Key Files
 
 ```
-/app
-├── app/
-│   ├── page.js              # Community Leaderboard
-│   ├── stats/page.js        # User Stats Dashboard
-│   ├── admin/page.js        # Admin Dashboard
-│   └── api/[[...path]]/route.js  # API endpoints
-├── components/ui/           # shadcn/ui components
-└── .env                     # Environment variables
+/app/app/
+├── layout.js                  # WhopIframeSdkProvider wrapper (REQUIRED)
+├── admin/page.js              # Uses useIframeSdk() hook
+├── api/payments/              # Payment & payout endpoints
+└── api/webhooks/whop/         # Webhook handler
 ```
 
-## API Endpoints
+## 🔧 Troubleshooting
 
-### Public Endpoints
-- `GET /api/leaderboard?period={weekly|monthly|all_time}` - Get leaderboard rankings
-- `GET /api/user-stats` - Get current user statistics
-- `POST /api/sync-engagement` - Webhook for Whop engagement sync
+**"useIframeSdk is not a function"**
+- Must run inside Whop iframe
+- Check WhopIframeSdkProvider in layout.js
 
-### Admin Endpoints
-- `GET /api/admin/dashboard` - Get admin dashboard data
-- `POST /api/admin/prize-pool` - Create new prize pool
-- `POST /api/admin/process-payouts` - Process payouts for completed prize pool
+**Payments fail:**
+- Verify HTTPS deployment
+- Check webhook secret is set
+- View webhook logs in Whop dashboard
 
-## Engagement Point System
+**No data syncing:**
+- Verify experience IDs in `/api/sync-whop/route.js`
+- Check permissions: `chat:read`, `forum:read`
+- Run manual sync via `/api/sync-whop`
 
-| Action | Points |
-|--------|--------|
-| Daily Login | +5 pts |
-| Receive a Like | +2 pts |
-| Receive a Comment | +3 pts |
-| Get Shared | +5 pts |
-| 7-Day Streak Bonus | +50 pts |
-| 30-Day Streak Bonus | +200 pts |
+## 📚 Resources
 
-## Prize Pool Distribution
-
-- 🥇 **1st Place**: 40%
-- 🥈 **2nd Place**: 30%
-- 🥉 **3rd Place**: 20%
-- 🎖️ **4th-10th**: 10% (shared)
-
-## Integration Guide
-
-### Whop Authentication
-1. Set up Whop OAuth in your app settings
-2. Implement OAuth flow
-3. Store whop_user_id in user sessions
-
-### Whop Engagement Sync
-1. Set up webhooks in Whop dashboard
-2. Configure webhook endpoint: `/api/sync-engagement`
-3. Process events: post_created, comment_created, like_created
-
-### Whop Payment Integration
-1. Use Whop's payment API for payouts
-2. Implement in `/api/admin/process-payouts`
-3. Track payment status in `payouts` table
-
-## License
-
-Proprietary - Built for Whop Ecosystem
+- [Whop SDK](https://docs.whop.com/sdk)
+- [Payments Guide](https://docs.whop.com/apps/features/payments)
+- [Example Repo](https://github.com/whopio/whop-app-call-it)
