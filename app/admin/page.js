@@ -108,17 +108,67 @@ export default function AdminDashboard() {
 
   const handleProcessPayouts = async (prizePoolId) => {
     try {
-      const response = await fetch('/api/admin/process-payouts', {
+      // Get top 10 users for this prize pool's period
+      const response = await fetch(`/api/leaderboard?period=weekly`);
+      const data = await response.json();
+      
+      if (!data.leaderboard || data.leaderboard.length === 0) {
+        alert('No users to pay out');
+        return;
+      }
+
+      const top10 = data.leaderboard.slice(0, 10);
+      
+      // Get prize pool details
+      const poolResponse = await fetch(`/api/admin/dashboard`);
+      const poolData = await poolResponse.json();
+      const prizePool = poolData.prizePools.find(p => p.id === prizePoolId);
+      
+      if (!prizePool) {
+        alert('Prize pool not found');
+        return;
+      }
+
+      const totalAmount = parseFloat(prizePool.amount);
+      
+      // Calculate distribution (40%, 30%, 20%, 10% split among 4-10)
+      const distribution = [
+        totalAmount * 0.4,  // 1st
+        totalAmount * 0.3,  // 2nd
+        totalAmount * 0.2,  // 3rd
+        ...Array(7).fill(totalAmount * 0.1 / 7), // 4th-10th split
+      ];
+
+      // Create winners array with calculated amounts
+      const winners = top10.map((user, index) => ({
+        userId: user.id,
+        whopUserId: user.whop_user_id,
+        username: user.username,
+        amount: distribution[index],
+        rank: index + 1,
+      }));
+
+      // Process payouts
+      const payoutResponse = await fetch('/api/payments/payout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prizePoolId })
+        body: JSON.stringify({ 
+          prizePoolId,
+          winners,
+        })
       });
       
-      if (response.ok) {
+      const payoutData = await payoutResponse.json();
+      
+      if (payoutResponse.ok) {
+        alert(`✅ Payouts processed! ${payoutData.results.filter(r => r.status === 'success').length} successful`);
         fetchAdminData();
+      } else {
+        throw new Error(payoutData.error || 'Failed to process payouts');
       }
     } catch (error) {
       console.error('Error processing payouts:', error);
+      alert(`❌ Error: ${error.message}`);
     }
   };
 
