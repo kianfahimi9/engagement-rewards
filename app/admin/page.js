@@ -254,7 +254,6 @@ export default function AdminDashboard() {
                   >
                     {paymentLoading ? 'Processing Payment...' : 'Create Prize Pool'}
                   </Button>
-                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
