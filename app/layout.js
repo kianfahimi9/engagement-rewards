@@ -1,15 +1,17 @@
-import './globals.css'
+'use client';
 
-export const metadata = {
-  title: 'Next.js MongoDB Template',
-  description: 'A simple template with App Router, MongoDB, and shadcn/ui',
-}
+import './globals.css'
+import { WhopProvider } from "@whop/react";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <WhopProvider
+          appId={process.env.NEXT_PUBLIC_WHOP_APP_ID}
+        >
+          {children}
+        </WhopProvider>
       </body>
     </html>
   )
