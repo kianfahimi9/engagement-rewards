@@ -2,6 +2,7 @@
 
 import './globals.css'
 import { WhopIframeSdkProvider, WhopThemeScript } from "@whop/react";
+import { Theme } from "@whop/react/components";
 
 export default function RootLayout({ children }) {
   return (
@@ -10,9 +11,11 @@ export default function RootLayout({ children }) {
         <WhopThemeScript />
       </head>
       <body>
-        <WhopIframeSdkProvider>
-          {children}
-        </WhopIframeSdkProvider>
+        <Theme accentColor="orange">
+          <WhopIframeSdkProvider>
+            {children}
+          </WhopIframeSdkProvider>
+        </Theme>
       </body>
     </html>
   )
