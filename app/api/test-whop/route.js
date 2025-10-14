@@ -42,11 +42,25 @@ export async function GET(request) {
           }, { status: 400 });
         }
         try {
+          console.log('Fetching chat messages for experience:', experienceId);
           result = await whopSdk.messages.listMessagesFromChat({
             chatExperienceId: experienceId,
           });
+          console.log('Chat messages result:', JSON.stringify(result, null, 2));
+          
+          // Also try to find/create the chat to see if it exists
+          const chatInfo = await whopSdk.messages.findOrCreateChat({
+            experienceId: experienceId,
+          });
+          console.log('Chat info:', JSON.stringify(chatInfo, null, 2));
+          
+          result = {
+            messages: result,
+            chatInfo: chatInfo,
+          };
         } catch (error) {
-          result = { error: error.message, stack: error.stack };
+          console.error('Chat messages error:', error);
+          result = { error: error.message, stack: error.stack, details: error.toString() };
         }
         break;
 
