@@ -284,13 +284,22 @@ export default function CommunityLeaderboard() {
                   <Sparkles className="h-4 w-4 md:h-5 md:w-5" />
                   Level System
                 </CardTitle>
-                <CardDescription className="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-1">Climb through 10 levels based on engagement</CardDescription>
+                <CardDescription className="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-1">Climb through 10 levels based on engagement received</CardDescription>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FA4616]/10 border border-[#FA4616]/20">
-                <span className="text-2xl">❤️</span>
-                <div className="text-left">
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Core Rule</p>
-                  <p className="text-sm font-bold text-[#FA4616]">1 Like = 1 Point</p>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FA4616]/10 border border-[#FA4616]/20">
+                  <span className="text-2xl">👁️</span>
+                  <div className="text-left">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Forum Views</p>
+                    <p className="text-sm font-bold text-[#FA4616]">0.1 pts each</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800">
+                  <span className="text-2xl">💬</span>
+                  <div className="text-left">
+                    <p className="text-xs text-gray-600 dark:text-gray-400">Replies Received</p>
+                    <p className="text-sm font-bold text-purple-600 dark:text-purple-400">1 pt each</p>
+                  </div>
                 </div>
               </div>
             </div>
