@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Flame, Crown, Medal, TrendingUp, Zap, ChevronRight, Sparkles, Award } from 'lucide-react';
+import { Trophy, Flame, Crown, Medal, TrendingUp, Zap, ChevronRight, Sparkles, Award, MessageSquare, MessageCircle, Shield } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
