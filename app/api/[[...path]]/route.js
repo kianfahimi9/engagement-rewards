@@ -248,49 +248,97 @@ async function getUserStats(request) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
+    const communityId = searchParams.get('communityId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85';
 
-    // Mock user stats
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: 'userId is required' },
+        { status: 400 }
+      );
+    }
+
+    // Fetch user data
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (userError) throw userError;
+
+    // Fetch leaderboard entry for user
+    const { data: leaderboardEntry } = await supabase
+      .from('leaderboard_entries')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('community_id', communityId)
+      .eq('period_type', 'all_time')
+      .single();
+
+    // Fetch streak data
+    const { data: streakData } = await supabase
+      .from('daily_streaks')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('community_id', communityId)
+      .single();
+
+    // Fetch user's posts for activity breakdown
+    const { data: postsData } = await supabase
+      .from('posts')
+      .select('post_type, points, created_at')
+      .eq('user_id', userId)
+      .eq('community_id', communityId)
+      .order('created_at', { ascending: false });
+
+    // Fetch earnings (payouts)
+    const { data: earningsData } = await supabase
+      .from('payouts')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('community_id', communityId)
+      .order('created_at', { ascending: false });
+
+    // Calculate activity breakdown
+    const forumPosts = postsData?.filter(p => p.post_type === 'forum').length || 0;
+    const chatMessages = postsData?.filter(p => p.post_type === 'chat').length || 0;
+    const totalPoints = leaderboardEntry?.points || 0;
+
+    // Format response
+    const stats = {
+      user: {
+        id: userData.id,
+        username: userData.username,
+        avatar_url: userData.avatar_url,
+        totalPoints: totalPoints,
+        rank: leaderboardEntry?.rank || 0,
+        level: calculateLevel(totalPoints),
+        levelBadge: getLevelBadge(calculateLevel(totalPoints)),
+        currentStreak: streakData?.current_streak || 0,
+        longestStreak: streakData?.longest_streak || 0,
+        engagementGenerated: leaderboardEntry?.engagement_generated || 0,
+        totalLogins: 0, // Not tracked yet
+        forumPosts: forumPosts,
+        chatMessages: chatMessages,
+        likesReceived: 0, // Not tracked (Whop API limitation)
+        commentsReceived: 0, // Not tracked yet
+        sharesReceived: 0, // Not tracked yet
+        badges: [] // TODO: Implement badge system
+      },
+      earnings: (earningsData || []).map(earning => ({
+        id: earning.id,
+        amount: parseFloat(earning.amount),
+        rank: earning.rank,
+        date: earning.created_at,
+        period: 'Weekly', // TODO: Get from prize pool
+        status: earning.status
+      }))
+    };
+
     return NextResponse.json({
       success: true,
-      stats: {
-        username: 'You',
-        avatar_url: null,
-        totalPoints: 743,
-        rank: 12,
-        currentStreak: 5,
-        longestStreak: 8,
-        engagementGenerated: 54,
-        totalLogins: 45,
-        likesReceived: 123,
-        commentsReceived: 87,
-        sharesReceived: 12,
-        badges: [
-          { id: '1', name: 'Hot Streak', icon: '🔥', description: '7 day streak', unlocked: true },
-          { id: '2', name: 'Chatterbox', icon: '💬', description: '100 comments', unlocked: true },
-          { id: '3', name: 'Rising Star', icon: '⭐', description: 'Top 10 rank', unlocked: false },
-          { id: '4', name: 'Engagement King', icon: '👑', description: '500+ engagement', unlocked: false },
-          { id: '5', name: 'Consistent', icon: '📅', description: '30 day streak', unlocked: false },
-          { id: '6', name: 'Influencer', icon: '✨', description: '1000+ engagement', unlocked: false },
-        ]
-      },
-      earnings: [
-        {
-          id: '1',
-          amount: 200,
-          rank: 2,
-          date: '2025-01-12',
-          period: 'Weekly',
-          status: 'completed'
-        },
-        {
-          id: '2',
-          amount: 75,
-          rank: 7,
-          date: '2025-01-05',
-          period: 'Weekly',
-          status: 'completed'
-        }
-      ]
+      ...stats,
+      dataSource: 'real'
     });
   } catch (error) {
     console.error('User stats error:', error);
