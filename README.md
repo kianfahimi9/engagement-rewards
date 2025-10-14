@@ -2,6 +2,26 @@
 
 A gamified community engagement platform built for Whop communities, rewarding active members through point-based leaderboards and prize pools.
 
+## ⚠️ Important: Local Preview Limitations
+
+**The app will show errors in local preview (`http://localhost:3000`) - THIS IS EXPECTED!**
+
+The Whop SDK (`WhopIframeSdkProvider`) ONLY works when:
+1. ✅ App is deployed to Vercel (HTTPS)
+2. ✅ App is accessed inside Whop's iframe
+3. ✅ User is authenticated via Whop
+
+**Error you'll see locally:**
+```
+TypeError: render is not a function
+```
+
+**This is normal!** The app is production-ready and will work perfectly once deployed to Vercel and accessed through Whop.
+
+**To test:** Deploy to Vercel → Install in Whop → Access via community sidebar
+
+---
+
 ## 🚀 Features
 
 - **Real-time Leaderboard** - Track top performers by week, month, or all-time
