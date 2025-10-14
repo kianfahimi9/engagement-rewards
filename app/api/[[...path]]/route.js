@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { calculateLevel, getLevelBadge } from '@/lib/points-system';
 
-// Mock data for development - will be replaced with Supabase queries
-const mockUsers = [
+// Initialize Supabase client
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
+
+// DEPRECATED - Keeping for reference only
+const mockUsers_OLD = [
   { 
     id: '1', 
     whop_user_id: 'user_1', 
