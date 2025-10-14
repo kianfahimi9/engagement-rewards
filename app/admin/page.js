@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   
-  const iframeSdk = useIframeSdk();
+  const iframeSdk = typeof window !== 'undefined' ? null : null; // Will be implemented when deployed in Whop iframe
 
   useEffect(() => {
     fetchAdminData();
