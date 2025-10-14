@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 
 export default function CommunityLeaderboard() {
-  const [selectedPeriod, setSelectedPeriod] = useState('weekly');
+  const [selectedPeriod, setSelectedPeriod] = useState('all_time');
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [prizePool, setPrizePool] = useState(null);
