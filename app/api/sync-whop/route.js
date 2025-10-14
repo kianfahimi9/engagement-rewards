@@ -12,7 +12,7 @@ import { syncCommunityEngagement } from '@/lib/whop-sync';
 // Hardcoded for MVP - will move to database
 const COMMUNITIES = [
   {
-    id: 'community_1',
+    id: '2b7ecb03-7c43-4aca-ae53-c77cdf766d85', // Real UUID from Supabase
     name: 'Test Community',
     forumExperienceId: 'exp_2AXIaDSvdIf9L7',
     chatExperienceId: 'exp_4MjMbbnlbB5Fcv',
