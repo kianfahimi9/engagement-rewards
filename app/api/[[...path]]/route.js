@@ -412,64 +412,70 @@ async function syncEngagement(request) {
 // GET /api/admin/dashboard
 async function getAdminDashboard(request) {
   try {
-    // Mock admin stats
+    const { searchParams } = new URL(request.url);
+    const communityId = searchParams.get('communityId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85';
+
+    // Get total members
+    const { count: totalMembers } = await supabase
+      .from('community_members')
+      .select('*', { count: 'exact', head: true })
+      .eq('community_id', communityId);
+
+    // Get total posts and engagement
+    const { data: postsData } = await supabase
+      .from('posts')
+      .select('post_type, points')
+      .eq('community_id', communityId);
+
+    const totalPosts = postsData?.filter(p => p.post_type === 'forum').length || 0;
+    const totalChatMessages = postsData?.filter(p => p.post_type === 'chat').length || 0;
+    const totalEngagement = postsData?.reduce((sum, p) => sum + (parseFloat(p.points) || 0), 0) || 0;
+
+    // Get prize pools
+    const { data: prizePools } = await supabase
+      .from('prize_pools')
+      .select('*')
+      .eq('community_id', communityId)
+      .order('created_at', { ascending: false });
+
+    const activePools = prizePools?.filter(p => p.status === 'active') || [];
+    const completedPools = prizePools?.filter(p => p.status === 'completed') || [];
+
+    // Get total paid out
+    const { data: payouts } = await supabase
+      .from('payouts')
+      .select('amount')
+      .eq('community_id', communityId)
+      .eq('status', 'completed');
+
+    const totalPaidOut = payouts?.reduce((sum, p) => sum + parseFloat(p.amount), 0) || 0;
+
+    // Get active streaks
+    const { data: streaks } = await supabase
+      .from('daily_streaks')
+      .select('current_streak')
+      .eq('community_id', communityId)
+      .gt('current_streak', 0);
+
+    const activeStreaks = streaks?.length || 0;
+
     return NextResponse.json({
       success: true,
       stats: {
-        totalMembers: 847,
-        newMembersThisWeek: 23,
-        totalPaidOut: 2450,
-        completedPools: 5,
-        engagementScore: 8.7,
-        engagementGrowth: 15.3,
-        activeStreaks: 126,
-        totalPosts: 1243,
-        totalComments: 3421,
-        totalLikes: 5678,
-        avgEngagement: 12.3
+        totalMembers: totalMembers || 0,
+        newMembersThisWeek: 0, // TODO: Filter by last 7 days
+        totalPaidOut: totalPaidOut,
+        completedPools: completedPools.length,
+        engagementScore: totalEngagement / (totalMembers || 1),
+        engagementGrowth: 0, // TODO: Calculate growth
+        activeStreaks: activeStreaks,
+        totalPosts: totalPosts,
+        totalChatMessages: totalChatMessages,
+        totalLikes: 0, // Not tracked (Whop limitation)
+        avgEngagement: totalEngagement / (totalPosts || 1)
       },
-      prizePools: [
-        {
-          id: 'pool_1',
-          amount: 500,
-          period_start: '2025-01-20',
-          period_end: '2025-01-26',
-          status: 'active'
-        },
-        {
-          id: 'pool_2',
-          amount: 750,
-          period_start: '2025-01-13',
-          period_end: '2025-01-19',
-          status: 'completed'
-        }
-      ],
-      payouts: [
-        {
-          id: '1',
-          username: 'Sarah Chen',
-          amount: 300,
-          rank: 1,
-          status: 'completed',
-          paid_at: '2025-01-19'
-        },
-        {
-          id: '2',
-          username: 'Alex Rivera',
-          amount: 225,
-          rank: 2,
-          status: 'completed',
-          paid_at: '2025-01-19'
-        },
-        {
-          id: '3',
-          username: 'Jordan Park',
-          amount: 150,
-          rank: 3,
-          status: 'processing',
-          paid_at: '2025-01-19'
-        }
-      ]
+      prizePools: prizePools || [],
+      dataSource: 'real'
     });
   } catch (error) {
     console.error('Admin dashboard error:', error);
