@@ -114,28 +114,125 @@ const mockPrizePool = {
 async function getLeaderboard(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const period = searchParams.get('period') || 'weekly';
+    const period = searchParams.get('period') || 'all_time';
+    const communityId = searchParams.get('communityId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85'; // Default to test community
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Fetch leaderboard entries with user data
+    const { data: leaderboardData, error: leaderboardError } = await supabase
+      .from('leaderboard_entries')
+      .select(`
+        id,
+        user_id,
+        points,
+        rank,
+        engagement_generated,
+        users (
+          id,
+          whop_user_id,
+          username,
+          avatar_url
+        )
+      `)
+      .eq('community_id', communityId)
+      .eq('period_type', period)
+      .order('points', { ascending: false })
+      .limit(10);
 
-    // Return mock data
+    if (leaderboardError) throw leaderboardError;
+
+    // Fetch current user's stats (for now, use first user as example)
+    const currentUserId = leaderboardData?.[0]?.user_id;
+    
+    const { data: currentUserData } = await supabase
+      .from('leaderboard_entries')
+      .select(`
+        id,
+        user_id,
+        points,
+        rank,
+        engagement_generated,
+        users (
+          id,
+          whop_user_id,
+          username,
+          avatar_url
+        )
+      `)
+      .eq('community_id', communityId)
+      .eq('period_type', period)
+      .eq('user_id', currentUserId)
+      .single();
+
+    // Fetch daily streak for current user
+    const { data: streakData } = await supabase
+      .from('daily_streaks')
+      .select('current_streak, longest_streak')
+      .eq('user_id', currentUserId)
+      .eq('community_id', communityId)
+      .single();
+
+    // Fetch active prize pool
+    const { data: prizePoolData } = await supabase
+      .from('prize_pools')
+      .select('*')
+      .eq('community_id', communityId)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    // Format leaderboard data
+    const formattedLeaderboard = (leaderboardData || []).map((entry, index) => ({
+      id: entry.users.id,
+      whop_user_id: entry.users.whop_user_id,
+      username: entry.users.username || 'Anonymous',
+      avatar_url: entry.users.avatar_url,
+      rank: index + 1,
+      points: entry.points || 0,
+      engagement_generated: entry.engagement_generated || 0,
+      current_streak: 0, // Will be populated from daily_streaks if needed
+      longest_streak: 0,
+      level: calculateLevel(entry.points || 0),
+    }));
+
+    // Format current user
+    const formattedCurrentUser = currentUserData ? {
+      id: currentUserData.users.id,
+      whop_user_id: currentUserData.users.whop_user_id,
+      username: currentUserData.users.username || 'You',
+      avatar_url: currentUserData.users.avatar_url,
+      rank: currentUserData.rank || 0,
+      points: currentUserData.points || 0,
+      engagement_generated: currentUserData.engagement_generated || 0,
+      current_streak: streakData?.current_streak || 0,
+      longest_streak: streakData?.longest_streak || 0,
+      level: calculateLevel(currentUserData.points || 0),
+    } : null;
+
+    // Format prize pool
+    const formattedPrizePool = prizePoolData ? {
+      id: prizePoolData.id,
+      amount: parseFloat(prizePoolData.amount),
+      currency: prizePoolData.currency,
+      period_start: prizePoolData.period_start,
+      period_end: prizePoolData.period_end,
+      status: prizePoolData.status,
+    } : {
+      id: 'default',
+      amount: 0,
+      currency: 'USD',
+      period_start: new Date().toISOString(),
+      period_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'none',
+    };
+
     return NextResponse.json({
       success: true,
-      leaderboard: mockUsers,
-      currentUser: {
-        id: 'current_user',
-        whop_user_id: 'user_current',
-        username: 'You',
-        avatar_url: null,
-        rank: 12,
-        points: 743,
-        engagement_generated: 54,
-        current_streak: 5,
-        longest_streak: 8
-      },
-      prizePool: mockPrizePool,
-      period
+      leaderboard: formattedLeaderboard,
+      currentUser: formattedCurrentUser,
+      prizePool: formattedPrizePool,
+      period,
+      dataSource: 'real', // Flag to indicate real data
     });
   } catch (error) {
     console.error('Leaderboard error:', error);
