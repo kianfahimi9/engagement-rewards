@@ -95,16 +95,6 @@ export default function AdminDashboard() {
       setPaymentLoading(false);
     }
   };
-      
-      if (response.ok) {
-        setNewPoolAmount('');
-        setDialogOpen(false);
-        fetchAdminData();
-      }
-    } catch (error) {
-      console.error('Error creating prize pool:', error);
-    }
-  };
 
   const handleProcessPayouts = async (prizePoolId) => {
     try {
