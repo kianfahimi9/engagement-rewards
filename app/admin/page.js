@@ -212,7 +212,8 @@ export default function AdminDashboard() {
                     className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
                     disabled={!newPoolAmount || parseFloat(newPoolAmount) <= 0 || paymentLoading}
                   >
-                    Create Prize Pool
+                    {paymentLoading ? 'Processing Payment...' : 'Create Prize Pool'}
+                  </Button>
                   </Button>
                 </div>
               </DialogContent>
