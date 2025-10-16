@@ -136,8 +136,7 @@ async function getLeaderboard(request) {
         users (
           whop_user_id,
           username,
-          avatar_url,
-          whop_company_id
+          avatar_url
         )
       `)
       .eq('whop_company_id', companyId)
