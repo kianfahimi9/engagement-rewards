@@ -311,7 +311,7 @@ async function getUserStats(request) {
     // Format response
     const stats = {
       user: {
-        id: userData.id,
+        whop_user_id: userData.whop_user_id,
         username: userData.username,
         avatar_url: userData.avatar_url,
         totalPoints: totalPoints,
@@ -330,7 +330,7 @@ async function getUserStats(request) {
         badges: [] // TODO: Implement badge system
       },
       earnings: (earningsData || []).map(earning => ({
-        id: earning.id,
+        whop_payout_id: earning.whop_payment_id,
         amount: parseFloat(earning.amount),
         rank: earning.rank,
         date: earning.created_at,
