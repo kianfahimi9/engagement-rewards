@@ -129,16 +129,15 @@ async function getLeaderboard(request) {
     const { data: leaderboardData, error: leaderboardError } = await supabase
       .from('leaderboard_entries')
       .select(`
-        id,
-        user_id,
+        whop_user_id,
         points,
         rank,
         engagement_generated,
         users (
-          id,
           whop_user_id,
           username,
-          avatar_url
+          avatar_url,
+          whop_company_id
         )
       `)
       .eq('whop_company_id', companyId)
@@ -149,33 +148,32 @@ async function getLeaderboard(request) {
     if (leaderboardError) throw leaderboardError;
 
     // Fetch current user's stats (for now, use first user as example)
-    const currentUserId = leaderboardData?.[0]?.user_id;
+    const currentUserId = leaderboardData?.[0]?.whop_user_id;
     
     const { data: currentUserData } = await supabase
       .from('leaderboard_entries')
       .select(`
-        id,
-        user_id,
+        whop_user_id,
         points,
         rank,
         engagement_generated,
         users (
-          id,
           whop_user_id,
           username,
-          avatar_url
+          avatar_url,
+          whop_company_id
         )
       `)
       .eq('whop_company_id', companyId)
       .eq('period_type', period)
-      .eq('user_id', currentUserId)
+      .eq('whop_user_id', currentUserId)
       .single();
 
     // Fetch daily streak for current user
     const { data: streakData } = await supabase
       .from('daily_streaks')
       .select('current_streak, longest_streak')
-      .eq('user_id', currentUserId)
+      .eq('whop_user_id', currentUserId)
       .eq('whop_company_id', companyId)
       .single();
 
