@@ -265,7 +265,7 @@ async function getUserStats(request) {
     const { data: userData, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('id', userId)
+      .eq('whop_user_id', userId)
       .single();
 
     if (userError) throw userError;
@@ -274,7 +274,7 @@ async function getUserStats(request) {
     const { data: leaderboardEntry } = await supabase
       .from('leaderboard_entries')
       .select('*')
-      .eq('user_id', userId)
+      .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .eq('period_type', 'all_time')
       .single();
@@ -283,7 +283,7 @@ async function getUserStats(request) {
     const { data: streakData } = await supabase
       .from('daily_streaks')
       .select('*')
-      .eq('user_id', userId)
+      .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .single();
 
@@ -291,7 +291,7 @@ async function getUserStats(request) {
     const { data: postsData } = await supabase
       .from('posts')
       .select('post_type, points, created_at')
-      .eq('user_id', userId)
+      .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .order('created_at', { ascending: false });
 
@@ -299,9 +299,9 @@ async function getUserStats(request) {
     const { data: earningsData } = await supabase
       .from('payouts')
       .select('*')
-      .eq('user_id', userId)
+      .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false});
 
     // Calculate activity breakdown
     const forumPosts = postsData?.filter(p => p.post_type === 'forum').length || 0;
