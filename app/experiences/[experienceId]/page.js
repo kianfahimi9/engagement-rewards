@@ -1,5 +1,6 @@
 import LeaderboardView from './leaderboard.client';
 import { verifyUser } from '@/lib/authentication';
+import { ensureCommunityExists } from '@/lib/company';
 import { redirect } from 'next/navigation';
 
 // Force dynamic rendering
@@ -13,6 +14,9 @@ export default async function ExperiencePage({ params }) {
     const { userId, accessLevel, companyContext } = await verifyUser(experienceId);
     
     console.log('✅ User verified:', { userId, accessLevel, experienceId, companyId: companyContext.company.companyId });
+    
+    // Ensure community exists in database (creates if first time)
+    await ensureCommunityExists(companyContext);
     
     // Pass auth info and company context to client component
     return (
