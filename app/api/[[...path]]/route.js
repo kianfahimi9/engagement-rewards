@@ -189,7 +189,6 @@ async function getLeaderboard(request) {
 
     // Format leaderboard data
     const formattedLeaderboard = (leaderboardData || []).map((entry, index) => ({
-      id: entry.users.id,
       whop_user_id: entry.users.whop_user_id,
       username: entry.users.username || 'Anonymous',
       avatar_url: entry.users.avatar_url,
@@ -203,7 +202,6 @@ async function getLeaderboard(request) {
 
     // Format current user
     const formattedCurrentUser = currentUserData ? {
-      id: currentUserData.users.id,
       whop_user_id: currentUserData.users.whop_user_id,
       username: currentUserData.users.username || 'You',
       avatar_url: currentUserData.users.avatar_url,
@@ -217,14 +215,14 @@ async function getLeaderboard(request) {
 
     // Format prize pool
     const formattedPrizePool = prizePoolData ? {
-      id: prizePoolData.id,
+      whop_payment_id: prizePoolData.whop_payment_id,
       amount: parseFloat(prizePoolData.amount),
       currency: prizePoolData.currency,
       period_start: prizePoolData.period_start,
       period_end: prizePoolData.period_end,
       status: prizePoolData.status,
     } : {
-      id: 'default',
+      whop_payment_id: 'default',
       amount: 0,
       currency: 'USD',
       period_start: new Date().toISOString(),
