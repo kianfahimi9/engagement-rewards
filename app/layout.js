@@ -1,11 +1,12 @@
-'use client';
-
 import './globals.css'
-import { WhopIframeSdkProvider, WhopThemeScript } from "@whop/react";
+import { WhopThemeScript } from "@whop/react";
 import { Theme } from "@whop/react/components";
+import { WhopProviders } from "@/components/WhopProviders";
 
-// Force dynamic rendering - app must run in Whop iframe
-export const dynamic = 'force-dynamic';
+export const metadata = {
+  title: "Community Engagement Leaderboard",
+  description: "Compete, engage, and earn rewards in your Whop community",
+};
 
 export default function RootLayout({ children }) {
   return (
@@ -13,11 +14,11 @@ export default function RootLayout({ children }) {
       <head>
         <WhopThemeScript />
       </head>
-      <body>
+      <body className="antialiased">
         <Theme accentColor="orange">
-          <WhopIframeSdkProvider>
+          <WhopProviders>
             {children}
-          </WhopIframeSdkProvider>
+          </WhopProviders>
         </Theme>
       </body>
     </html>

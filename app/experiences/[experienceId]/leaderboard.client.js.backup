@@ -1,0 +1,200 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useIframeSdk } from "@whop/react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Trophy, TrendingUp, Calendar, Award, Flame } from "lucide-react";
+
+export default function LeaderboardView({ experienceId }) {
+  const iframeSdk = useIframeSdk();
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedPeriod, setSelectedPeriod] = useState('all_time');
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [selectedPeriod, experienceId]);
+
+  const fetchLeaderboard = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/leaderboard?period=${selectedPeriod}&experienceId=${experienceId}`);
+      const data = await response.json();
+      setLeaderboardData(data.leaderboard || []);
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      setLeaderboardData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getLevelBadge = (level) => {
+    const colors = {
+      1: 'bg-gray-500',
+      2: 'bg-green-500',
+      3: 'bg-blue-500',
+      4: 'bg-purple-500',
+      5: 'bg-pink-500',
+      6: 'bg-orange-500',
+      7: 'bg-red-500',
+      8: 'bg-yellow-500',
+      9: 'bg-indigo-500',
+      10: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500'
+    };
+    return colors[level] || 'bg-gray-400';
+  };
+
+  const getRankIcon = (rank) => {
+    if (rank === 1) return <Trophy className="w-6 h-6 text-yellow-400" />;
+    if (rank === 2) return <Trophy className="w-6 h-6 text-gray-400" />;
+    if (rank === 3) return <Trophy className="w-6 h-6 text-orange-400" />;
+    return <span className="text-xl font-bold text-muted-foreground">#{rank}</span>;
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 dark:from-gray-900 dark:to-gray-800 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <Trophy className="w-10 h-10 text-orange-600" />
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              Community Leaderboard
+            </h1>
+          </div>
+          <p className="text-lg text-gray-600 dark:text-gray-400">
+            Compete, engage, and earn rewards for your contributions
+          </p>
+        </div>
+
+        {/* Period Selector */}
+        <div className="flex justify-center gap-2">
+          {[
+            { value: 'all_time', label: 'All Time', icon: Trophy },
+            { value: 'monthly', label: 'Monthly', icon: Calendar },
+            { value: 'weekly', label: 'Weekly', icon: TrendingUp }
+          ].map(({ value, label, icon: Icon }) => (
+            <button
+              key={value}
+              onClick={() => setSelectedPeriod(value)}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all ${
+                selectedPeriod === value
+                  ? 'bg-orange-600 text-white shadow-lg scale-105'
+                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Leaderboard */}
+        <Card className="shadow-2xl border-orange-200 dark:border-orange-900">
+          <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Award className="w-6 h-6" />
+              Top Contributors
+            </CardTitle>
+            <CardDescription className="text-orange-100">
+              Ranked by engagement points
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="p-12 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading leaderboard...</p>
+              </div>
+            ) : leaderboardData.length === 0 ? (
+              <div className="p-12 text-center">
+                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-xl text-gray-600 dark:text-gray-400">No data yet. Be the first to contribute!</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {leaderboardData.map((user, index) => (
+                  <div
+                    key={user.user_id || index}
+                    className={`p-6 hover:bg-orange-50 dark:hover:bg-gray-700 transition-colors ${
+                      index < 3 ? 'bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-gray-800 dark:to-gray-700' : ''
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 flex-1">
+                        {/* Rank */}
+                        <div className="w-12 flex justify-center">
+                          {getRankIcon(user.rank || index + 1)}
+                        </div>
+
+                        {/* User Info */}
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            {user.username || `User ${user.user_id?.slice(0, 8)}`}
+                          </h3>
+                          <div className="flex items-center gap-3 mt-1">
+                            <Badge className={`${getLevelBadge(user.current_level || 1)} text-white`}>
+                              Level {user.current_level || 1}
+                            </Badge>
+                            {user.streak_days > 0 && (
+                              <div className="flex items-center gap-1 text-sm text-orange-600">
+                                <Flame className="w-4 h-4" />
+                                <span className="font-semibold">{user.streak_days} day streak</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Points */}
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-orange-600">
+                            {user.total_points?.toLocaleString() || 0}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">points</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Level System Explanation */}
+        <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-orange-600" />
+              How Points Work
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">Earn Points By:</h3>
+              <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+                <li className="flex items-start gap-2">
+                  <span className="text-orange-600 font-bold">•</span>
+                  <span><strong>Forum Posts:</strong> 0.1 points per view, 1 point per reply received</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-orange-600 font-bold">•</span>
+                  <span><strong>Chat Messages:</strong> Lighter tracking for active participation</span>
+                </li>
+              </ul>
+            </div>
+            <div className="bg-orange-50 dark:bg-gray-700 p-4 rounded-lg">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">🛡️ Anti-Spam Protection</h4>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Short posts (&lt;50 chars), self-replies, instant replies, and posts with no engagement 
+                are filtered to ensure authentic contributions are rewarded.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

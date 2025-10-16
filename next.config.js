@@ -1,41 +1,27 @@
+// Inline withWhopAppConfig to avoid module resolution issues
+function withWhopAppConfig(nextConfig, whopAppOptions = {}) {
+  return async function applyWhopAppConfig(phase, defaults) {
+    const resolvedConfig = typeof nextConfig === "function" ? await nextConfig(phase, defaults) : nextConfig;
+    resolvedConfig.experimental ??= {};
+    resolvedConfig.experimental.serverActions ??= {};
+    resolvedConfig.experimental.serverActions.allowedOrigins ??= [];
+    resolvedConfig.experimental.serverActions.allowedOrigins.push(`${whopAppOptions.domainId ?? "*"}.apps.whop.com`);
+    resolvedConfig.experimental.optimizePackageImports ??= [];
+    resolvedConfig.experimental.optimizePackageImports.push("frosted-ui");
+    return resolvedConfig;
+  };
+}
+
 const nextConfig = {
-  output: 'standalone',
+  // TypeScript configuration - ignore build errors (we use JavaScript)
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // Server external packages (Next.js 15+)
+  serverExternalPackages: ['mongodb'],
   images: {
-    unoptimized: true,
-  },
-  experimental: {
-    // Remove if not using Server Components
-    serverComponentsExternalPackages: ['mongodb'],
-  },
-  webpack(config, { dev }) {
-    if (dev) {
-      // Reduce CPU/memory from file watching
-      config.watchOptions = {
-        poll: 2000, // check every 2 seconds
-        aggregateTimeout: 300, // wait before rebuilding
-        ignored: ['**/node_modules'],
-      };
-    }
-    return config;
-  },
-  onDemandEntries: {
-    maxInactiveAge: 10000,
-    pagesBufferLength: 2,
-  },
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          { key: "X-Frame-Options", value: "ALLOWALL" },
-          { key: "Content-Security-Policy", value: "frame-ancestors *;" },
-          { key: "Access-Control-Allow-Origin", value: process.env.CORS_ORIGINS || "*" },
-          { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, DELETE, OPTIONS" },
-          { key: "Access-Control-Allow-Headers", value: "*" },
-        ],
-      },
-    ];
+    remotePatterns: [{ hostname: "**" }],
   },
 };
 
-module.exports = nextConfig;
+module.exports = withWhopAppConfig(nextConfig);

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { calculateLevel, getLevelBadge } from '@/lib/points-system';
+import { whopSdk } from '@/lib/whop-sdk';
+import { headers } from 'next/headers';
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -102,7 +104,7 @@ const mockUsers_OLD = [
 
 const mockPrizePool = {
   id: '1',
-  community_id: 'comm_1',
+  whop_company_id: 'comm_1',
   amount: 500,
   currency: 'USD',
   period_start: '2025-01-20',
@@ -115,7 +117,13 @@ async function getLeaderboard(request) {
   try {
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || 'all_time';
-    const communityId = searchParams.get('communityId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85'; // Default to test community
+    const companyId = searchParams.get('companyId');
+    if (!companyId) {
+      return NextResponse.json(
+        { success: false, error: 'companyId is required' },
+        { status: 400 }
+      );
+    }
     
     // Fetch leaderboard entries with user data
     const { data: leaderboardData, error: leaderboardError } = await supabase
@@ -133,7 +141,7 @@ async function getLeaderboard(request) {
           avatar_url
         )
       `)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .eq('period_type', period)
       .order('points', { ascending: false })
       .limit(10);
@@ -158,7 +166,7 @@ async function getLeaderboard(request) {
           avatar_url
         )
       `)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .eq('period_type', period)
       .eq('user_id', currentUserId)
       .single();
@@ -168,14 +176,14 @@ async function getLeaderboard(request) {
       .from('daily_streaks')
       .select('current_streak, longest_streak')
       .eq('user_id', currentUserId)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .single();
 
     // Fetch active prize pool
     const { data: prizePoolData } = await supabase
       .from('prize_pools')
       .select('*')
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .eq('status', 'active')
       .order('created_at', { ascending: false })
       .limit(1)
@@ -248,7 +256,7 @@ async function getUserStats(request) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    const communityId = searchParams.get('communityId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85';
+    const companyId = searchParams.get('companyId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85';
 
     if (!userId) {
       return NextResponse.json(
@@ -271,7 +279,7 @@ async function getUserStats(request) {
       .from('leaderboard_entries')
       .select('*')
       .eq('user_id', userId)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .eq('period_type', 'all_time')
       .single();
 
@@ -280,7 +288,7 @@ async function getUserStats(request) {
       .from('daily_streaks')
       .select('*')
       .eq('user_id', userId)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .single();
 
     // Fetch user's posts for activity breakdown
@@ -288,7 +296,7 @@ async function getUserStats(request) {
       .from('posts')
       .select('post_type, points, created_at')
       .eq('user_id', userId)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .order('created_at', { ascending: false });
 
     // Fetch earnings (payouts)
@@ -296,7 +304,7 @@ async function getUserStats(request) {
       .from('payouts')
       .select('*')
       .eq('user_id', userId)
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .order('created_at', { ascending: false });
 
     // Calculate activity breakdown
@@ -353,12 +361,12 @@ async function getUserStats(request) {
 async function createPrizePool(request) {
   try {
     const body = await request.json();
-    const { communityId, amount, periodStart, periodEnd } = body;
+    const { companyId, amount, periodStart, periodEnd } = body;
 
     // TODO: Implement Supabase insert
     // const { data, error } = await supabase
     //   .from('prize_pools')
-    //   .insert([{ community_id: communityId, amount, period_start: periodStart, period_end: periodEnd }])
+    //   .insert([{ whop_company_id: companyId, amount, period_start: periodStart, period_end: periodEnd }])
     //   .select()
     //   .single();
 
@@ -366,7 +374,7 @@ async function createPrizePool(request) {
       success: true,
       prizePool: {
         id: 'new_pool_' + Date.now(),
-        community_id: communityId,
+        whop_company_id: companyId,
         amount,
         period_start: periodStart,
         period_end: periodEnd,
@@ -386,7 +394,7 @@ async function createPrizePool(request) {
 async function syncEngagement(request) {
   try {
     const body = await request.json();
-    const { whopUserId, communityId, engagementData } = body;
+    const { whopUserId, companyId, engagementData } = body;
 
     // TODO: Implement engagement sync logic
     // This will be called by Whop webhooks to sync engagement data
@@ -413,19 +421,19 @@ async function syncEngagement(request) {
 async function getAdminDashboard(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const communityId = searchParams.get('communityId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85';
+    const companyId = searchParams.get('companyId') || '2b7ecb03-7c43-4aca-ae53-c77cdf766d85';
 
     // Get total members
     const { count: totalMembers } = await supabase
       .from('community_members')
       .select('*', { count: 'exact', head: true })
-      .eq('community_id', communityId);
+      .eq('whop_company_id', companyId);
 
     // Get total posts and engagement
     const { data: postsData } = await supabase
       .from('posts')
       .select('post_type, points')
-      .eq('community_id', communityId);
+      .eq('whop_company_id', companyId);
 
     const totalPosts = postsData?.filter(p => p.post_type === 'forum').length || 0;
     const totalChatMessages = postsData?.filter(p => p.post_type === 'chat').length || 0;
@@ -435,7 +443,7 @@ async function getAdminDashboard(request) {
     const { data: prizePools } = await supabase
       .from('prize_pools')
       .select('*')
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .order('created_at', { ascending: false });
 
     const activePools = prizePools?.filter(p => p.status === 'active') || [];
@@ -445,7 +453,7 @@ async function getAdminDashboard(request) {
     const { data: payouts } = await supabase
       .from('payouts')
       .select('amount')
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .eq('status', 'completed');
 
     const totalPaidOut = payouts?.reduce((sum, p) => sum + parseFloat(p.amount), 0) || 0;
@@ -454,7 +462,7 @@ async function getAdminDashboard(request) {
     const { data: streaks } = await supabase
       .from('daily_streaks')
       .select('current_streak')
-      .eq('community_id', communityId)
+      .eq('whop_company_id', companyId)
       .gt('current_streak', 0);
 
     const activeStreaks = streaks?.length || 0;
@@ -490,7 +498,7 @@ async function getAdminDashboard(request) {
 async function createAdminPrizePool(request) {
   try {
     const body = await request.json();
-    const { amount, communityId } = body;
+    const { amount, companyId } = body;
 
     // TODO: Implement Supabase insert
     // Calculate period dates (current week)
@@ -504,7 +512,7 @@ async function createAdminPrizePool(request) {
       success: true,
       prizePool: {
         id: 'new_pool_' + Date.now(),
-        community_id: communityId,
+        whop_company_id: companyId,
         amount,
         period_start: periodStart.toISOString().split('T')[0],
         period_end: periodEnd.toISOString().split('T')[0],
@@ -551,13 +559,13 @@ async function processPayouts(request) {
 async function getLevelNames(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const communityId = searchParams.get('communityId');
+    const companyId = searchParams.get('companyId');
 
     // TODO: Get from Supabase
     // const { data, error } = await supabase
     //   .from('communities')
     //   .select('level_names')
-    //   .eq('whop_community_id', communityId)
+    //   .eq('whop_whop_company_id', companyId)
     //   .single();
 
     // Return default level names for now
@@ -589,7 +597,7 @@ async function getLevelNames(request) {
 async function updateLevelNames(request) {
   try {
     const body = await request.json();
-    const { communityId, levelNames } = body;
+    const { companyId, levelNames } = body;
 
     // Validate levelNames object
     if (!levelNames || typeof levelNames !== 'object') {
@@ -603,7 +611,7 @@ async function updateLevelNames(request) {
     // const { data, error } = await supabase
     //   .from('communities')
     //   .update({ level_names: levelNames })
-    //   .eq('whop_community_id', communityId)
+    //   .eq('whop_whop_company_id', companyId)
     //   .select()
     //   .single();
 

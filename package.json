@@ -3,13 +3,14 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "NODE_OPTIONS='--max-old-space-size=512' next dev --hostname 0.0.0.0 --port 3000",
+        "dev": "whop-proxy --command 'next dev --turbopack'",
         "dev:no-reload": "next dev --hostname 0.0.0.0 --port 3000",
         "dev:webpack": "next dev --hostname 0.0.0.0 --port 3000",
         "build": "next build",
         "start": "next start"
     },
     "dependencies": {
+        "@auth/core": "^0.40.0",
         "@hookform/resolvers": "^5.1.1",
         "@radix-ui/react-accordion": "^1.2.11",
         "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -40,8 +41,8 @@
         "@radix-ui/react-tooltip": "^1.2.7",
         "@supabase/supabase-js": "^2.75.0",
         "@tanstack/react-table": "^8.21.3",
-        "@whop/api": "^0.0.51",
-        "@whop/react": "^0.2.46",
+        "@whop/api": "0.0.42",
+        "@whop/react": "0.2.37",
         "axios": "^1.10.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -51,11 +52,11 @@
         "input-otp": "^1.4.2",
         "lucide-react": "^0.516.0",
         "mongodb": "^6.6.0",
-        "next": "14.2.3",
+        "next": "15.3.2",
         "next-themes": "^0.4.6",
-        "react": "^18",
+        "react": "^19.0.0",
         "react-day-picker": "^9.7.0",
-        "react-dom": "^18",
+        "react-dom": "^19.0.0",
         "react-hook-form": "^7.58.1",
         "react-resizable-panels": "^3.0.3",
         "recharts": "^2.15.3",
@@ -67,10 +68,27 @@
         "zod": "^3.25.67"
     },
     "devDependencies": {
+        "@types/react": "^19.2.2",
+        "@whop-apps/dev-proxy": "0.0.1-canary.116",
         "autoprefixer": "^10.4.19",
         "globals": "^16.2.0",
         "postcss": "^8",
-        "tailwindcss": "^3.4.1"
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5.9.3"
     },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+    "resolutions": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "@react-aria/color/react": "^19.0.0",
+        "@react-aria/color/react-dom": "^19.0.0",
+        "@react-aria/toolbar/react": "^19.0.0",
+        "@react-aria/tree/react": "^19.0.0",
+        "@react-aria/tree/react-dom": "^19.0.0",
+        "@react-types/color/react": "^19.0.0",
+        "react-aria-components/react": "^19.0.0",
+        "react-aria-components/react-dom": "^19.0.0",
+        "vaul/react": "^19.0.0",
+        "vaul/react-dom": "^19.0.0"
+    }
 }
