@@ -137,7 +137,7 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
               <div className="space-y-2 md:space-y-3">
                 {leaderboardData.slice(0, showAll ? 10 : 5).map((user) => (
                   <div
-                    key={user.id}
+                    key={user.whop_user_id}
                     className={`flex items-center gap-2 md:gap-5 p-3 md:p-5 rounded-xl md:rounded-2xl transition-all hover:scale-[1.01] cursor-pointer ${
                       user.rank === 1
                         ? 'bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-950/20 dark:to-amber-950/20 border-2 border-yellow-200 dark:border-yellow-800'
