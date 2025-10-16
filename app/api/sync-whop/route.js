@@ -2,40 +2,60 @@
  * Whop Engagement Sync Endpoint
  * 
  * Manually trigger sync or will be called by cron job
- * GET /api/sync-whop - Sync all communities
+ * GET /api/sync-whop - Sync all communities from database
  * POST /api/sync-whop - Sync specific community
  */
 
 import { NextResponse } from 'next/server';
 import { syncCommunityEngagement } from '@/lib/whop-sync';
+import { createClient } from '@supabase/supabase-js';
 
-// Hardcoded for MVP - will move to database
-const COMMUNITIES = [
-  {
-    id: '2b7ecb03-7c43-4aca-ae53-c77cdf766d85', // Real UUID from Supabase
-    name: 'Test Community',
-    forumExperienceId: 'exp_2AXIaDSvdIf9L7',
-    chatExperienceId: 'exp_4MjMbbnlbB5Fcv',
-  }
-];
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export async function GET(request) {
   console.log('\n🚀 Starting Whop engagement sync...');
   
   try {
+    // Fetch all communities from database
+    const { data: communities, error: fetchError } = await supabase
+      .from('communities')
+      .select('whop_company_id, name, settings');
+    
+    if (fetchError) {
+      throw new Error(`Failed to fetch communities: ${fetchError.message}`);
+    }
+    
+    if (!communities || communities.length === 0) {
+      return NextResponse.json({
+        success: true,
+        message: 'No communities found to sync',
+        results: []
+      });
+    }
+    
+    console.log(`Found ${communities.length} communities to sync`);
+    
     const results = [];
 
-    for (const community of COMMUNITIES) {
+    for (const community of communities) {
       console.log(`\nSyncing community: ${community.name}`);
       
+      // Extract forum and chat experiences from settings
+      const forumExperiences = community.settings?.forumExperiences || [];
+      const chatExperiences = community.settings?.chatExperiences || [];
+      
       const result = await syncCommunityEngagement(
-        community.id,
-        community.forumExperienceId,
-        community.chatExperienceId
+        community.whop_company_id,
+        forumExperiences,
+        chatExperiences
       );
 
       results.push({
         community: community.name,
+        companyId: community.whop_company_id,
         ...result
       });
     }
@@ -61,7 +81,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { communityId, forumExperienceId, chatExperienceId } = body;
+    const { communityId, forumExperiences, chatExperiences } = body;
 
     if (!communityId) {
       return NextResponse.json({
@@ -73,8 +93,8 @@ export async function POST(request) {
 
     const result = await syncCommunityEngagement(
       communityId,
-      forumExperienceId,
-      chatExperienceId
+      forumExperiences || [],
+      chatExperiences || []
     );
 
     return NextResponse.json({
