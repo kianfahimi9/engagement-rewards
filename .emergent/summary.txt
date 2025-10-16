@@ -1,0 +1,86 @@
+<analysis>
+The trajectory describes an iterative development process for a community engagement leaderboard. Initial requirements included Skool-like gamification, Whop payments, and AI moderation, with a later pivot to focus on core UI, Supabase schema, and a custom point system. The AI engineer extensively worked on frontend UI/UX, redesigns, mobile optimization, and backend API routes. A significant portion involved debugging Whop API integration for activity tracking, leading to a custom point system based on views and replies instead of likes due to API limitations. Whop payments were integrated, and the database schema was cleaned to reflect the new point system. The work concluded with troubleshooting Vercel deployment errors related to static generation and assisting the user with another AI's interaction with Supabase tools.
+</analysis>
+
+<product_requirements>
+The user initially requested a community engagement leaderboard application for the Whop ecosystem. This app aimed to gamify community interaction, drawing inspiration from Skool's leaderboard and Duolingo/Clash of Clans UI/UX. The core problem to solve was incentivizing organic engagement through a point system and Whop payment rewards. Key features included tracking engagement metrics, such as daily streaks, likes, and comments, and facilitating weekly prize pools funded by community owners. The app needed to support multiple communities via a unique community identifier. Early requirements for Whop authentication/payments and AI moderation were deferred. The UI was designed to include a main community leaderboard, a user's personal statistics page (displaying earnings, level progression, streaks, rank, points), and an admin dashboard for community owners (managing prize pools, payouts, community analytics, and customizing level names). The design was to be mobile-optimized and use Whop's brand colors. A critical requirement was implementing a Skool-like point system, which evolved from tracking 'likes' to 'views' and 'replies' due to Whop API limitations, incorporating anti-spam measures. Community owners needed to define custom names for the 10 engagement levels.
+</product_requirements>
+
+<key_technical_concepts>
+- **Next.js**: Full-stack framework for frontend and API routes.
+- **Supabase**: Backend-as-a-Service for database management.
+- **Tailwind CSS & Shadcn UI**: For styling and UI components.
+- **Whop SDK**: For authentication via iframe, fetching community data (chat, forum posts), and processing payments/payouts.
+- **Custom Point System**: Logic for calculating engagement points based on views and replies with anti-spam rules.
+- **Environment Variables**: Securely storing API keys and database credentials.
+- **Vercel Deployment**: Platform for deploying Next.js applications.
+</key_technical_concepts>
+
+<code_architecture>
+
+-   ****:
+    -   **Importance**: Global layout.
+    -   **Changes**: Integrated  and  components as per Whop example repo. Updated to  to prevent static generation issues with client-side only components during Vercel deployment.
+-   ****:
+    -   **Importance**: Main leaderboard UI.
+    -   **Changes**: Updated to fetch real Supabase data, display real Whop user info, points, and rankings. Modified default leaderboard period from weekly to all_time and updated the Level System section to reflect the new views+replies point calculation with anti-spam details.
+-   ****:
+    -   **Importance**: User personal stats.
+    -   **Changes**: Updated to fetch real Supabase data for user statistics.
+-   ****:
+    -   **Importance**: Admin dashboard.
+    -   **Changes**: Integrated Whop payment UI components, including a button to create prize pools via  and logic for processing payouts. Debgugged various syntax and import errors, specifically with  and .
+-   ****:
+    -   **Importance**: Central API handler.
+    -   **Changes**: Rewritten to use Supabase client for fetching leaderboard, user stats, and admin data, replacing mock data.
+-   ****:
+    -   **Importance**: Point calculation logic.
+    -   **Changes**: Updated to calculate points based on  with anti-spam filters (min 10 chars, min 5 views, no self/instant replies). Refactored exports to correctly expose .
+-   ****:
+    -   **Importance**: Whop SDK client.
+    -   **Changes**: Configured with user-provided , , , .
+-   ****:
+    -   **Importance**: Syncs Whop data to Supabase.
+    -   **Changes**: Implemented logic to fetch forum posts and chat messages from Whop, calculate points, and insert/update , ,  tables for different periods (weekly, monthly, all_time). Includes error handling and logging.
+-   ****:
+    -   **Importance**: Handles creating Whop charges.
+    -   **Changes**: Created to use  for initiating payments.
+-   ****:
+    -   **Importance**: Handles Whop payouts.
+    -   **Changes**: Created to use  for sending funds to users.
+-   ****:
+    -   **Importance**: Handles Whop payment webhooks.
+    -   **Changes**: Created to validate webhooks and process  events.
+-   **Supabase Schema**:
+    -   **Tables**: , , , , , , , , , .
+    -   **Removed Tables**: , ,  as they were not relevant to the final point system.  now stores community-specific points and levels across different periods.
+</code_architecture>
+
+<pending_tasks>
+- Integrate AI moderation for authentic engagement (deferred by user).
+- Create webhook for specific chat/forum events (explored, but only payment webhook implemented so far).
+- Add sample/seed data to the Supabase database for more robust demonstration (basic sync implemented).
+- Complete webhook setup in Whop dashboard and set  for payment validation.
+</pending_tasks>
+
+<current_work>
+Immediately before this summary request, the AI engineer was assisting the user with Vercel deployment and an issue with another AI (Claude Code) connecting to Supabase via its MCP (Managed Code Provider) tools.
+
+**Vercel Deployment Issue:** The user reported a  during Vercel deployment. This was identified as a Next.js static prerendering error occurring because  (used in ) is a client-side only component designed to run within Whop's iframe, not during server-side build.
+*   **Action Taken**: The AI engineer modified  by adding  to force dynamic rendering, preventing Next.js from attempting static generation of pages that contain client-side-only Whop SDK components.
+
+**Claude Code Supabase Connection Issue:** The user reported that their Claude Code environment was retarded and could not use the Supabase MCP tools, despite showing connected.
+*   **Action Taken**: The AI engineer provided precise instructions to the user for Claude Code, including the exact names of the Supabase MCP tools (e.g., ) and example usage commands. The AI also suggested alternative troubleshooting steps like restarting Claude Code or providing Supabase credentials directly to Claude if MCP tools remained unresponsive.
+
+The product is in a state where:
+- Backend data syncing from Whop (forum posts, chat messages) to Supabase is functional.
+- The custom point system based on views and replies is implemented and calculating points (though current data may show 0 points due to anti-spam thresholds).
+- Frontend (leaderboard, user stats, admin) is wired to display real data from Supabase.
+- Whop payments are integrated for prize pool creation and payouts, replicating the example repo's structure.
+- The database schema is cleaned and optimized for the current point system.
+- The deployment is blocked by the Vercel prerendering issue, which has been addressed, and the user is now attempting deployment.
+</current_work>
+
+<optional_next_step>
+Assist the user in configuring Claude Code to properly utilize the Supabase MCP tools or connect to Supabase directly.
+</optional_next_step>
