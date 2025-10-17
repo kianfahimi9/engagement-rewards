@@ -264,9 +264,36 @@ async function getUserStats(request) {
       .from('users')
       .select('*')
       .eq('whop_user_id', userId)
-      .single();
+      .maybeSingle();
 
-    if (userError) throw userError;
+    // If user doesn't exist, return empty stats
+    if (userError || !userData) {
+      console.log(`User ${userId} not found, returning empty stats`);
+      return NextResponse.json({
+        success: true,
+        user: {
+          whop_user_id: userId,
+          username: 'Unknown User',
+          avatar_url: null,
+          totalPoints: 0,
+          rank: 0,
+          level: 0,
+          levelBadge: '🌱',
+          currentStreak: 0,
+          longestStreak: 0,
+          engagementGenerated: 0,
+          totalLogins: 0,
+          forumPosts: 0,
+          chatMessages: 0,
+          likesReceived: 0,
+          commentsReceived: 0,
+          sharesReceived: 0,
+          badges: []
+        },
+        earnings: [],
+        dataSource: 'empty'
+      });
+    }
 
     // Fetch leaderboard entry for user
     const { data: leaderboardEntry } = await supabase
@@ -275,7 +302,7 @@ async function getUserStats(request) {
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .eq('period_type', 'all_time')
-      .single();
+      .maybeSingle();
 
     // Fetch streak data
     const { data: streakData } = await supabase
@@ -283,7 +310,7 @@ async function getUserStats(request) {
       .select('*')
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
-      .single();
+      .maybeSingle();
 
     // Fetch user's posts for activity breakdown
     const { data: postsData } = await supabase
