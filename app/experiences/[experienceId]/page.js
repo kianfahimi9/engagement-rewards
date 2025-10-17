@@ -1,6 +1,7 @@
 import LeaderboardView from './leaderboard.client';
 import { verifyUser } from '@/lib/authentication';
 import { ensureCommunityExists } from '@/lib/company';
+import { syncCommunityEngagement } from '@/lib/whop-sync';
 import { redirect } from 'next/navigation';
 
 // Force dynamic rendering
@@ -16,19 +17,20 @@ export default async function ExperiencePage({ params }) {
     console.log('✅ User verified:', { userId, accessLevel, experienceId, companyId: companyContext.company.companyId });
     
     // Ensure community exists in database (creates if first time)
-    await ensureCommunityExists(companyContext);
+    const communityData = await ensureCommunityExists(companyContext);
     
-    // Auto-sync on every page load - WAIT for it to complete
+    // Auto-sync on every page load - call sync function directly
     try {
       console.log('🔄 Auto-syncing leaderboard data...');
-      const syncResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sync-whop`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const syncResult = await syncResponse.json();
-      console.log('✅ Auto-sync completed:', syncResult.message);
+      const forumExperiences = communityData?.settings?.forumExperiences || [];
+      const chatExperiences = communityData?.settings?.chatExperiences || [];
+      
+      await syncCommunityEngagement(
+        companyContext.company.companyId,
+        forumExperiences,
+        chatExperiences
+      );
+      console.log('✅ Auto-sync completed');
     } catch (syncError) {
       console.error('❌ Auto-sync failed:', syncError);
     }
