@@ -33,7 +33,7 @@ export default async function ExperiencePage({ params }) {
       // Fetch community from DB to get latest settings
       const { data: community } = await supabase
         .from('communities')
-        .select('whop_company_id, name, settings')
+        .select('whop_company_id, name, settings, level_names')
         .eq('whop_company_id', companyContext.company.companyId)
         .single();
       
