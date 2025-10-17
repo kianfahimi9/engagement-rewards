@@ -187,24 +187,23 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                       </div>
                       <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500 dark:text-gray-400">
                         <span className="flex items-center gap-1">
+                          <Award className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                          <strong className="text-gray-900 dark:text-white">Lvl {Math.floor(user.points / 100)}</strong>
+                        </span>
+                        <Separator orientation="vertical" className="h-3 md:h-4 hidden sm:block" />
+                        <span className="flex items-center gap-1">
                           <Zap className="h-3 w-3 md:h-3.5 md:w-3.5" />
                           <strong className="text-gray-900 dark:text-white">{user.points}</strong>
                           <span className="hidden sm:inline">pts</span>
                         </span>
-                        <Separator orientation="vertical" className="h-3 md:h-4 hidden sm:block" />
-                        <span className="flex items-center gap-1">
-                          <TrendingUp className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                          <strong className="text-gray-900 dark:text-white">{user.engagement_generated}</strong>
-                          <span className="hidden sm:inline">eng</span>
-                        </span>
                       </div>
                     </div>
 
-                    {/* Level */}
+                    {/* Engagement Generated */}
                     <div className="text-right flex-shrink-0">
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5 hidden md:block">Level</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5 hidden md:block">Engagement</div>
                       <div className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                        {Math.floor(user.points / 100)}
+                        {user.engagement_generated}
                       </div>
                     </div>
                   </div>
