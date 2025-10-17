@@ -18,7 +18,12 @@ export default function StatsView({ experienceId, userId, companyId }) {
 
   useEffect(() => {
     if (userId && companyId) {
-      fetchUserStats();
+      // Add delay on initial load to let sync complete (same as refresh button)
+      const timer = setTimeout(() => {
+        fetchUserStats();
+      }, 2000);
+      
+      return () => clearTimeout(timer);
     }
   }, [userId, companyId]);
 
