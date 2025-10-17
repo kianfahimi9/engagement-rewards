@@ -287,3 +287,12 @@ function StatsContent() {
     </div>
   );
 }
+
+// Wrapper component with Suspense
+export default function UserStatsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <StatsContent />
+    </Suspense>
+  );
+}
