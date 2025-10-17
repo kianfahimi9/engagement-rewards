@@ -13,6 +13,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useIframeSdk } from "@whop/react";
 import Link from 'next/link';
 
+// Force dynamic rendering to use useSearchParams
+export const dynamic = 'force-dynamic';
+
 export default function AdminDashboard() {
   const searchParams = useSearchParams();
   const experienceId = searchParams.get('experienceId');
