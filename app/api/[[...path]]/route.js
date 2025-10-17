@@ -175,6 +175,23 @@ async function getLeaderboard(request) {
       .eq('whop_company_id', companyId)
       .single();
 
+    // Fetch ALL streaks for users in this community
+    const { data: allStreaks } = await supabase
+      .from('daily_streaks')
+      .select('whop_user_id, current_streak, longest_streak')
+      .eq('whop_company_id', companyId);
+
+    // Create a map for quick lookup
+    const streaksMap = {};
+    if (allStreaks) {
+      allStreaks.forEach(s => {
+        streaksMap[s.whop_user_id] = {
+          current_streak: s.current_streak,
+          longest_streak: s.longest_streak
+        };
+      });
+    }
+
     // Fetch active prize pool
     const { data: prizePoolData } = await supabase
       .from('prize_pools')
@@ -185,18 +202,21 @@ async function getLeaderboard(request) {
       .limit(1)
       .single();
 
-    // Format leaderboard data
-    const formattedLeaderboard = (leaderboardData || []).map((entry, index) => ({
-      whop_user_id: entry.users.whop_user_id,
-      username: entry.users.username || 'Anonymous',
-      avatar_url: entry.users.avatar_url,
-      rank: index + 1,
-      points: entry.points || 0,
-      engagement_generated: entry.engagement_generated || 0,
-      current_streak: 0, // Will be populated from daily_streaks if needed
-      longest_streak: 0,
-      level: calculateLevel(entry.points || 0),
-    }));
+    // Format leaderboard data with streaks
+    const formattedLeaderboard = (leaderboardData || []).map((entry, index) => {
+      const userStreak = streaksMap[entry.users.whop_user_id] || { current_streak: 0, longest_streak: 0 };
+      return {
+        whop_user_id: entry.users.whop_user_id,
+        username: entry.users.username || 'Anonymous',
+        avatar_url: entry.users.avatar_url,
+        rank: index + 1,
+        points: entry.points || 0,
+        engagement_generated: entry.engagement_generated || 0,
+        current_streak: userStreak.current_streak,
+        longest_streak: userStreak.longest_streak,
+        level: calculateLevel(entry.points || 0),
+      };
+    });
 
     // Format current user
     const formattedCurrentUser = currentUserData ? {
