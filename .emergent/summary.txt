@@ -1,67 +1,66 @@
 <analysis>
-The previous AI engineer's work focused on iterating a Whop community engagement leaderboard, initially streamlining to UI and Supabase, then integrating complex Whop APIs and payments. The core of this trajectory involved extensive debugging and refactoring to address Vercel deployment issues and ensure proper embedding within the Whop iframe. Key challenges included:  server-side rendering errors, Vercel's  misconfiguration due to  in , incorrect Vercel root directory settings, and GitHub author authentication conflicts with Vercel. The engineer systematically resolved these through dynamic rendering, root directory adjustments, and refactoring the Whop SDK integration to match a recommended example, culminating in a successful local build ready for deployment.
+The AI engineer successfully built a Whop community engagement leaderboard. The work began with core features like gamification, point systems (views/replies), and Whop integration. Initial efforts focused on robust database schema refactoring using s and multi-experience support. Significant progress was made in ensuring real-time data accuracy, especially for user statistics and leaderboard displays. Challenges included Vercel deployment issues, dynamic data population post-DB clear, and ensuring synchronous data updates. The engineer surgically addressed user interface refinements, implemented and refined auto-sync mechanisms for single communities, integrated streak calculation, and established granular admin access control. A persistent theme was debugging data flow from Whop API to DB sync to UI display, often requiring multiple iterations to correct data mapping, API calls, and client-side rendering logic. The current state has almost all features working, with the last identified issue being incorrect point calculation in the  function, which prevents points from updating.
 </analysis>
 
 <product_requirements>
-The user requested a gamified community engagement leaderboard for the Whop ecosystem, inspired by platforms like Skool. The goal is to incentivize organic engagement through points and Whop payment rewards, supporting multiple communities with unique identifiers. The application requires a main community leaderboard, a user's personal statistics page (earnings, level, streaks, rank, points), and an admin dashboard for prize pool management, payouts, and community analytics. The design must be mobile-optimized and Whop-branded. A Skool-like anti-spam point system based on forum post views (0.1 points) and replies (1 point), with lighter chat message tracking, was required. Community owners need to customize 10 level names. Payment integration is necessary for funding prize pools and disbursing rewards. Additionally, the app must deploy successfully to Vercel, gracefully display a message when accessed outside the Whop iframe, and specifically embed within Whop using a dynamic  path, following the integration patterns of the  example.
+The product aims to create a Whop community engagement leaderboard, drawing inspiration from Skool's gamification and Duolingo/Clash of Clans UI. Its core purpose is to foster organic community interaction through a point system and Whop payment rewards. Key functionalities include tracking engagement (views, replies), facilitating weekly prize pools by community owners, and supporting multiple communities. AI moderation was initially considered but deferred. The UI comprises a main leaderboard, a personal statistics page (displaying earnings, level, streaks, rank, engagement generated, total posts), and an admin dashboard for prize pool management, payouts, analytics, and custom level names. The point system utilizes  with anti-spam. Community owners can define 10 custom engagement level names. A critical requirement was dynamically creating community records and tracking engagement across multiple forum/chat experiences upon initial app setup, ensuring single-community specific and scalable data syncing. Admin access is restricted to the community owner. Display names are used instead of usernames.
 </product_requirements>
 
 <key_technical_concepts>
-- **Next.js**: Full-stack framework (Server/Client Components, Dynamic Routes).
-- **Supabase**: Backend-as-a-Service for database.
-- **Tailwind CSS & Shadcn UI**: Styling and component library.
-- **Whop SDK ()**: For Whop authentication, chat/forum data, and payments.
-- **Skool-like Point System**: Custom logic for engagement points and levels.
-- **Multi-community Support**: Database design for data isolation.
-- **Vercel Deployment**: Configuration for , root directory, and dynamic rendering.
+- **Next.js**: Full-stack framework (frontend & API routes).
+- **Supabase**: Backend-as-a-Service for database management (PostgreSQL).
+- **Whop SDK**: For authentication, fetching community data (chat/forum posts), payments/payouts.
+- **Custom Point System**: Views (0.1) + Replies (1) with anti-spam.
+- **Tailwind CSS & Shadcn UI**: For styling and UI components.
+- **Dynamic Rendering/Suspense**: Next.js features for client-side components.
+- **Database Schema Migration**: Refactoring to  PKs and many-to-many relationships.
+- **Server/Client Components**: Strategic use for performance and security.
 </key_technical_concepts>
 
 <code_architecture>
-The application is a Next.js full-stack project utilizing Supabase.
 
 
-
--   ****:
-    -   **Importance**: Global layout, imports global CSS, wraps children. Crucial for global providers.
-    -   **Changes**: Initially updated to include  via  and . Later,  and  were removed. Now directly uses  (with a render prop fix) and , with  added to prevent static generation errors.
--   ****:
-    -   **Importance**: Main community leaderboard page.
-    -   **Changes**: Updated multiple times for UI redesigns and real data. Now includes .
--   ****:
-    -   **Importance**: Provides a nested layout specific to dynamic Whop experiences, wrapping content with .
-    -   **Changes**: Newly created. Implemented as a server component, extracts  from , and includes .
--   ****:
-    -   **Importance**: The main page rendered when the app is accessed via Whop's dynamic experience URL.
-    -   **Changes**: Newly created. Functions as a server component to fetch  and renders a client component () for UI. Includes .
--   ****:
-    -   **Importance**: Client-side component containing the primary UI and logic for the leaderboard within an experience.
-    -   **Changes**: Newly created to encapsulate client-specific UI.
--   ****:
-    -   **Importance**: Next.js configuration.
-    -   **Changes**:  was repeatedly added and removed. Its final state is without  to ensure Vercel compatibility. An attempt to integrate  was made but reverted due to missing dependencies/helpers.
--   **Removed Files**: , , , , , .
--   **Added Files**: .
+-   ****: Global layout. Uses .  for Vercel deployment compatibility.
+-   ****: Server component. Authenticates user (), ensures community data exists (), and triggers auto-sync () on page load. Passes relevant user/company context to client components.
+-   ****: Client component.
+    -   Displays the community leaderboard, now defaulting to Weekly view.
+    -   User tiles display  instead of .
+    -   Your Current Rank section accurately shows the logged-in user's profile photo, display name, rank, points, level, and streak.
+    -   Streak count is always shown; the flame icon appears when streak is 3+.
+    -   Admin button is conditionally rendered only for community owners.
+    -   My Stats button was removed from the header.
+-   ****: Server component. Refactored to mirror  structure for consistency and security. Authenticates user (), ensures community data, and triggers auto-sync. Passes , , ,  to . Correctly destructures .
+-   ****: Client component. Displays individual user statistics (earnings, level, streaks, rank, total posts, forum/chat activity, engagement generated). Includes a Refresh button that triggers a single-community sync.
+-   ****: Server component. Handles authentication, ensuring only the community  can access. If not an owner, it redirects or shows an Access Denied message.
+-   ****: New client component that contains the actual UI logic for the admin dashboard.
+-   ****: Central API handler for various backend functions.
+    -   : Fetches leaderboard data, correctly joining  data and filtering current user's data using  from request.
+    -   : Retrieves a specific user's detailed statistics, including , , , and streak data. Gracefully handles cases where a user may not exist.
+    -   : Modified to fetch specific community settings from the database based on a  provided in the request body, then triggers  for only that community, ensuring scalability.
+-   ****: Contains the logic for  and . Defines points:  with anti-spam. **(Currently identified as having a bug in point calculation.)**
+-   ****: Service for syncing Whop data.
+    -   Performs  operations for  (using display  instead of , and  for avatar), , , and .
+    -   Includes  function, called after post/message processing, to update the  table.
+    -   Calls  (previously ) to recalculate points for users after data sync.
+-   ****:  function. Checks Whop SDK's  for  status. If an admin logs in and the  table's  is 'system' or null, it updates it with the actual . Retrieves  by checking if the logged-in user matches the  in the  table.
+-   ****:  function. Now accepts and uses the  parameter to populate the  column in the  table when creating or updating a community record.
+-   **Supabase Schema**:  table now includes an  column (TEXT) which references . The  table schema was confirmed and is compatible with streak calculation.
 </code_architecture>
 
 <pending_tasks>
-- Integrate AI moderation for authentic engagement.
-- Further testing of Whop payments with real transactions after successful deployment.
-- Configure  permission in the Whop Developer Dashboard.
+- Integrate AI moderation for authentic engagement (deferred by user).
+- Complete webhook setup in Whop dashboard and set  for payment validation.
+- Customize default level names via admin panel (currently hardcoded defaults).
+- **Crucially, fix the  logic to correctly award points.**
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the AI engineer was focused on resolving critical Vercel deployment and Whop iframe embedding issues. The main problem involved a  during static generation of pages containing the , and a  error caused by  in  and misconfigured Vercel root directory settings. The user also explicitly requested the app dynamically open inside Whop using the  path, replicating the  example's approach.
+Immediately before this summary request, the AI engineer was actively debugging a critical issue where **points were still showing as 0** in the UI, despite previous fixes for the points not updating problem and the absence of any error logs in Vercel. The logs indicated that the  was running, forum and chat syncs were completing (e.g., 0 new, 11 existing forum posts, 0 new, 8 existing chat messages), and  was being called successfully, leading to Leaderboard updated for 2 users and streak updates.
 
-The engineer addressed these by:
-1.  Correcting the Vercel project's root directory to blank/ (from ).
-2.  Removing  from .
-3.  Refactoring  usage to handle the context consumer multiple children error by using a render prop pattern, and removing the intermediary  and  components.
-4.  Implementing the dynamic  route, including a new ,  (server component), and  (client component), following the  example's architecture.
-5.  Ultimately, the  static generation error was resolved by adding  to the root , , and the new  and .
-
-The local build () is now succeeding, with all relevant routes correctly marked as dynamic. The  has been added to environment variables, and the webhook URL configured.
+However, detailed logging added for  revealed the root cause: individual posts were being processed (e.g., ), but the  and  were consistently calculating as **0**, even when  were present. This implies a logical error within the  function itself, preventing any points from being awarded or updated in the database, even for posts that have views or replies. The system correctly identifies existing posts and skips them if points are unchanged (which they are, because they are always 0). The focus is now on identifying and rectifying the flaw in the points calculation logic within .
 </current_work>
 
 <optional_next_step>
-Push the latest changes (with  rendering) from Claude Code to GitHub, and then verify the app loads correctly within Whop's iframe and the graceful fallback works when accessed directly.
+Investigate and fix the  function in  to correctly calculate points based on views and replies.
 </optional_next_step>
+
