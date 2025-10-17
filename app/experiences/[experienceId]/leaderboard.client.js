@@ -411,7 +411,13 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                       <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                        1 pt per reply
+                        1 pt per comment
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
+                        1 pt per like
                       </p>
                     </div>
                     <div className="flex items-start gap-2">
@@ -444,13 +450,25 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                     <div className="flex items-start gap-2">
                       <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                       <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                        0.5 pts per reply
+                        0.5 pt per reply
                       </p>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Info className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
                       <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                        Great for staying active!
+                        0.5 pt per reaction
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
+                        0.5 pt per poll vote
+                      </p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
+                        10 pt bonus (pinned)
                       </p>
                     </div>
                   </div>
@@ -471,7 +489,7 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                     Quality Over Quantity
                   </h3>
                   <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                    Spam filters active: Posts need 10+ characters, 5+ views. Self-replies don't count. Create valuable content!
+                    Spam filters active: Posts need 10+ characters and minimum views. Create valuable content that others engage with!
                   </p>
                 </div>
               </div>
