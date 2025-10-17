@@ -402,13 +402,13 @@ async function getUserStats(request) {
         levelBadge: getLevelBadge(calculateLevel(totalPoints)),
         currentStreak: streakData?.current_streak || 0,
         longestStreak: streakData?.longest_streak || 0,
-        engagementGenerated: leaderboardEntry?.engagement_generated || 0,
         totalLogins: 0, // Not tracked yet
         forumPosts: forumPosts,
         chatMessages: chatMessages,
-        likesReceived: 0, // Not tracked (Whop API limitation)
-        commentsReceived: 0, // Not tracked yet
-        sharesReceived: 0, // Not tracked yet
+        totalViews: totalViews,
+        totalLikes: totalLikes,
+        totalReplies: totalReplies,
+        totalPollVotes: totalPollVotes,
         badges: [] // TODO: Implement badge system
       },
       earnings: (earningsData || []).map(earning => ({
