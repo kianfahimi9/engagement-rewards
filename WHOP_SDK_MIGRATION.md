@@ -24,7 +24,42 @@ const { access_level: accessLevel } = await whopSdk.users.checkAccess(experience
 });
 ```
 
-### 2. Forum Posts Listing
+### 2. Get Company from Experience
+**OLD API:**
+```js
+const experience = await whopSdk.experiences.getExperience({
+  experienceId: experienceId
+});
+const company = experience.company;
+```
+
+**NEW API (Workaround):**
+```js
+// List experiences for the app and find the matching one
+for await (const exp of whopSdk.experiences.list({ app_id: appId })) {
+  if (exp.id === experienceId) {
+    return exp.company; // Company info is in the experience object
+  }
+}
+```
+
+### 3. List Experiences
+**OLD API:**
+```js
+const result = await whopSdk.experiences.listExperiences({
+  companyId: companyId
+});
+```
+
+**NEW API:**
+```js
+const experiences = [];
+for await (const exp of whopSdk.experiences.list({ company_id: companyId })) {
+  experiences.push(exp);
+}
+```
+
+### 4. Forum Posts Listing
 **OLD API:**
 ```js
 const response = await whopSdk.forums.listForumPostsFromForum({
@@ -49,7 +84,7 @@ const response = await whopSdk.forumPosts.list({
 - `created_at`
 - `updated_at`
 
-### 3. Chat Messages Listing
+### 5. Chat Messages Listing
 **NEW API includes engagement metrics:**
 ```js
 const response = await whopSdk.messages.listMessagesFromChat({
@@ -65,6 +100,12 @@ const response = await whopSdk.messages.listMessagesFromChat({
 - `replying_to_message_id`
 - `is_pinned`
 
+### 6. Retrieve Company
+**NEW API:**
+```js
+const company = await whopSdk.companies.retrieve(companyId);
+```
+
 ---
 
 ## Files Updated
@@ -73,14 +114,19 @@ const response = await whopSdk.messages.listMessagesFromChat({
    - Changed import from `@whop/api` to `@whop/sdk`
 
 2. **`/app/lib/authentication.js`**
-   - Updated access check method signature
+   - Updated access check: `whopSdk.users.checkAccess(resourceId, { id: userId })`
 
-3. **`/app/lib/whop-sync.js`**
+3. **`/app/lib/company.js`**
+   - Updated to list experiences with `experiences.list({ app_id })`
+   - Added workaround to find company from experience
+   - Updated forum/chat detection to use new SDK methods
+
+4. **`/app/lib/whop-sync.js`**
    - Updated forum posts sync to use `forumPosts.list()`
    - Updated to extract snake_case fields from API
    - Added support for likes, reactions, poll votes
 
-4. **`/app/lib/points-system.js`**
+5. **`/app/lib/points-system.js`**
    - Refactored to accept direct API values
    - Added likes and poll votes to point calculations
 
@@ -89,6 +135,7 @@ const response = await whopSdk.messages.listMessagesFromChat({
 ## Testing Checklist
 
 - [ ] User authentication works in Whop iframe
+- [ ] Company context loads correctly from experience_id
 - [ ] Forum posts sync correctly with engagement metrics
 - [ ] Chat messages sync with reactions and poll votes
 - [ ] Points calculate correctly with new formula
@@ -108,3 +155,11 @@ const response = await whopSdk.messages.listMessagesFromChat({
 ```
 (reply_count × 0.5) + (reaction_count × 0.5) + (poll_votes_count × 0.5) + (is_pinned ? 10 : 0)
 ```
+
+---
+
+## Known Limitations
+
+1. **No direct "get experience" method**: Must list experiences and find the matching one
+2. **Cold start performance**: First load without DB cache requires iterating through all app experiences
+3. **Async iterators**: New SDK uses async iterators for pagination, requires `for await` loops
