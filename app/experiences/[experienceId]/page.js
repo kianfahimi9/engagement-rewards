@@ -62,6 +62,7 @@ export default async function ExperiencePage({ params }) {
         isAdmin={isOwner}
         companyId={companyContext.company.companyId}
         companyContext={companyContext}
+        levelNames={community?.level_names || null}
       />
     );
   } catch (error) {
