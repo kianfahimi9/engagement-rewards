@@ -14,6 +14,7 @@ export default function StatsView({ experienceId, userId, companyId }) {
   const [stats, setStats] = useState(null);
   const [earnings, setEarnings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (userId && companyId) {
@@ -39,6 +40,27 @@ export default function StatsView({ experienceId, userId, companyId }) {
       console.error('Error fetching user stats:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      // Trigger sync
+      console.log('🔄 Triggering sync for company:', companyId);
+      await fetch('/api/sync-whop', {
+        method: 'GET'
+      });
+      
+      // Wait a bit for sync to complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Refetch stats
+      await fetchUserStats();
+    } catch (error) {
+      console.error('Error refreshing stats:', error);
+    } finally {
+      setRefreshing(false);
     }
   };
 
