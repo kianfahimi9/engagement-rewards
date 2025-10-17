@@ -14,7 +14,7 @@ import Link from 'next/link';
 
 export default function LeaderboardView({ experienceId, userId, isAdmin, companyId, companyContext }) {
   const iframeSdk = useIframeSdk();
-  const [selectedPeriod, setSelectedPeriod] = useState('all_time');
+  const [selectedPeriod, setSelectedPeriod] = useState('weekly');
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [prizePool, setPrizePool] = useState(null);
