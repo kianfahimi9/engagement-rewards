@@ -51,10 +51,18 @@ export default function StatsView({ experienceId, userId, companyId }) {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      // Trigger sync
-      console.log('🔄 Triggering sync for company:', companyId);
+      // Trigger sync for ONLY this community
+      console.log('🔄 Refreshing stats for company:', companyId);
+      
+      // Call the POST endpoint with specific community (not GET which syncs all)
       await fetch('/api/sync-whop', {
-        method: 'GET'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          communityId: companyId
+        })
       });
       
       // Wait a bit for sync to complete
