@@ -390,6 +390,8 @@ async function getUserStats(request) {
         avatar_url: userData.avatar_url,
         totalPoints: totalPoints,
         rank: leaderboardEntry?.rank || 0,
+        weeklyRank: weeklyRank?.rank || 0,
+        monthlyRank: monthlyRank?.rank || 0,
         level: calculateLevel(totalPoints),
         levelBadge: getLevelBadge(calculateLevel(totalPoints)),
         currentStreak: streakData?.current_streak || 0,
