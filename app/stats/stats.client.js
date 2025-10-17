@@ -211,22 +211,31 @@ export default function StatsView({ experienceId, userId, companyId }) {
               <Separator className="bg-gray-200 dark:bg-gray-800" />
 
               {/* Rank & Points Stats */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy className="h-4 w-4 text-[#FA4616]" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Rank</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">All-Time Rank</span>
                   </div>
-                  <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                     #{stats?.rank || '-'}
                   </p>
                 </div>
                 <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center gap-2 mb-2">
-                    <Zap className="h-4 w-4 text-[#FA4616]" />
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Points</span>
+                    <TrendingUp className="h-4 w-4 text-orange-500" />
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Weekly Rank</span>
                   </div>
-                  <p className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+                  <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                    #{stats?.weeklyRank || '-'}
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="h-4 w-4 text-[#FA4616]" />
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Total Points</span>
+                  </div>
+                  <p className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                     {stats?.totalPoints || 0}
                   </p>
                 </div>
