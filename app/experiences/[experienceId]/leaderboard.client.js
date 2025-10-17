@@ -77,11 +77,13 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                   <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
                 </Button>
               </Link>
-              <Link href={`/admin?experienceId=${experienceId}`}>
-                <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white text-xs md:text-sm px-2 md:px-4">
-                  Admin
-                </Button>
-              </Link>
+              {isAdmin && (
+                <Link href={`/admin?experienceId=${experienceId}`}>
+                  <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white text-xs md:text-sm px-2 md:px-4">
+                    Admin
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
