@@ -23,7 +23,8 @@ export default async function ExperiencePage({ params }) {
     console.log('✅ User verified:', { userId, accessLevel, isOwner, experienceId, companyId: companyContext.company.companyId });
     
     // Ensure community exists in database (creates if first time)
-    await ensureCommunityExists(companyContext);
+    // Pass userId if user is owner to store in DB
+    await ensureCommunityExists(companyContext, isOwner ? userId : null);
     
     // Auto-sync on every page load - fetch fresh community data from DB (like /api/sync-whop does)
     try {
