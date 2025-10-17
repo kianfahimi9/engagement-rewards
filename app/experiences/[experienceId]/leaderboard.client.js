@@ -192,6 +192,18 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                         </span>
                         <Separator orientation="vertical" className="h-3 md:h-4 hidden sm:block" />
                         <span className="flex items-center gap-1">
+                          {user.current_streak >= 3 ? (
+                            <Flame className="h-3 w-3 md:h-3.5 md:w-3.5 text-orange-500" />
+                          ) : (
+                            <Flame className="h-3 w-3 md:h-3.5 md:w-3.5 text-gray-400" />
+                          )}
+                          <strong className={user.current_streak >= 3 ? "text-orange-600 dark:text-orange-400" : "text-gray-900 dark:text-white"}>
+                            {user.current_streak || 0}
+                          </strong>
+                          <span className="hidden sm:inline">day{user.current_streak !== 1 ? 's' : ''}</span>
+                        </span>
+                        <Separator orientation="vertical" className="h-3 md:h-4 hidden sm:block" />
+                        <span className="flex items-center gap-1">
                           <Zap className="h-3 w-3 md:h-3.5 md:w-3.5" />
                           <strong className="text-gray-900 dark:text-white">{user.points}</strong>
                           <span className="hidden sm:inline">pts</span>
