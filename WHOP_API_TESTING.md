@@ -13,7 +13,7 @@ Since Whop's documentation is incomplete, we're testing APIs directly to see wha
 
 ## ✅ Test Endpoint Created
 
-**URL:** `https://engage-score.preview.emergentagent.com/api/test-whop`
+**URL:** `https://engage-scores.preview.emergentagent.com/api/test-whop`
 
 ### Available Tests:
 
@@ -127,7 +127,7 @@ We need to find chat and forum experience IDs to test message/post fetching.
 
 Once we have an `experienceId`, test:
 ```bash
-curl "https://engage-score.preview.emergentagent.com/api/test-whop?test=chat-messages&experienceId=exp_XXX"
+curl "https://engage-scores.preview.emergentagent.com/api/test-whop?test=chat-messages&experienceId=exp_XXX"
 ```
 
 Expected data from docs:
@@ -148,7 +148,7 @@ Expected data from docs:
 ### Step 3: Test Forum Posts
 
 ```bash
-curl "https://engage-score.preview.emergentagent.com/api/test-whop?test=forum-posts&experienceId=exp_XXX"
+curl "https://engage-scores.preview.emergentagent.com/api/test-whop?test=forum-posts&experienceId=exp_XXX"
 ```
 
 Expected fields (per docs):
@@ -165,7 +165,7 @@ We need to test what webhook events are ACTUALLY available.
 
 **Test with POST request:**
 ```bash
-curl -X POST https://engage-score.preview.emergentagent.com/api/test-whop \
+curl -X POST https://engage-scores.preview.emergentagent.com/api/test-whop \
   -H "Content-Type: application/json" \
   -d '{
     "webhookUrl": "https://your-webhook-endpoint.com/whop",
