@@ -118,9 +118,18 @@ async function getLeaderboard(request) {
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || 'all_time';
     const companyId = searchParams.get('companyId');
+    const currentUserId = searchParams.get('userId'); // Get actual logged-in user ID
+    
     if (!companyId) {
       return NextResponse.json(
         { success: false, error: 'companyId is required' },
+        { status: 400 }
+      );
+    }
+    
+    if (!currentUserId) {
+      return NextResponse.json(
+        { success: false, error: 'userId is required' },
         { status: 400 }
       );
     }
