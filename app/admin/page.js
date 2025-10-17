@@ -515,3 +515,12 @@ function AdminContent() {
     </div>
   );
 }
+
+// Wrapper component with Suspense
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <AdminContent />
+    </Suspense>
+  );
+}
