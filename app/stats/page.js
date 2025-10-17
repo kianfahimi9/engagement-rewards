@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,10 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 
-// Force dynamic rendering to use useSearchParams
-export const dynamic = 'force-dynamic';
-
-export default function UserStatsPage() {
+// StatsContent component that uses useSearchParams
+function StatsContent() {
   const searchParams = useSearchParams();
   const experienceId = searchParams.get('experienceId');
   const [stats, setStats] = useState(null);
