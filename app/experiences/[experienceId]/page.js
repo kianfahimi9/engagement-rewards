@@ -18,9 +18,9 @@ export default async function ExperiencePage({ params }) {
   
   try {
     // Verify user has access to this experience
-    const { userId, accessLevel, companyContext } = await verifyUser(experienceId);
+    const { userId, accessLevel, isOwner, companyContext } = await verifyUser(experienceId);
     
-    console.log('✅ User verified:', { userId, accessLevel, experienceId, companyId: companyContext.company.companyId });
+    console.log('✅ User verified:', { userId, accessLevel, isOwner, experienceId, companyId: companyContext.company.companyId });
     
     // Ensure community exists in database (creates if first time)
     await ensureCommunityExists(companyContext);
