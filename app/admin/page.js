@@ -1,63 +1,75 @@
-'use client';
+import AdminView from './admin.client';
+import { verifyUser } from '@/lib/authentication';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { DollarSign, TrendingUp, Users, Activity, ArrowLeft, Plus, Trophy, Clock, CheckCircle, XCircle, BarChart3, Award } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useIframeSdk } from "@whop/react";
-import Link from 'next/link';
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
-// AdminContent component that uses useSearchParams
-function AdminContent() {
-  const searchParams = useSearchParams();
-  const experienceId = searchParams.get('experienceId');
-  const [stats, setStats] = useState(null);
-  const [prizePools, setPrizePools] = useState([]);
-  const [payouts, setPayouts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [newPoolAmount, setNewPoolAmount] = useState('');
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
+export default async function AdminPage({ searchParams }) {
+  const params = await searchParams;
+  const experienceId = params?.experienceId;
   
-  const iframeSdk = useIframeSdk();
-
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
-
-  const fetchAdminData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/admin/dashboard');
-      const data = await response.json();
-      setStats(data.stats);
-      setPrizePools(data.prizePools || []);
-      setPayouts(data.payouts || []);
-    } catch (error) {
-      console.error('Error fetching admin data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreatePrizePool = async () => {
-    setPaymentLoading(true);
-    setPaymentError('');
+  if (!experienceId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Missing Experience ID</h1>
+          <p className="text-gray-600 mb-4">Please access this page from a valid community.</p>
+        </div>
+      </div>
+    );
+  }
+  
+  try {
+    // Verify user has access to this experience and is the owner
+    const { userId, isOwner, companyContext } = await verifyUser(experienceId);
     
-    try {
-      // Get current user from iframe SDK
-      const currentUser = await iframeSdk.getCurrentUser();
-      
-      if (!currentUser?.id) {
-        throw new Error('User not found');
-      }
+    console.log('✅ Admin page - User verified:', { userId, isOwner, experienceId, companyId: companyContext.company.companyId });
+    
+    // Only allow owners to access admin page
+    if (!isOwner) {
+      return (
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+            <p className="text-gray-600 mb-4">Only community owners can access the admin dashboard.</p>
+            <a 
+              href={`/experiences/${experienceId}`}
+              className="text-blue-500 hover:underline"
+            >
+              Go back to leaderboard
+            </a>
+          </div>
+        </div>
+      );
+    }
+    
+    // Pass auth info to client component
+    return (
+      <AdminView 
+        experienceId={experienceId}
+        userId={userId}
+        companyId={companyContext.company.companyId}
+      />
+    );
+  } catch (error) {
+    console.error('❌ Admin page auth verification failed:', error);
+    
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You don't have access to this page.</p>
+          <a 
+            href="/" 
+            className="text-blue-500 hover:underline"
+          >
+            Go to main page
+          </a>
+        </div>
+      </div>
+    );
+  }
+}
 
       // Step 1: Create charge on server
       const response = await fetch('/api/payments/create-charge', {
