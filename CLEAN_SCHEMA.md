@@ -294,7 +294,7 @@ AND user_id != $1; -- Exclude self-replies
 
 These tables existed in earlier versions but are **NO LONGER USED**:
 
-- ❌ **likes** - We don't track likes (Whop API limitation)
+- ❌ **likes** - Like counts now tracked directly in posts table (likes_count column)
 - ❌ **comments** - Merged into posts table via `parent_id`
 - ❌ **user_points_history** - Points calculated from posts table directly
 
@@ -302,10 +302,12 @@ These tables existed in earlier versions but are **NO LONGER USED**:
 
 ## ✅ Schema is Clean!
 
-The database now perfectly matches the current point system:
+The database now perfectly matches the current robust point system:
 - ✅ Views tracked (forum posts only)
-- ✅ Replies tracked (forum + chat)
-- ✅ No reference to likes
+- ✅ Comments tracked (from Whop API comment_count)
+- ✅ Likes tracked (forum posts: like_count, chat: reaction_counts sum)
+- ✅ Poll votes tracked (chat messages only: poll_votes sum)
+- ✅ Pinned bonus (10 points for pinned content)
 - ✅ Community-specific points
 - ✅ Whop payment integration fields
 - ✅ All unused tables removed
