@@ -176,7 +176,14 @@ export default function StatsView({ experienceId, userId, companyId }) {
                   <Badge className="bg-[#FA4616] text-white border-0">
                     Level {Math.floor((stats?.totalPoints || 0) / 100)}
                   </Badge>
-                  <Badge variant="outline" className="border-orange-400 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 gap-1">
+                  <Badge 
+                    variant="outline" 
+                    className={`gap-1 ${
+                      (stats?.currentStreak || 0) >= 3
+                        ? 'border-orange-400 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30'
+                        : 'border-gray-300 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30'
+                    }`}
+                  >
                     <Flame className="h-3 w-3" />
                     {stats?.currentStreak || 0} day streak
                   </Badge>
