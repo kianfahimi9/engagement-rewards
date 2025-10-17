@@ -346,12 +346,12 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                     <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3">#{currentUser.rank}</h3>
                     <div className="flex flex-wrap items-center gap-2 md:gap-3">
                       <Badge variant="secondary" className="gap-1 md:gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-0 text-xs">
-                        <Zap className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                        {currentUser.points} pts
+                        <Award className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                        Level {Math.floor(currentUser.points / 100)}
                       </Badge>
                       <Badge variant="outline" className="gap-1 md:gap-1.5 border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 text-xs">
-                        <Flame className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                        {currentUser.current_streak} day
+                        <Zap className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                        {currentUser.points} pts
                       </Badge>
                     </div>
                   </div>
