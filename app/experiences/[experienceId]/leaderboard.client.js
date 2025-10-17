@@ -276,19 +276,47 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                           </DialogHeader>
                           <div className="space-y-4 mt-4">
                             {/* Points Breakdown */}
-                            <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FA4616]/10 border border-[#FA4616]/20">
-                                <span className="text-2xl">👁️</span>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#FA4616]/10 border border-[#FA4616]/20">
+                                <span className="text-xl">👁️</span>
                                 <div className="text-left">
                                   <p className="text-xs text-gray-600 dark:text-gray-400">Forum Views</p>
-                                  <p className="text-sm font-bold text-[#FA4616]">0.1 pts each</p>
+                                  <p className="text-sm font-bold text-[#FA4616]">0.1 pts</p>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800">
-                                <span className="text-2xl">💬</span>
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800">
+                                <span className="text-xl">💬</span>
                                 <div className="text-left">
-                                  <p className="text-xs text-gray-600 dark:text-gray-400">Replies Received</p>
-                                  <p className="text-sm font-bold text-purple-600 dark:text-purple-400">1 pt each</p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Forum Comments</p>
+                                  <p className="text-sm font-bold text-purple-600 dark:text-purple-400">1 pt</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-pink-50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-800">
+                                <span className="text-xl">❤️</span>
+                                <div className="text-left">
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Forum Likes</p>
+                                  <p className="text-sm font-bold text-pink-600 dark:text-pink-400">1 pt</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+                                <span className="text-xl">💬</span>
+                                <div className="text-left">
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Chat Replies</p>
+                                  <p className="text-sm font-bold text-blue-600 dark:text-blue-400">0.5 pts</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800">
+                                <span className="text-xl">😊</span>
+                                <div className="text-left">
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Chat Reactions</p>
+                                  <p className="text-sm font-bold text-yellow-600 dark:text-yellow-400">0.5 pts</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
+                                <span className="text-xl">📊</span>
+                                <div className="text-left">
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Poll Votes</p>
+                                  <p className="text-sm font-bold text-green-600 dark:text-green-400">0.5 pts</p>
                                 </div>
                               </div>
                             </div>
