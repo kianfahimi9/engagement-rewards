@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Link from 'next/link';
 
-export default function LeaderboardView({ experienceId, userId, isAdmin, companyId, companyContext }) {
+export default function LeaderboardView({ experienceId, userId, isAdmin, companyId, companyContext, levelNames }) {
   const iframeSdk = useIframeSdk();
   const [selectedPeriod, setSelectedPeriod] = useState('weekly');
   const [leaderboardData, setLeaderboardData] = useState([]);
