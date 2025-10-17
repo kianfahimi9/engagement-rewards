@@ -263,102 +263,78 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                           <DialogHeader>
-                            <DialogTitle>How Points Work</DialogTitle>
+                            <DialogTitle className="flex items-center gap-2">
+                              <Sparkles className="h-5 w-5" />
+                              Level System
+                            </DialogTitle>
                             <DialogDescription>
-                              Learn how to earn points and climb the leaderboard
+                              Climb through 10 levels based on engagement received
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4 mt-4">
-                            {/* Forum Posts Card */}
-                            <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-white dark:from-orange-950/30 dark:to-gray-950">
-                              <CardContent className="p-4 md:p-6">
-                                <div className="flex items-start gap-3 md:gap-4">
-                                  <div className="p-2.5 md:p-3 bg-[#FA4616] rounded-xl md:rounded-2xl flex-shrink-0">
-                                    <MessageSquare className="h-5 w-5 md:h-7 md:w-7 text-white" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-base md:text-lg mb-1.5 md:mb-2 text-gray-900 dark:text-white">
-                                      Forum Posts (Main Points)
-                                    </h3>
-                                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-3 md:mb-4">
-                                      Earn points when others engage with your content
-                                    </p>
-                                    <div className="space-y-1.5 md:space-y-2">
-                                      <div className="flex items-start gap-2">
-                                        <Check className="h-4 w-4 md:h-4.5 md:w-4.5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                                          0.1 point per view (min 5 views)
-                                        </p>
-                                      </div>
-                                      <div className="flex items-start gap-2">
-                                        <Check className="h-4 w-4 md:h-4.5 md:w-4.5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                                          1 point per reply received
-                                        </p>
-                                      </div>
-                                      <div className="flex items-start gap-2">
-                                        <Check className="h-4 w-4 md:h-4.5 md:w-4.5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                                          10 point bonus for pinned posts
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
+                            {/* Points Breakdown */}
+                            <div className="flex flex-col gap-2">
+                              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FA4616]/10 border border-[#FA4616]/20">
+                                <span className="text-2xl">👁️</span>
+                                <div className="text-left">
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Forum Views</p>
+                                  <p className="text-sm font-bold text-[#FA4616]">0.1 pts each</p>
                                 </div>
-                              </CardContent>
-                            </Card>
-
-                            {/* Chat Messages Card */}
-                            <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-white dark:from-purple-950/30 dark:to-gray-950">
-                              <CardContent className="p-4 md:p-6">
-                                <div className="flex items-start gap-3 md:gap-4">
-                                  <div className="p-2.5 md:p-3 bg-purple-500 rounded-xl md:rounded-2xl flex-shrink-0">
-                                    <MessageCircle className="h-5 w-5 md:h-7 md:w-7 text-white" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-base md:text-lg mb-1.5 md:mb-2 text-gray-900 dark:text-white">
-                                      Chat Messages (Light Tracking)
-                                    </h3>
-                                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-3 md:mb-4">
-                                      Stay active in discussions
-                                    </p>
-                                    <div className="space-y-1.5 md:space-y-2">
-                                      <div className="flex items-start gap-2">
-                                        <Check className="h-4 w-4 md:h-4.5 md:w-4.5 text-green-500 flex-shrink-0 mt-0.5" />
-                                        <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                                          0.5 points per reply received
-                                        </p>
-                                      </div>
-                                      <div className="flex items-start gap-2">
-                                        <Info className="h-4 w-4 md:h-4.5 md:w-4.5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                        <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
-                                          Great for staying active!
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
+                              </div>
+                              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800">
+                                <span className="text-2xl">💬</span>
+                                <div className="text-left">
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">Replies Received</p>
+                                  <p className="text-sm font-bold text-purple-600 dark:text-purple-400">1 pt each</p>
                                 </div>
-                              </CardContent>
-                            </Card>
-
-                            {/* Quality Over Quantity Card */}
-                            <Card className="border-2 border-yellow-200 dark:border-yellow-800 bg-gradient-to-br from-yellow-50 to-white dark:from-yellow-950/30 dark:to-gray-950">
-                              <CardContent className="p-4 md:p-6">
-                                <div className="flex items-start gap-3 md:gap-4">
-                                  <div className="p-2.5 md:p-3 bg-yellow-500 rounded-xl md:rounded-2xl flex-shrink-0">
-                                    <Shield className="h-5 w-5 md:h-7 md:w-7 text-white" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h3 className="font-bold text-base md:text-lg mb-1.5 md:mb-2 text-gray-900 dark:text-white">
-                                      Quality Over Quantity
-                                    </h3>
-                                    <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                                      Spam filters active: Posts need 10+ characters, 5+ views to count. Self-replies and instant replies don't count. Create valuable content that others want to engage with!
+                              </div>
+                            </div>
+                            
+                            {/* Level Grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                              {[
+                                { level: 1, points: 0, icon: '🌱', name: 'Level 1' },
+                                { level: 2, points: 5, icon: '🙂', name: 'Level 2' },
+                                { level: 3, points: 20, icon: '👍', name: 'Level 3' },
+                                { level: 4, points: 65, icon: '🌟', name: 'Level 4' },
+                                { level: 5, points: 155, icon: '⚡', name: 'Level 5' },
+                                { level: 6, points: 515, icon: '🔥', name: 'Level 6' },
+                                { level: 7, points: 2015, icon: '💎', name: 'Level 7' },
+                                { level: 8, points: 8015, icon: '👑', name: 'Level 8' },
+                                { level: 9, points: 33015, icon: '🏆', name: 'Level 9' },
+                                { level: 10, points: 100000, icon: '⭐', name: 'Level 10' },
+                              ].map((item) => (
+                                <div key={item.level} className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 border border-gray-200 dark:border-gray-800">
+                                  <div className="text-center">
+                                    <div className="text-3xl mb-2">{item.icon}</div>
+                                    <Badge className="bg-[#FA4616] text-white border-0 text-xs mb-2">
+                                      Lvl {item.level}
+                                    </Badge>
+                                    <p className="text-xs font-semibold text-gray-900 dark:text-white mb-1">{item.name}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {item.points.toLocaleString()} pts
                                     </p>
                                   </div>
                                 </div>
-                              </CardContent>
-                            </Card>
+                              ))}
+                            </div>
+                            
+                            {/* Custom Level Names Info */}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900">
+                              <div className="flex items-start gap-3">
+                                <div className="bg-blue-500 p-2 rounded-lg flex-shrink-0">
+                                  <Award className="h-5 w-5 text-white" />
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+                                    Custom Level Names
+                                  </p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    Community admins can personalize level titles (e.g., "Newbie" → "The GOAT")
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </DialogContent>
                       </Dialog>
