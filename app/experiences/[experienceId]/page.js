@@ -3,6 +3,12 @@ import { verifyUser } from '@/lib/authentication';
 import { ensureCommunityExists } from '@/lib/company';
 import { syncCommunityEngagement } from '@/lib/whop-sync';
 import { redirect } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
@@ -17,20 +23,32 @@ export default async function ExperiencePage({ params }) {
     console.log('✅ User verified:', { userId, accessLevel, experienceId, companyId: companyContext.company.companyId });
     
     // Ensure community exists in database (creates if first time)
-    const communityData = await ensureCommunityExists(companyContext);
+    await ensureCommunityExists(companyContext);
     
-    // Auto-sync on every page load - call sync function directly
+    // Auto-sync on every page load - fetch fresh community data from DB (like /api/sync-whop does)
     try {
       console.log('🔄 Auto-syncing leaderboard data...');
-      const forumExperiences = communityData?.settings?.forumExperiences || [];
-      const chatExperiences = communityData?.settings?.chatExperiences || [];
       
-      await syncCommunityEngagement(
-        companyContext.company.companyId,
-        forumExperiences,
-        chatExperiences
-      );
-      console.log('✅ Auto-sync completed');
+      // Fetch community from DB to get latest settings
+      const { data: community } = await supabase
+        .from('communities')
+        .select('whop_company_id, name, settings')
+        .eq('whop_company_id', companyContext.company.companyId)
+        .single();
+      
+      if (community) {
+        const forumExperiences = community.settings?.forumExperiences || [];
+        const chatExperiences = community.settings?.chatExperiences || [];
+        
+        console.log('📊 Syncing with experiences:', { forumExperiences, chatExperiences });
+        
+        await syncCommunityEngagement(
+          community.whop_company_id,
+          forumExperiences,
+          chatExperiences
+        );
+        console.log('✅ Auto-sync completed');
+      }
     } catch (syncError) {
       console.error('❌ Auto-sync failed:', syncError);
     }
