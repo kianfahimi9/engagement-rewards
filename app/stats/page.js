@@ -53,7 +53,7 @@ export default function UserStatsPage() {
       <header className="bg-white/90 dark:bg-[#141212]/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
         <div className="container mx-auto px-4 md:px-6 py-4 md:py-5">
           <div className="flex items-center justify-between">
-            <Link href="/">
+            <Link href={experienceId ? `/experiences/${experienceId}` : '/'}>
               <Button variant="ghost" className="gap-2 text-gray-700 dark:text-gray-300 text-xs md:text-sm px-2 md:px-4">
                 <ArrowLeft className="h-3 w-3 md:h-4 md:w-4" />
                 Back
