@@ -173,12 +173,6 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-1 md:gap-2 mb-1">
                         <h4 className="font-semibold text-sm md:text-base truncate text-gray-900 dark:text-white">{user.username}</h4>
-                        {user.current_streak >= 7 && (
-                          <Badge variant="outline" className="border-orange-300 dark:border-orange-700 text-orange-600 dark:text-orange-400 gap-1 bg-orange-50 dark:bg-orange-950/30 text-xs px-1.5 py-0">
-                            <Flame className="h-2.5 w-2.5 md:h-3 md:w-3" />
-                            <span className="hidden sm:inline">{user.current_streak}</span>
-                          </Badge>
-                        )}
                         {user.rank <= 3 && (
                           <Badge className="bg-[#FA4616] text-white border-0 text-xs px-1.5 py-0 hidden sm:inline-flex">
                             Top {user.rank}
