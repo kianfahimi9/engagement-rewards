@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { DollarSign, TrendingUp, Users, Activity, ArrowLeft, Plus, Trophy, Clock, CheckCircle, XCircle, BarChart3, Award } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,10 +13,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useIframeSdk } from "@whop/react";
 import Link from 'next/link';
 
-// Force dynamic rendering to use useSearchParams
-export const dynamic = 'force-dynamic';
-
-export default function AdminDashboard() {
+// AdminContent component that uses useSearchParams
+function AdminContent() {
   const searchParams = useSearchParams();
   const experienceId = searchParams.get('experienceId');
   const [stats, setStats] = useState(null);
