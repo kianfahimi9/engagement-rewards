@@ -70,13 +70,6 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
               </div>
             </div>
             <div className="flex items-center gap-2 md:gap-3">
-              <Link href={`/stats?experienceId=${experienceId}`}>
-                <Button variant="ghost" className="gap-1 md:gap-2 text-gray-700 dark:text-gray-300 text-xs md:text-sm px-2 md:px-4">
-                  <span className="hidden sm:inline">My Stats</span>
-                  <span className="sm:hidden">Stats</span>
-                  <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
-                </Button>
-              </Link>
               {isAdmin && (
                 <Link href={`/admin?experienceId=${experienceId}`}>
                   <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white text-xs md:text-sm px-2 md:px-4">
