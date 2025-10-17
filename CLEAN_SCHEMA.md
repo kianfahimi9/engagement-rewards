@@ -82,6 +82,9 @@ All content (forum posts AND chat messages).
 - post_type: text -- 'forum' or 'chat'
 - parent_id: text -- Whop post ID being replied to (null = top-level)
 - view_count: integer (default 0)
+- likes_count: integer (default 0) -- NEW: Likes/reactions count
+- reply_count: integer (default 0) -- NEW: Comments/replies count
+- poll_votes_count: integer (default 0) -- NEW: Poll votes count (chat only)
 - is_pinned: boolean (default false)
 - points: numeric (default 0) -- Calculated points for this post
 - points_breakdown: jsonb -- How points were calculated
@@ -90,16 +93,17 @@ All content (forum posts AND chat messages).
 ```
 
 **Points Calculation:**
-- Forum: `(view_count * 0.1) + (reply_count * 1) + (is_pinned ? 10 : 0)`
-- Chat: `(reply_count * 0.5)`
+- **Forum:** `(view_count × 0.1) + (reply_count × 1) + (likes_count × 1) + (is_pinned ? 10 : 0)`
+- **Chat:** `(reply_count × 0.5) + (likes_count × 0.5) + (poll_votes_count × 0.5) + (is_pinned ? 10 : 0)`
 
 **Example points_breakdown:**
 ```json
 {
   "views": 5.0,
-  "replies": 3,
+  "comments": 3,
+  "likes": 2,
   "bonuses": 10,
-  "total": 18.0
+  "total": 20.0
 }
 ```
 
