@@ -364,7 +364,7 @@ async function getUserStats(request) {
     // Fetch user's posts for activity breakdown
     const { data: postsData } = await supabase
       .from('posts')
-      .select('post_type, points, created_at')
+      .select('post_type, points, view_count, likes_count, reply_count, poll_votes_count, created_at')
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .order('created_at', { ascending: false });
@@ -381,6 +381,12 @@ async function getUserStats(request) {
     const forumPosts = postsData?.filter(p => p.post_type === 'forum').length || 0;
     const chatMessages = postsData?.filter(p => p.post_type === 'chat').length || 0;
     const totalPoints = leaderboardEntry?.points || 0;
+    
+    // Calculate engagement metrics
+    const totalViews = postsData?.reduce((sum, p) => sum + (p.view_count || 0), 0) || 0;
+    const totalLikes = postsData?.reduce((sum, p) => sum + (p.likes_count || 0), 0) || 0;
+    const totalReplies = postsData?.reduce((sum, p) => sum + (p.reply_count || 0), 0) || 0;
+    const totalPollVotes = postsData?.reduce((sum, p) => sum + (p.poll_votes_count || 0), 0) || 0;
 
     // Format response
     const stats = {
