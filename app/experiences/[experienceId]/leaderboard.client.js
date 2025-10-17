@@ -324,20 +324,19 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                             {/* Level Grid */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                               {[
-                                { level: 1, points: 0, icon: '🌱', name: 'Level 1' },
-                                { level: 2, points: 5, icon: '🙂', name: 'Level 2' },
-                                { level: 3, points: 20, icon: '👍', name: 'Level 3' },
-                                { level: 4, points: 65, icon: '🌟', name: 'Level 4' },
-                                { level: 5, points: 155, icon: '⚡', name: 'Level 5' },
-                                { level: 6, points: 515, icon: '🔥', name: 'Level 6' },
-                                { level: 7, points: 2015, icon: '💎', name: 'Level 7' },
-                                { level: 8, points: 8015, icon: '👑', name: 'Level 8' },
-                                { level: 9, points: 33015, icon: '🏆', name: 'Level 9' },
-                                { level: 10, points: 100000, icon: '⭐', name: 'Level 10' },
+                                { level: 1, points: 0, name: levelNames?.level_1 || 'Level 1' },
+                                { level: 2, points: 5, name: levelNames?.level_2 || 'Level 2' },
+                                { level: 3, points: 20, name: levelNames?.level_3 || 'Level 3' },
+                                { level: 4, points: 65, name: levelNames?.level_4 || 'Level 4' },
+                                { level: 5, points: 155, name: levelNames?.level_5 || 'Level 5' },
+                                { level: 6, points: 515, name: levelNames?.level_6 || 'Level 6' },
+                                { level: 7, points: 2015, name: levelNames?.level_7 || 'Level 7' },
+                                { level: 8, points: 8015, name: levelNames?.level_8 || 'Level 8' },
+                                { level: 9, points: 33015, name: levelNames?.level_9 || 'Level 9' },
+                                { level: 10, points: 100000, name: levelNames?.level_10 || 'Level 10' },
                               ].map((item) => (
                                 <div key={item.level} className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 border border-gray-200 dark:border-gray-800">
                                   <div className="text-center">
-                                    <div className="text-3xl mb-2">{item.icon}</div>
                                     <Badge className="bg-[#FA4616] text-white border-0 text-xs mb-2">
                                       Lvl {item.level}
                                     </Badge>
