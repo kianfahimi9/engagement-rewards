@@ -347,7 +347,7 @@ export default function StatsView({ experienceId, userId, companyId }) {
               <CardDescription className="text-gray-500 dark:text-gray-400">Your engagement metrics</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {[
                   { label: 'Forum Posts', value: stats?.forumPosts || 0, icon: '📝' },
                   { label: 'Chat Messages', value: stats?.chatMessages || 0, icon: '💬' },
@@ -360,6 +360,26 @@ export default function StatsView({ experienceId, userId, companyId }) {
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.label}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Engagement Generated Highlight */}
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-2 border-orange-200 dark:border-orange-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="h-5 w-5 text-[#FA4616]" />
+                      <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Engagement Generated</h4>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      Total views & replies your content received
+                    </p>
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-5xl font-bold text-[#FA4616]">{stats?.engagementGenerated || 0}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">interactions</p>
+                    </div>
+                  </div>
+                  <div className="hidden md:block text-6xl opacity-20">🚀</div>
+                </div>
               </div>
             </CardContent>
           </Card>
