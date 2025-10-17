@@ -1,36 +1,54 @@
 import StatsView from './stats.client';
-import { Suspense } from 'react';
+import { verifyUser } from '@/lib/authentication';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
-// Wrapper to handle URL params
-async function StatsPageWrapper({ searchParams }) {
+export default async function UserStatsPage({ searchParams }) {
   const params = await searchParams;
-  const experienceId = params?.experienceId || null;
+  const experienceId = params?.experienceId;
   
-  // For now, pass mock data - in production, these would come from server-side auth
-  // Similar to how the experience page does it with verifyUser()
-  const mockUserId = 'user_test123'; // TODO: Get from verifyUser() in production
-  const mockCompanyId = '2b7ecb03-7c43-4aca-ae53-c77cdf766d85'; // TODO: Get from verifyUser() in production
-  
-  return (
-    <StatsView 
-      experienceId={experienceId}
-      userId={mockUserId}
-      companyId={mockCompanyId}
-    />
-  );
-}
-
-export default function UserStatsPage({ searchParams }) {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FA4616]"></div>
+  if (!experienceId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Missing Experience ID</h1>
+          <p className="text-gray-600 mb-4">Please access this page from a valid community.</p>
+        </div>
       </div>
-    }>
-      <StatsPageWrapper searchParams={searchParams} />
-    </Suspense>
-  );
+    );
+  }
+  
+  try {
+    // Verify user has access to this experience (same as leaderboard page)
+    const { userId, accessLevel, companyContext } = await verifyUser(experienceId);
+    
+    console.log('✅ Stats page - User verified:', { userId, experienceId, companyId: companyContext.company.companyId });
+    
+    // Pass auth info to client component
+    return (
+      <StatsView 
+        experienceId={experienceId}
+        userId={userId}
+        companyId={companyContext.company.companyId}
+      />
+    );
+  } catch (error) {
+    console.error('❌ Stats page auth verification failed:', error);
+    
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
+          <p className="text-gray-600 mb-4">You don't have access to this experience.</p>
+          <a 
+            href="/" 
+            className="text-blue-500 hover:underline"
+          >
+            Go to main page
+          </a>
+        </div>
+      </div>
+    );
+  }
 }
