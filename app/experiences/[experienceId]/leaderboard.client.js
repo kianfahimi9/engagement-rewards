@@ -266,7 +266,7 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                     </div>
                   </div>
                 </div>
-                <Link href="/stats" className="w-full sm:w-auto">
+                <Link href={`/stats?experienceId=${experienceId}`} className="w-full sm:w-auto">
                   <Button size="lg" className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white w-full sm:w-auto text-sm md:text-base">
                     View Details
                     <ChevronRight className="h-4 w-4 ml-2" />
