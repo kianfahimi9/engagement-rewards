@@ -29,7 +29,7 @@ export default async function UserStatsPage({ searchParams }) {
   
   try {
     // Verify user has access to this experience (same as leaderboard page)
-    const { userId, accessLevel, companyContext } = await verifyUser(experienceId);
+    const { userId, isOwner, companyContext } = await verifyUser(experienceId);
     
     console.log('✅ Stats page - User verified:', { userId, experienceId, companyId: companyContext.company.companyId });
     
