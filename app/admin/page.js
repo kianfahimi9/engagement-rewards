@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { DollarSign, TrendingUp, Users, Activity, ArrowLeft, Plus, Trophy, Clock, CheckCircle, XCircle, BarChart3, Award } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,8 @@ import { useIframeSdk } from "@whop/react";
 import Link from 'next/link';
 
 export default function AdminDashboard() {
+  const searchParams = useSearchParams();
+  const experienceId = searchParams.get('experienceId');
   const [stats, setStats] = useState(null);
   const [prizePools, setPrizePools] = useState([]);
   const [payouts, setPayouts] = useState([]);
