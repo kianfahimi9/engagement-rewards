@@ -1,7 +1,9 @@
 # Clean Database Schema Documentation
 
 **Last Updated:** January 2025  
-**Point System:** Views (0.1 pts) + Replies (1 pt for forum, 0.5 pts for chat)
+**Point System:** 
+- **Forum Posts:** Views (0.1 pts) + Comments (1 pt) + Likes (1 pt) + Pinned Bonus (10 pts)
+- **Chat Messages:** Replies (0.5 pts) + Reactions (0.5 pts) + Poll Votes (0.5 pts) + Pinned Bonus (10 pts)
 
 ---
 
