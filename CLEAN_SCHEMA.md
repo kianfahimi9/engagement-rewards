@@ -216,16 +216,16 @@ Individual payouts to winners.
 ### Engagement Tracking
 
 1. **Sync from Whop** (`/api/sync-whop`)
-   - Fetch forum posts via `whopSdk.forums.listForumPostsFromForum()`
-   - Fetch chat messages via `whopSdk.messages.listMessagesFromChat()`
+   - Fetch forum posts via `whopSdk.forumPosts.list()` with view_count, like_count, comment_count
+   - Fetch chat messages via `whopSdk.messages.listMessagesFromChat()` with reactions and poll votes
    
 2. **Store in posts table**
-   - Save with `post_type`, `parent_id`, `view_count`
+   - Save with `post_type`, `parent_id`, `view_count`, `likes_count`, `reply_count`, `poll_votes_count`
    
 3. **Calculate points**
-   - Forum: views × 0.1 + replies × 1
-   - Chat: replies × 0.5
-   - Apply anti-spam filters (min 10 chars, min 5 views)
+   - Forum: `(view_count × 0.1) + (reply_count × 1) + (likes_count × 1) + (pinned ? 10 : 0)`
+   - Chat: `(reply_count × 0.5) + (likes_count × 0.5) + (poll_votes_count × 0.5) + (pinned ? 10 : 0)`
+   - Apply anti-spam filters (min 10 chars, min 1 view)
    
 4. **Update leaderboard_entries**
    - Sum all points per user per community
