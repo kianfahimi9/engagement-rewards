@@ -18,11 +18,20 @@ export default async function ExperiencePage({ params }) {
     // Ensure community exists in database (creates if first time)
     await ensureCommunityExists(companyContext);
     
-    // Auto-sync on every page load
-    console.log('🔄 Auto-syncing leaderboard data...');
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sync-whop`, {
-      method: 'GET'
-    }).catch(err => console.error('Auto-sync failed:', err));
+    // Auto-sync on every page load - WAIT for it to complete
+    try {
+      console.log('🔄 Auto-syncing leaderboard data...');
+      const syncResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sync-whop`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const syncResult = await syncResponse.json();
+      console.log('✅ Auto-sync completed:', syncResult.message);
+    } catch (syncError) {
+      console.error('❌ Auto-sync failed:', syncError);
+    }
     
     // Pass auth info and company context to client component
     return (
