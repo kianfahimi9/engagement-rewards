@@ -259,12 +259,15 @@ async function getUserStats(request) {
       );
     }
 
-    // Fetch user data - use maybeSingle() to avoid errors when user doesn't exist
-    const { data: userData } = await supabase
+    console.log('📊 Fetching stats for user:', userId, 'company:', companyId);
+
+    // Fetch user data - don't use .single() or .maybeSingle()
+    const { data: userDataArray, error: userError } = await supabase
       .from('users')
       .select('*')
-      .eq('whop_user_id', userId)
-      .maybeSingle();
+      .eq('whop_user_id', userId);
+
+    const userData = userDataArray && userDataArray.length > 0 ? userDataArray[0] : null;
 
     // If user doesn't exist, return empty stats
     if (!userData) {
@@ -296,21 +299,23 @@ async function getUserStats(request) {
     }
 
     // Fetch leaderboard entry for user
-    const { data: leaderboardEntry } = await supabase
+    const { data: leaderboardArray } = await supabase
       .from('leaderboard_entries')
       .select('*')
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
-      .eq('period_type', 'all_time')
-      .maybeSingle();
+      .eq('period_type', 'all_time');
+
+    const leaderboardEntry = leaderboardArray && leaderboardArray.length > 0 ? leaderboardArray[0] : null;
 
     // Fetch streak data
-    const { data: streakData } = await supabase
+    const { data: streakArray } = await supabase
       .from('daily_streaks')
       .select('*')
       .eq('whop_user_id', userId)
-      .eq('whop_company_id', companyId)
-      .maybeSingle();
+      .eq('whop_company_id', companyId);
+
+    const streakData = streakArray && streakArray.length > 0 ? streakArray[0] : null;
 
     // Fetch user's posts for activity breakdown
     const { data: postsData } = await supabase
