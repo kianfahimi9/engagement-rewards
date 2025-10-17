@@ -350,6 +350,10 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                         Level {Math.floor(currentUser.points / 100)}
                       </Badge>
                       <Badge variant="outline" className="gap-1 md:gap-1.5 border-orange-200 dark:border-orange-800 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/30 text-xs">
+                        <Flame className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                        {currentUser.current_streak || 0} day streak
+                      </Badge>
+                      <Badge variant="outline" className="gap-1 md:gap-1.5 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 text-xs">
                         <Zap className="h-3 w-3 md:h-3.5 md:w-3.5" />
                         {currentUser.points} pts
                       </Badge>
