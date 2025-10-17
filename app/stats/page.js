@@ -61,7 +61,7 @@ function StatsContent() {
     }
   };
 
-  if (loading) {
+  if (loading || !userId || !companyId) {
     return (
       <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FA4616]"></div>
