@@ -205,14 +205,6 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                         </span>
                       </div>
                     </div>
-
-                    {/* Engagement Generated */}
-                    <div className="text-right flex-shrink-0">
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mb-0.5 hidden md:block">Engagement</div>
-                      <div className="text-xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                        {user.engagement_generated}
-                      </div>
-                    </div>
                   </div>
                 ))}
 
