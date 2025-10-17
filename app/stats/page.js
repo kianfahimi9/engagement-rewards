@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,6 +12,8 @@ import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 
 export default function UserStatsPage() {
+  const searchParams = useSearchParams();
+  const experienceId = searchParams.get('experienceId');
   const [stats, setStats] = useState(null);
   const [earnings, setEarnings] = useState([]);
   const [loading, setLoading] = useState(true);
