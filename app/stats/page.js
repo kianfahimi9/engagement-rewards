@@ -292,10 +292,10 @@ function StatsContent() {
             <CardContent className="p-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: 'Total Logins', value: stats?.totalLogins || 0, icon: '📅' },
-                  { label: 'Likes Received', value: stats?.likesReceived || 0, icon: '❤️' },
-                  { label: 'Comments Received', value: stats?.commentsReceived || 0, icon: '💬' },
-                  { label: 'Shares Received', value: stats?.sharesReceived || 0, icon: '🔄' },
+                  { label: 'Forum Posts', value: stats?.forumPosts || 0, icon: '📝' },
+                  { label: 'Chat Messages', value: stats?.chatMessages || 0, icon: '💬' },
+                  { label: 'Current Streak', value: stats?.currentStreak || 0, icon: '🔥' },
+                  { label: 'Longest Streak', value: stats?.longestStreak || 0, icon: '⭐' },
                 ].map((stat, i) => (
                   <div key={i} className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
                     <div className="text-4xl mb-3">{stat.icon}</div>
