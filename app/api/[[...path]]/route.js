@@ -344,6 +344,23 @@ async function getUserStats(request) {
 
     const streakData = streakArray && streakArray.length > 0 ? streakArray[0] : null;
 
+    // Fetch weekly and monthly ranks
+    const { data: weeklyRank } = await supabase
+      .from('leaderboard_entries')
+      .select('rank')
+      .eq('whop_user_id', userId)
+      .eq('whop_company_id', companyId)
+      .eq('period_type', 'weekly')
+      .single();
+
+    const { data: monthlyRank } = await supabase
+      .from('leaderboard_entries')
+      .select('rank')
+      .eq('whop_user_id', userId)
+      .eq('whop_company_id', companyId)
+      .eq('period_type', 'monthly')
+      .single();
+
     // Fetch user's posts for activity breakdown
     const { data: postsData } = await supabase
       .from('posts')
