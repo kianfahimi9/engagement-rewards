@@ -58,7 +58,7 @@ export default async function ExperiencePage({ params }) {
       <LeaderboardView 
         experienceId={experienceId}
         userId={userId}
-        isAdmin={accessLevel === 'admin'}
+        isAdmin={isOwner}
         companyId={companyContext.company.companyId}
         companyContext={companyContext}
       />
