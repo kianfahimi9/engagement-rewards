@@ -26,16 +26,16 @@ export default async function ExperiencePage({ params }) {
     // Pass userId if user is owner to store in DB
     await ensureCommunityExists(companyContext, isOwner ? userId : null);
     
+    // Fetch community from DB to get latest settings and level names
+    const { data: community } = await supabase
+      .from('communities')
+      .select('whop_company_id, name, settings, level_names')
+      .eq('whop_company_id', companyContext.company.companyId)
+      .single();
+
     // Auto-sync on every page load - fetch fresh community data from DB (like /api/sync-whop does)
     try {
       console.log('🔄 Auto-syncing leaderboard data...');
-      
-      // Fetch community from DB to get latest settings
-      const { data: community } = await supabase
-        .from('communities')
-        .select('whop_company_id, name, settings, level_names')
-        .eq('whop_company_id', companyContext.company.companyId)
-        .single();
       
       if (community) {
         const forumExperiences = community.settings?.forumExperiences || [];
