@@ -33,7 +33,7 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
   const fetchLeaderboardData = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/leaderboard?period=${selectedPeriod}&experienceId=${experienceId}&companyId=${companyId}`);
+      const response = await fetch(`/api/leaderboard?period=${selectedPeriod}&experienceId=${experienceId}&companyId=${companyId}&userId=${userId}`);
       const data = await response.json();
       setLeaderboardData(data.leaderboard || []);
       setCurrentUser(data.currentUser || null);
