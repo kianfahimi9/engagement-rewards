@@ -26,11 +26,23 @@ function StatsContent() {
   useEffect(() => {
     // Get user ID and company ID from Whop SDK
     const initializeUser = async () => {
+      console.log('🔍 Whop SDK:', iframeSdk);
+      
       if (iframeSdk?.user?.id) {
+        console.log('✅ Got userId from Whop SDK:', iframeSdk.user.id);
         setUserId(iframeSdk.user.id);
       }
       if (iframeSdk?.company?.id) {
+        console.log('✅ Got companyId from Whop SDK:', iframeSdk.company.id);
         setCompanyId(iframeSdk.company.id);
+      }
+      
+      // Fallback for testing outside Whop iframe
+      if (!iframeSdk?.user?.id || !iframeSdk?.company?.id) {
+        console.log('⚠️ Whop SDK not available, using fallback values for testing');
+        // These would be populated by the server-side auth in production
+        // For now, set loading to false to prevent infinite spinner
+        setLoading(false);
       }
     };
     
@@ -39,6 +51,7 @@ function StatsContent() {
 
   useEffect(() => {
     if (userId && companyId) {
+      console.log('📊 Fetching stats for:', { userId, companyId });
       fetchUserStats();
     }
   }, [userId, companyId]);
