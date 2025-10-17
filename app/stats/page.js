@@ -11,6 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 
+// Force dynamic rendering to use useSearchParams
+export const dynamic = 'force-dynamic';
+
 export default function UserStatsPage() {
   const searchParams = useSearchParams();
   const experienceId = searchParams.get('experienceId');
