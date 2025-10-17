@@ -34,7 +34,8 @@ export default async function UserStatsPage({ searchParams }) {
     console.log('✅ Stats page - User verified:', { userId, experienceId, companyId: companyContext.company.companyId });
     
     // Ensure community exists and trigger sync (same as leaderboard page)
-    await ensureCommunityExists(companyContext);
+    // Pass userId if user is owner to store in DB
+    await ensureCommunityExists(companyContext, isOwner ? userId : null);
     
     // Auto-sync on every page load - fetch fresh community data from DB (like /api/sync-whop does)
     try {
