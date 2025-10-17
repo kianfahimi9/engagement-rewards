@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useIframeSdk } from "@whop/react";
 import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,23 +14,46 @@ import Link from 'next/link';
 
 // StatsContent component that uses useSearchParams
 function StatsContent() {
+  const iframeSdk = useIframeSdk();
   const searchParams = useSearchParams();
   const experienceId = searchParams.get('experienceId');
   const [stats, setStats] = useState(null);
   const [earnings, setEarnings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
+  const [companyId, setCompanyId] = useState(null);
 
   useEffect(() => {
-    fetchUserStats();
-  }, []);
+    // Get user ID and company ID from Whop SDK
+    const initializeUser = async () => {
+      if (iframeSdk?.user?.id) {
+        setUserId(iframeSdk.user.id);
+      }
+      if (iframeSdk?.company?.id) {
+        setCompanyId(iframeSdk.company.id);
+      }
+    };
+    
+    initializeUser();
+  }, [iframeSdk]);
+
+  useEffect(() => {
+    if (userId && companyId) {
+      fetchUserStats();
+    }
+  }, [userId, companyId]);
 
   const fetchUserStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/user-stats');
+      const response = await fetch(`/api/user-stats?userId=${userId}&companyId=${companyId}`);
       const data = await response.json();
-      setStats(data.stats);
-      setEarnings(data.earnings || []);
+      
+      if (data.success) {
+        // API returns data.user, map it to stats
+        setStats(data.user);
+        setEarnings(data.earnings || []);
+      }
     } catch (error) {
       console.error('Error fetching user stats:', error);
     } finally {
