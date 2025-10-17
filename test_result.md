@@ -101,3 +101,153 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Enhanced gamified point system for Whop community leaderboard. Added likes, poll votes, and improved reply tracking using Whop API directly. 
+  
+  New Point System:
+  - Forum Posts: (views × 0.1) + (comments × 1) + (likes × 1) + (pinned ? 10 : 0)
+  - Chat Messages: (replies × 0.5) + (reactions × 0.5) + (poll_votes × 0.5) + (pinned ? 10 : 0)
+  
+  Implementation includes:
+  1. Added 3 new columns to posts table: likes_count, reply_count, poll_votes_count
+  2. Updated point calculation functions to use engagement metrics from Whop API directly
+  3. Updated sync service to fetch and store likes, reactions, poll votes from Whop API
+  4. Updated UI components to display new point breakdown
+
+backend:
+  - task: "Add database columns for engagement metrics"
+    implemented: true
+    working: "NA"
+    file: "Supabase migration - add_likes_reply_poll_counts_to_posts"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added likes_count, reply_count, poll_votes_count columns to posts table via Supabase migration"
+
+  - task: "Update point calculation for forum posts"
+    implemented: true
+    working: "NA"
+    file: "/app/lib/points-system.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Refactored calculateForumPostPoints to accept viewCount, commentCount, likeCount, isPinned params directly from Whop API. Formula: (views × 0.1) + (comments × 1) + (likes × 1) + (pinned ? 10 : 0)"
+
+  - task: "Update point calculation for chat messages"
+    implemented: true
+    working: "NA"
+    file: "/app/lib/points-system.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Refactored calculateChatMessagePoints to accept replyCount, reactionCount, pollVotesCount, isPinned params. Formula: (replies × 0.5) + (reactions × 0.5) + (poll_votes × 0.5) + (pinned ? 10 : 0)"
+
+  - task: "Update forum post sync to use Whop API metrics"
+    implemented: true
+    working: "NA"
+    file: "/app/lib/whop-sync.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated syncForumPosts to extract view_count, like_count, comment_count, is_pinned from Whop API response and store in database. Using whopSdk.forumPosts.list() with proper field mappings (snake_case from API)"
+
+  - task: "Update chat message sync to calculate reactions and poll votes"
+    implemented: true
+    working: "NA"
+    file: "/app/lib/whop-sync.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated syncChatMessages to sum reaction_counts and poll_votes arrays from Whop API. Counting replies by filtering messages with replying_to_message_id. Storing all counts in database."
+
+  - task: "Leaderboard API endpoint"
+    implemented: true
+    working: true
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Existing endpoint should continue working. Points will now include likes, reactions, poll votes automatically from posts table."
+
+  - task: "Sync API endpoint"
+    implemented: true
+    working: "NA"
+    file: "/app/app/api/[[...path]]/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Sync endpoint calls updated whop-sync functions. Need to test full sync cycle with new engagement metrics."
+
+frontend:
+  - task: "Update leaderboard point info cards"
+    implemented: true
+    working: "NA"
+    file: "/app/app/experiences/[experienceId]/leaderboard.client.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Updated 'How Points Work' info cards to show: Forum (0.1/view + 1/comment + 1/like + 10 pinned) and Chat (0.5/reply + 0.5/reaction + 0.5/poll vote + 10 pinned)"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Add database columns for engagement metrics"
+    - "Update point calculation for forum posts"
+    - "Update point calculation for chat messages"
+    - "Update forum post sync to use Whop API metrics"
+    - "Update chat message sync to calculate reactions and poll votes"
+    - "Sync API endpoint"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      Enhanced point system implementation complete. Key changes:
+      
+      1. Database: Added likes_count, reply_count, poll_votes_count columns to posts table
+      2. Point calculations: Completely refactored to use direct API metrics instead of calculating from post arrays
+      3. Sync service: Updated to extract engagement metrics directly from Whop API responses
+      4. UI: Updated info cards to show new point breakdown
+      
+      CRITICAL TESTING AREAS:
+      - Verify database migration applied successfully
+      - Test forum post sync with real Whop data (check if API returns view_count, like_count, comment_count in snake_case)
+      - Test chat message sync (verify reaction_counts and poll_votes arrays are being summed correctly)
+      - Verify point calculations are working with new formula
+      - Check that leaderboard updates correctly with new points
+      
+      AUTHENTICATION: Use existing Whop authentication flow - user should already be authenticated
+      
+      Please focus on backend API testing first, especially the sync endpoint to ensure Whop API integration is working correctly.
