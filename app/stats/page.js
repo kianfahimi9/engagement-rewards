@@ -258,25 +258,33 @@ function StatsContent() {
               <CardDescription className="text-gray-500 dark:text-gray-400">Unlock rewards by hitting milestones</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {stats?.badges?.map((badge, i) => (
-                  <div
-                    key={i}
-                    className={`p-5 rounded-2xl text-center transition-all ${
-                      badge.unlocked
-                        ? 'bg-gray-50 dark:bg-gray-900 border-2 border-[#FA4616] hover:scale-105'
-                        : 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 opacity-40'
-                    }`}
-                  >
-                    <div className="text-4xl mb-3">{badge.icon}</div>
-                    <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">{badge.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{badge.description}</p>
-                    {badge.unlocked && (
-                      <Badge className="mt-3 bg-[#FA4616] text-white border-0 text-xs">Unlocked</Badge>
-                    )}
-                  </div>
-                ))}
-              </div>
+              {stats?.badges && stats.badges.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {stats.badges.map((badge, i) => (
+                    <div
+                      key={i}
+                      className={`p-5 rounded-2xl text-center transition-all ${
+                        badge.unlocked
+                          ? 'bg-gray-50 dark:bg-gray-900 border-2 border-[#FA4616] hover:scale-105'
+                          : 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 opacity-40'
+                      }`}
+                    >
+                      <div className="text-4xl mb-3">{badge.icon}</div>
+                      <p className="font-semibold text-sm mb-1 text-gray-900 dark:text-white">{badge.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{badge.description}</p>
+                      {badge.unlocked && (
+                        <Badge className="mt-3 bg-[#FA4616] text-white border-0 text-xs">Unlocked</Badge>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Award className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No achievements yet</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Keep engaging to unlock badges!</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
