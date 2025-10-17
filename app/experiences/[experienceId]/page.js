@@ -18,6 +18,12 @@ export default async function ExperiencePage({ params }) {
     // Ensure community exists in database (creates if first time)
     await ensureCommunityExists(companyContext);
     
+    // Auto-sync on every page load
+    console.log('🔄 Auto-syncing leaderboard data...');
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sync-whop`, {
+      method: 'GET'
+    }).catch(err => console.error('Auto-sync failed:', err));
+    
     // Pass auth info and company context to client component
     return (
       <LeaderboardView 
