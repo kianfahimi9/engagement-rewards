@@ -259,15 +259,15 @@ async function getUserStats(request) {
       );
     }
 
-    // Fetch user data
-    const { data: userData, error: userError } = await supabase
+    // Fetch user data - use maybeSingle() to avoid errors when user doesn't exist
+    const { data: userData } = await supabase
       .from('users')
       .select('*')
       .eq('whop_user_id', userId)
       .maybeSingle();
 
     // If user doesn't exist, return empty stats
-    if (userError || !userData) {
+    if (!userData) {
       console.log(`User ${userId} not found, returning empty stats`);
       return NextResponse.json({
         success: true,
