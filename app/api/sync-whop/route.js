@@ -81,7 +81,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { communityId, forumExperiences, chatExperiences } = body;
+    const { communityId } = body;
 
     if (!communityId) {
       return NextResponse.json({
@@ -91,10 +91,30 @@ export async function POST(request) {
 
     console.log(`\n🚀 Syncing specific community: ${communityId}`);
 
+    // Fetch community from DB to get latest settings (same as GET endpoint does)
+    const { data: community, error: fetchError } = await supabase
+      .from('communities')
+      .select('whop_company_id, name, settings')
+      .eq('whop_company_id', communityId)
+      .single();
+
+    if (fetchError || !community) {
+      return NextResponse.json({
+        error: `Community not found: ${communityId}`,
+        details: fetchError?.message
+      }, { status: 404 });
+    }
+
+    // Extract forum and chat experiences from settings
+    const forumExperiences = community.settings?.forumExperiences || [];
+    const chatExperiences = community.settings?.chatExperiences || [];
+
+    console.log('📊 Syncing with experiences:', { forumExperiences, chatExperiences });
+
     const result = await syncCommunityEngagement(
-      communityId,
-      forumExperiences || [],
-      chatExperiences || []
+      community.whop_company_id,
+      forumExperiences,
+      chatExperiences
     );
 
     return NextResponse.json({
