@@ -155,9 +155,7 @@ async function getLeaderboard(request) {
 
     if (leaderboardError) throw leaderboardError;
 
-    // Fetch current user's stats (for now, use first user as example)
-    const currentUserId = leaderboardData?.[0]?.whop_user_id;
-    
+    // Fetch current user's stats using the actual logged-in userId
     const { data: currentUserData } = await supabase
       .from('leaderboard_entries')
       .select(`
