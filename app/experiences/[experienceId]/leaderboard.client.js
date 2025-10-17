@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useIframeSdk } from "@whop/react";
-import { Trophy, Flame, Crown, Medal, TrendingUp, Zap, ChevronRight, Sparkles, Award, MessageSquare, MessageCircle, Shield } from 'lucide-react';
+import { Trophy, Flame, Crown, Medal, TrendingUp, Zap, ChevronRight, Sparkles, Award, MessageSquare, MessageCircle, Shield, Info, Check } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Link from 'next/link';
 
 export default function LeaderboardView({ experienceId, userId, isAdmin, companyId, companyContext }) {
