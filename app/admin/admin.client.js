@@ -112,7 +112,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
         setNewPoolAmount('');
         setPeriodType('weekly');
         setPeriodStart('');
-        setPeriodEnd('');
         setPaymentError('');
         
         // Refresh admin data after a short delay
