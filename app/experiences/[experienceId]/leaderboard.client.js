@@ -365,11 +365,11 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                         </DialogContent>
                       </Dialog>
                     </div>
-                    <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3">#{currentUser.rank}</h3>
+                    <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 md:mb-3">#{currentUser.rank || 'Unranked'}</h3>
                     <div className="flex flex-wrap items-center gap-2 md:gap-3">
                       <Badge variant="secondary" className="gap-1 md:gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border-0 text-xs">
                         <Award className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                        Level {Math.floor(currentUser.points / 100)}
+                        Level {currentUser.level || 1}
                       </Badge>
                       <Badge 
                         variant="outline" 
