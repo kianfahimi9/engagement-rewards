@@ -41,6 +41,9 @@ export async function POST(request) {
       currency: "usd",
       destinationId: userId,
       ledgerAccountId: ledgerAccountId,
+      idempotenceKey: `manual-${userId}-${Date.now()}`,
+      notes: `Manual test payout`,
+      reason: "content_reward_payout"
     });
 
     console.log('✅ Test payout successful');
