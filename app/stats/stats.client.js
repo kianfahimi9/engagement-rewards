@@ -85,8 +85,22 @@ export default function StatsView({ experienceId, userId, companyId }) {
     );
   }
 
-  const nextLevelPoints = Math.ceil((stats?.totalPoints || 0) / 100 + 1) * 100;
-  const progressToNextLevel = ((stats?.totalPoints || 0) % 100);
+  // Calculate proper level using Skool thresholds
+  const currentLevel = stats?.level || 1;
+  const nextLevel = currentLevel < 10 ? currentLevel + 1 : 10;
+  
+  // Level thresholds
+  const LEVEL_THRESHOLDS = {
+    1: 0, 2: 5, 3: 20, 4: 65, 5: 155, 
+    6: 515, 7: 2015, 8: 8015, 9: 33015, 10: 100000
+  };
+  
+  const currentThreshold = LEVEL_THRESHOLDS[currentLevel];
+  const nextThreshold = LEVEL_THRESHOLDS[nextLevel];
+  const pointsNeeded = Math.max(0, nextThreshold - (stats?.totalPoints || 0));
+  const pointsIntoLevel = (stats?.totalPoints || 0) - currentThreshold;
+  const pointsRequiredForLevel = nextThreshold - currentThreshold;
+  const progressPercent = currentLevel === 10 ? 100 : Math.min(100, (pointsIntoLevel / pointsRequiredForLevel) * 100);
 
   return (
     <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212]">
