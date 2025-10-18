@@ -66,13 +66,18 @@ export default function AdminView({ experienceId, userId, companyId }) {
         throw new Error('Please enter a valid amount');
       }
 
-      // Validate dates if provided
-      if (periodStart && periodEnd && new Date(periodStart) >= new Date(periodEnd)) {
-        throw new Error('End date must be after start date');
+      if (!periodType) {
+        throw new Error('Please select a period type');
       }
 
+      if (!periodStart) {
+        throw new Error('Please select a start date');
+      }
+
+      // Auto-calculate end date
+      const periodEnd = calculateEndDate(periodStart, periodType);
+
       // Create charge using official Whop API method
-      // userId is passed as prop from server component
       const response = await fetch('/api/payments/create-charge', {
         method: 'POST',
         headers: {
@@ -84,8 +89,8 @@ export default function AdminView({ experienceId, userId, companyId }) {
           companyId: companyId,
           experienceId: experienceId,
           periodType: periodType,
-          periodStart: periodStart || null,
-          periodEnd: periodEnd || null,
+          periodStart: periodStart,
+          periodEnd: periodEnd,
         }),
       });
 
