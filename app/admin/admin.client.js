@@ -20,6 +20,10 @@ export default function AdminView({ experienceId, userId, companyId }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [payoutLoading, setPayoutLoading] = useState({});
+  const [stats, setStats] = useState(null);
+  const [payouts, setPayouts] = useState([]);
+  const [paymentError, setPaymentError] = useState('');
+  const [paymentLoading, setPaymentLoading] = useState(false);
   
   // Form state
   const [newPoolAmount, setNewPoolAmount] = useState('');
