@@ -117,6 +117,59 @@ export async function POST(request) {
             details: {
               existingPool: {
                 period: pool.period_type,
+                start: pool.start_date,
+                end: pool.end_date,
+                amount: pool.amount
+              },
+              suggestion: `Schedule your pool to start after ${new Date(existingEnd).toLocaleDateString()}`
+            }
+          }, { status: 409 }); // 409 Conflict
+        }
+      }
+    }
+
+    // Check company balance
+    const balance = await getCompanyBalance(companyId);
+    
+    if (balance.availableBalance < amount) {
+      return NextResponse.json({
+        success: false,
+        error: 'Insufficient balance',
+        needsPayment: true,
+        currentBalance: balance.availableBalance,
+        required: amount
+      }, { status: 402 }); // 402 Payment Required
+    }
+
+    // Create prize pool
+    const { data: prizePool, error } = await supabase
+      .from('prize_pools')
+      .insert({
+        whop_company_id: companyId,
+        amount: amount,
+        period_type: periodType,
+        start_date: startDate.toISOString(),
+        end_date: poolEndDate.toISOString(),
+        status: 'pending', // Will become 'active' when payment succeeds
+        created_by: userId
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({
+      success: true,
+      prizePool
+    });
+  } catch (error) {
+    console.error('Error creating prize pool:', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
 
 // PUT /api/admin/prize-pools - Edit prize pool (with restrictions)
 export async function PUT(request) {
@@ -257,60 +310,6 @@ export async function DELETE(request) {
     });
   } catch (error) {
     console.error('Error deleting prize pool:', error);
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    );
-  }
-}
-
-                start: pool.start_date,
-                end: pool.end_date,
-                amount: pool.amount
-              },
-              suggestion: `Schedule your pool to start after ${new Date(existingEnd).toLocaleDateString()}`
-            }
-          }, { status: 409 }); // 409 Conflict
-        }
-      }
-    }
-
-    // Check company balance
-    const balance = await getCompanyBalance(companyId);
-    
-    if (balance.availableBalance < amount) {
-      return NextResponse.json({
-        success: false,
-        error: 'Insufficient balance',
-        needsPayment: true,
-        currentBalance: balance.availableBalance,
-        required: amount
-      }, { status: 402 }); // 402 Payment Required
-    }
-
-    // Create prize pool
-    const { data: prizePool, error } = await supabase
-      .from('prize_pools')
-      .insert({
-        whop_company_id: companyId,
-        amount: amount,
-        period_type: periodType,
-        start_date: startDate.toISOString(),
-        end_date: poolEndDate.toISOString(),
-        status: 'pending', // Will become 'active' when payment succeeds
-        created_by: userId
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    return NextResponse.json({
-      success: true,
-      prizePool
-    });
-  } catch (error) {
-    console.error('Error creating prize pool:', error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 }
