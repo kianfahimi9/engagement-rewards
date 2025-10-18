@@ -15,19 +15,21 @@ export default function StatsView({ experienceId, userId, companyId }) {
   const [earnings, setEarnings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [hasSyncedOnLoad, setHasSyncedOnLoad] = useState(false);
 
+  // Auto-sync on initial page load (once)
   useEffect(() => {
-    if (userId && companyId) {
-      // Trigger sync on initial load, then fetch stats
-      triggerSyncAndFetch();
+    if (userId && companyId && !hasSyncedOnLoad) {
+      triggerAutoSync();
+      setHasSyncedOnLoad(true);
     }
   }, [userId, companyId]);
 
-  const triggerSyncAndFetch = async () => {
+  const triggerAutoSync = async () => {
     setLoading(true);
     try {
       // Trigger sync for this community
-      console.log('🔄 Auto-syncing on page load for company:', companyId);
+      console.log('🔄 Auto-syncing stats on page load for company:', companyId);
       
       await fetch('/api/sync-whop', {
         method: 'POST',
