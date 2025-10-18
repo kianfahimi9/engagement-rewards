@@ -14,3 +14,4 @@ export default async function ExperienceLayout({ children, params }) {
     </WhopWebsocketProvider>
   );
 }
+ 
