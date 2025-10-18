@@ -53,13 +53,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
         throw new Error('Please enter a valid amount');
       }
 
-      // Get current user from iframe SDK
-      const currentUser = await iframeSdk.getCurrentUser();
-      
-      if (!currentUser?.id) {
-        throw new Error('User not found');
-      }
-
       // Calculate period dates for weekly pool (default)
       const now = new Date();
       const periodStart = new Date(now);
@@ -68,6 +61,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
       periodEnd.setDate(periodStart.getDate() + 6); // End of week (Saturday)
 
       // Create charge using official Whop API method
+      // userId is passed as prop from server component
       const response = await fetch('/api/payments/create-charge', {
         method: 'POST',
         headers: {
@@ -75,7 +69,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
         },
         body: JSON.stringify({
           amount: amount,
-          userId: currentUser.id,
+          userId: userId, // Use userId from props (server-side verified)
           companyId: companyId,
           experienceId: experienceId,
           periodType: 'weekly',
