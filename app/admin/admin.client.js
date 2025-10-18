@@ -606,68 +606,68 @@ export default function AdminView({ experienceId, userId, companyId }) {
       {/* Create Prize Pool Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create Prize Pool</DialogTitle>
-                      <DialogDescription>
-                        Add funds to reward your top contributors
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="periodType">Period Type <span className="text-red-500">*</span></Label>
-                        <Select value={periodType} onValueChange={setPeriodType} disabled={paymentLoading}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select period type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="weekly">Weekly (7 days)</SelectItem>
-                            <SelectItem value="monthly">Monthly (30 days)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+          <DialogHeader>
+            <DialogTitle>Create Prize Pool</DialogTitle>
+            <DialogDescription>
+              Add funds to reward your top contributors
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="periodType">Period Type <span className="text-red-500">*</span></Label>
+              <Select value={periodType} onValueChange={setPeriodType} disabled={paymentLoading}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select period type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="weekly">Weekly (7 days)</SelectItem>
+                  <SelectItem value="monthly">Monthly (30 days)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="periodStart">Start Date <span className="text-red-500">*</span></Label>
-                        <Input
-                          id="periodStart"
-                          type="date"
-                          min={new Date().toISOString().split('T')[0]}
-                          value={periodStart}
-                          onChange={(e) => setPeriodStart(e.target.value)}
-                          disabled={paymentLoading}
-                        />
-                        {periodStart && (
-                          <p className="text-xs text-gray-500">
-                            Ends on: {calculateEndDate(periodStart, periodType)}
-                          </p>
-                        )}
-                      </div>
+            <div className="space-y-2">
+              <Label htmlFor="periodStart">Start Date <span className="text-red-500">*</span></Label>
+              <Input
+                id="periodStart"
+                type="date"
+                min={new Date().toISOString().split('T')[0]}
+                value={periodStart}
+                onChange={(e) => setPeriodStart(e.target.value)}
+                disabled={paymentLoading}
+              />
+              {periodStart && (
+                <p className="text-xs text-gray-500">
+                  Ends on: {calculateEndDate(periodStart, periodType)}
+                </p>
+              )}
+            </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="amount">Prize Amount (USD) <span className="text-red-500">*</span></Label>
-                        <Input
-                          id="amount"
-                          type="number"
-                          placeholder="100.00"
-                          value={newPoolAmount}
-                          onChange={(e) => setNewPoolAmount(e.target.value)}
-                          disabled={paymentLoading}
-                        />
-                      </div>
+            <div className="space-y-2">
+              <Label htmlFor="amount">Prize Amount (USD) <span className="text-red-500">*</span></Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="100.00"
+                value={newPoolAmount}
+                onChange={(e) => setNewPoolAmount(e.target.value)}
+                disabled={paymentLoading}
+              />
+            </div>
 
-                      {paymentError && (
-                        <p className="text-sm text-red-500">{paymentError}</p>
-                      )}
-                      <Button
-                        className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
-                        onClick={handleCreatePrizePool}
-                        disabled={paymentLoading}
-                      >
-                        {paymentLoading ? 'Processing...' : 'Continue to Payment'}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+            {paymentError && (
+              <p className="text-sm text-red-500">{paymentError}</p>
+            )}
+            <Button
+              className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
+              onClick={handleCreatePrizePool}
+              disabled={paymentLoading}
+            >
+              {paymentLoading ? 'Processing...' : 'Continue to Payment'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
               </div>
             </CardHeader>
             <CardContent className="p-6">
