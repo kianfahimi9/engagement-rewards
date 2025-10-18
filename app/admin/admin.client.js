@@ -360,10 +360,13 @@ export default function AdminView({ experienceId, userId, companyId }) {
                         <Button
                           size="sm"
                           className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
-                          onClick={() => handleDistributePrizePool(pool)}
+                          onClick={() => {
+                            setSelectedPool(pool);
+                            setConfirmDialogOpen(true);
+                          }}
                           disabled={payoutLoading}
                         >
-                          {payoutLoading ? 'Processing...' : '💰 Distribute to Top 10'}
+                          {payoutLoading && selectedPool?.whop_payment_id === pool.whop_payment_id ? 'Processing...' : '💰 Distribute to Top 10'}
                         </Button>
                       )}
                     </div>
