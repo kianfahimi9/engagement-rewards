@@ -728,7 +728,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
                           <span className="text-amber-600 dark:text-amber-500">•</span>
                           <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400">
                             <Zap className="h-3 w-3" />
-                            {Math.round(stats.communityEngagement.topContributor.points)} pts
+                            {stats.communityEngagement.topContributor.points.toFixed(1)} pts
                           </span>
                         </div>
                       </div>
