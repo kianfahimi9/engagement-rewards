@@ -58,16 +58,44 @@ import { supabase } from '@/lib/supabase';
 // /app/lib/supabase.js
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+let _supabaseClient = null;
 
-export const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
+function getSupabaseClient() {
+  if (_supabaseClient) {
+    return _supabaseClient;
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase environment variables');
+  }
+
+  _supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
+
+  return _supabaseClient;
+}
+
+// Export a proxy that creates the client on first use (lazy initialization)
+export const supabase = new Proxy({}, {
+  get(target, prop) {
+    const client = getSupabaseClient();
+    return client[prop];
   }
 });
 ```
+
+**Lazy Initialization Pattern:**
+- The client is only created when first accessed (not at import time)
+- This prevents build-time errors when environment variables aren't available
+- The client is cached after first creation for performance
+- Uses JavaScript Proxy to intercept property access transparently
 
 ## Key Differences
 - **Service Role Key**: The centralized client uses `SUPABASE_SERVICE_ROLE_KEY` instead of `NEXT_PUBLIC_SUPABASE_ANON_KEY` for full backend access
