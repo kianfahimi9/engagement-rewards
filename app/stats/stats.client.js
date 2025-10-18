@@ -210,15 +210,15 @@ export default function StatsView({ experienceId, userId, companyId }) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium text-gray-700 dark:text-gray-300">
-                    Progress to Level {Math.floor((stats?.totalPoints || 0) / 100) + 1}
+                    Progress to Level {nextLevel}
                   </span>
                   <span className="font-bold text-[#FA4616]">
-                    {stats?.totalPoints || 0} / {nextLevelPoints}
+                    {stats?.totalPoints || 0} / {nextThreshold}
                   </span>
                 </div>
-                <Progress value={progressToNextLevel} className="h-3 bg-gray-100 dark:bg-gray-800" />
+                <Progress value={progressPercent} className="h-3 bg-gray-100 dark:bg-gray-800" />
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {100 - progressToNextLevel} points to next level
+                  {pointsNeeded.toFixed(1)} points to next level
                 </p>
               </div>
 
