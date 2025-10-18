@@ -56,12 +56,10 @@ export default function AdminView({ experienceId, userId, companyId }) {
         throw new Error('Please enter a valid amount');
       }
 
-      // Calculate period dates for weekly pool (default)
-      const now = new Date();
-      const periodStart = new Date(now);
-      periodStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
-      const periodEnd = new Date(periodStart);
-      periodEnd.setDate(periodStart.getDate() + 6); // End of week (Saturday)
+      // Validate dates if provided
+      if (periodStart && periodEnd && new Date(periodStart) >= new Date(periodEnd)) {
+        throw new Error('End date must be after start date');
+      }
 
       // Create charge using official Whop API method
       // userId is passed as prop from server component
@@ -72,12 +70,12 @@ export default function AdminView({ experienceId, userId, companyId }) {
         },
         body: JSON.stringify({
           amount: amount,
-          userId: userId, // Use userId from props (server-side verified)
+          userId: userId,
           companyId: companyId,
           experienceId: experienceId,
-          periodType: 'weekly',
-          periodStart: periodStart.toISOString().split('T')[0],
-          periodEnd: periodEnd.toISOString().split('T')[0],
+          periodType: periodType,
+          periodStart: periodStart || null,
+          periodEnd: periodEnd || null,
         }),
       });
 
