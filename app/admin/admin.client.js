@@ -147,6 +147,34 @@ export default function AdminView({ experienceId, userId, companyId }) {
     }
   };
 
+  const handleDeletePool = async (poolId) => {
+    if (!confirm('Are you sure you want to delete this scheduled prize pool?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/prize-pools?prizePoolId=${poolId}&userId=${userId}&experienceId=${experienceId}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success('Prize pool deleted');
+        fetchAdminData();
+      } else {
+        toast.error('Failed to delete', {
+          description: data.error,
+        });
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Failed to delete', {
+        description: error.message,
+      });
+    }
+  };
+
   const fetchAdminData = async () => {
     setLoading(true);
     try {
