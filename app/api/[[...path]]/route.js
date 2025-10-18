@@ -553,32 +553,76 @@ async function getAdminDashboard(request) {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    // Get usernames for recent payouts
+    // Get usernames and avatar URLs for recent payouts
     const payoutsWithUsers = await Promise.all(
       (recentPayouts || []).map(async (payout) => {
         const { data: user } = await supabase
           .from('users')
-          .select('username')
+          .select('username, avatar_url')
           .eq('whop_user_id', payout.whop_user_id)
           .single();
         
         return {
           ...payout,
-          username: user?.username || 'Unknown User'
+          users: {
+            username: user?.username || 'Unknown User',
+            avatar_url: user?.avatar_url
+          }
         };
       })
     );
+
+    // Calculate community engagement metrics
+    const { data: allPosts } = await supabase
+      .from('posts')
+      .select('likes_count, reply_count, view_count, poll_votes_count, whop_user_id')
+      .eq('whop_company_id', companyId);
+
+    const totalPostCount = allPosts?.filter(p => p.post_type === 'forum').length || 0;
+    const totalReplies = allPosts?.reduce((sum, p) => sum + (p.reply_count || 0), 0) || 0;
+    const totalReactions = allPosts?.reduce((sum, p) => sum + (p.likes_count || 0) + (p.poll_votes_count || 0), 0) || 0;
+    const totalViews = allPosts?.reduce((sum, p) => sum + (p.view_count || 0), 0) || 0;
+
+    // Get active members (users who posted/commented)
+    const uniqueActiveUsers = new Set(allPosts?.map(p => p.whop_user_id).filter(Boolean));
+    const activeMembers = uniqueActiveUsers.size;
+
+    // Calculate engagement rate
+    const totalInteractions = totalReplies + totalReactions;
+    const engagementRate = totalMembers > 0 
+      ? Math.round((totalInteractions / totalMembers)) 
+      : 0;
+
+    // Get top contributor
+    const { data: topContributor } = await supabase
+      .from('leaderboard_entries')
+      .select('whop_user_id, points, users(username)')
+      .eq('whop_company_id', companyId)
+      .order('points', { ascending: false })
+      .limit(1)
+      .single();
 
     return NextResponse.json({
       success: true,
       stats: {
         totalMembers: totalMembers || 0,
-        activePool: activePools.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0).toFixed(2),
+        activePrizePoolsCount: activePools.length,
         totalPaidOut: totalPaidOut.toFixed(2),
-        engagementRate: Math.round((activeStreaks / (totalMembers || 1)) * 100)
+        recentPayouts: payoutsWithUsers || [],
+        communityEngagement: {
+          totalPosts: totalPostCount,
+          totalReplies: totalReplies,
+          totalReactions: totalReactions,
+          totalViews: totalViews,
+          activeMembers: activeMembers,
+          engagementRate: engagementRate,
+          topContributor: topContributor ? {
+            username: topContributor.users?.username || 'N/A',
+            points: topContributor.points || 0
+          } : null
+        }
       },
       prizePools: prizePools || [],
-      payouts: payoutsWithUsers || [],
       dataSource: 'real'
     });
   } catch (error) {
