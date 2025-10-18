@@ -684,7 +684,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
             {/* Engagement Breakdown */}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">User Activity</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Active Members */}
                 <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
                   <div className="flex items-center justify-between mb-2">
@@ -702,35 +702,40 @@ export default function AdminView({ experienceId, userId, companyId }) {
                   </p>
                 </div>
 
-                {/* Engagement Rate */}
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Engagement Rate</p>
-                    <Activity className="h-4 w-4 text-gray-400" />
-                  </div>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {stats?.communityEngagement?.engagementRate || '0'}%
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Interactions per user
-                  </p>
-                </div>
-
                 {/* Top Contributor */}
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Top Contributor</p>
-                    <Crown className="h-4 w-4 text-yellow-500" />
+                <div className="p-4 bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-950/30 dark:to-yellow-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-medium text-amber-700 dark:text-amber-400">Top Contributor</p>
+                    <Crown className="h-4 w-4 text-amber-500" />
                   </div>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white truncate">
-                    {stats?.communityEngagement?.topContributor?.username || 'N/A'}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {stats?.communityEngagement?.topContributor?.points 
-                      ? `${Math.round(stats.communityEngagement.topContributor.points)} points`
-                      : 'No activity yet'
-                    }
-                  </p>
+                  {stats?.communityEngagement?.topContributor ? (
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10 ring-2 ring-amber-200 dark:ring-amber-800">
+                        <AvatarImage src={stats.communityEngagement.topContributor.avatar_url} />
+                        <AvatarFallback className="bg-[#FA4616] text-white text-sm font-semibold">
+                          {stats.communityEngagement.topContributor.username?.slice(0, 2).toUpperCase() || '??'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-amber-900 dark:text-amber-100 truncate">
+                          {stats.communityEngagement.topContributor.username}
+                        </p>
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400">
+                            <Award className="h-3 w-3" />
+                            Lvl {stats.communityEngagement.topContributor.level || 1}
+                          </span>
+                          <span className="text-amber-600 dark:text-amber-500">•</span>
+                          <span className="flex items-center gap-1 text-amber-700 dark:text-amber-400">
+                            <Zap className="h-3 w-3" />
+                            {Math.round(stats.communityEngagement.topContributor.points)} pts
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-amber-700 dark:text-amber-400">No activity yet</p>
+                  )}
                 </div>
               </div>
             </div>
