@@ -511,8 +511,8 @@ export default function AdminView({ experienceId, userId, companyId }) {
                 <div className="space-y-3">
                   {prizePools.map((pool, i) => {
                     const statusInfo = getStatusInfo(pool);
-                    const startDate = pool.start_date ? new Date(pool.start_date) : null;
-                    const endDate = pool.end_date ? new Date(pool.end_date) : null;
+                    const startDate = pool.start_date || pool.period_start ? new Date(pool.start_date || pool.period_start) : null;
+                    const endDate = pool.end_date || pool.period_end ? new Date(pool.end_date || pool.period_end) : null;
                     const now = new Date();
                     const daysUntilEnd = endDate ? Math.ceil((endDate - now) / (1000 * 60 * 60 * 24)) : 0;
                     
