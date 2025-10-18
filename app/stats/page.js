@@ -2,12 +2,7 @@ import StatsView from './stats.client';
 import { verifyUser } from '@/lib/authentication';
 import { ensureCommunityExists } from '@/lib/company';
 import { syncCommunityEngagement } from '@/lib/whop-sync';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from '@/lib/supabase';
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
