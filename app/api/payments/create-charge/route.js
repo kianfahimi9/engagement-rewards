@@ -76,6 +76,7 @@ export async function POST(request) {
         whop_company_id: companyId,
         amount: amountFloat,
         currency: 'usd',
+        period_type: poolPeriodType,
         period_start: periodStart || null,
         period_end: periodEnd || null,
         status: 'pending', // Will be updated to 'active' via webhook when payment completes
