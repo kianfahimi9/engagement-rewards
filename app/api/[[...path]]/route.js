@@ -324,13 +324,17 @@ async function getUserStats(request) {
       });
     }
 
+    // Fixed period_start for consistent queries
+    const fixedPeriodStart = '2025-01-01';
+
     // Fetch leaderboard entry for user
     const { data: leaderboardArray } = await supabase
       .from('leaderboard_entries')
       .select('*')
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
-      .eq('period_type', 'all_time');
+      .eq('period_type', 'all_time')
+      .eq('period_start', fixedPeriodStart);
 
     const leaderboardEntry = leaderboardArray && leaderboardArray.length > 0 ? leaderboardArray[0] : null;
 
@@ -346,18 +350,20 @@ async function getUserStats(request) {
     // Fetch weekly and monthly ranks
     const { data: weeklyRank } = await supabase
       .from('leaderboard_entries')
-      .select('rank')
+      .select('rank, points')
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .eq('period_type', 'weekly')
+      .eq('period_start', fixedPeriodStart)
       .single();
 
     const { data: monthlyRank } = await supabase
       .from('leaderboard_entries')
-      .select('rank')
+      .select('rank, points')
       .eq('whop_user_id', userId)
       .eq('whop_company_id', companyId)
       .eq('period_type', 'monthly')
+      .eq('period_start', fixedPeriodStart)
       .single();
 
     // Fetch user's posts for activity breakdown
