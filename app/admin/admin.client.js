@@ -396,37 +396,61 @@ export default function AdminView({ experienceId, userId, companyId }) {
             <CardContent className="p-6">
               {prizePools.length > 0 ? (
                 <div className="space-y-3">
-                  {prizePools.map((pool, i) => (
-                    <div key={i} className="p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <p className="font-semibold text-lg text-gray-900 dark:text-white">${pool.amount}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {pool.period_type && <span className="capitalize">{pool.period_type}</span>}
-                            {pool.period_start && pool.period_end && (
-                              <span> • {pool.period_start} to {pool.period_end}</span>
-                            )}
-                          </p>
+                  {prizePools.map((pool, i) => {
+                    const statusInfo = getStatusInfo(pool);
+                    return (
+                      <div key={i} className="p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <p className="font-semibold text-lg text-gray-900 dark:text-white">${pool.amount}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              <span className="capitalize">{pool.period_type}</span>
+                              {pool.start_date && pool.end_date && (
+                                <span> • {new Date(pool.start_date).toLocaleDateString()} - {new Date(pool.end_date).toLocaleDateString()}</span>
+                              )}
+                            </p>
+                          </div>
+                          <Badge className={`${statusInfo.color} border-0`}>
+                            {statusInfo.icon} {statusInfo.label}
+                          </Badge>
                         </div>
-                        <Badge className={pool.status === 'active' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 border-0'}>
-                          {pool.status}
-                        </Badge>
+                        
+                        {/* Action buttons based on status */}
+                        <div className="flex gap-2 mt-3">
+                          {statusInfo.label === 'Ended - Ready for Payout' && (
+                            <Button
+                              size="sm"
+                              className="flex-1 bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
+                              onClick={() => {
+                                setSelectedPool(pool);
+                                setConfirmDialogOpen(true);
+                              }}
+                              disabled={payoutLoading}
+                            >
+                              {payoutLoading && selectedPool?.whop_payment_id === pool.whop_payment_id ? 'Processing...' : '💰 Distribute to Winners'}
+                            </Button>
+                          )}
+                          
+                          {statusInfo.canDelete && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-red-600 border-red-200 hover:bg-red-50"
+                              onClick={() => handleDeletePool(pool.id)}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+
+                        {statusInfo.label === 'Scheduled' && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            ⏳ Starts in {Math.ceil((new Date(pool.start_date) - new Date()) / (1000 * 60 * 60 * 24))} days
+                          </p>
+                        )}
                       </div>
-                      {pool.status === 'active' && (
-                        <Button
-                          size="sm"
-                          className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
-                          onClick={() => {
-                            setSelectedPool(pool);
-                            setConfirmDialogOpen(true);
-                          }}
-                          disabled={payoutLoading}
-                        >
-                          {payoutLoading && selectedPool?.whop_payment_id === pool.whop_payment_id ? 'Processing...' : '💰 Distribute to Top 10'}
-                        </Button>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-12">
