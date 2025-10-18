@@ -353,15 +353,254 @@ export default function AdminView({ experienceId, userId, companyId }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Prize Pools */}
           <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white">
+                <div className="flex items-center gap-3">
+                  <div className="bg-[#FA4616]/10 p-2.5 rounded-xl">
                     <DollarSign className="h-5 w-5 text-[#FA4616]" />
-                    Prize Pools
-                  </CardTitle>
-                  <CardDescription className="text-gray-500 dark:text-gray-400">Manage community rewards</CardDescription>
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-gray-900 dark:text-white">Prize Pools</CardTitle>
+                    <CardDescription>Manage community rewards</CardDescription>
+                  </div>
                 </div>
+                <Button
+                  onClick={() => {
+                    setDialogOpen(true);
+                    setPaymentError('');
+                  }}
+                  className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
+                  size="sm"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Create Pool
+                </Button>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="p-6">
+              {prizePools.length > 0 ? (
+                <div className="space-y-3">
+                  {prizePools.map((pool, i) => {
+                    const statusInfo = getStatusInfo(pool);
+                    const startDate = pool.start_date ? new Date(pool.start_date) : null;
+                    const endDate = pool.end_date ? new Date(pool.end_date) : null;
+                    const now = new Date();
+                    const daysUntilEnd = endDate ? Math.ceil((endDate - now) / (1000 * 60 * 60 * 24)) : 0;
+                    
+                    return (
+                      <div key={i} className="group p-5 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-[#FA4616]/30 dark:hover:border-[#FA4616]/30 transition-all hover:shadow-lg">
+                        {/* Header Row */}
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-4">
+                            <div className="bg-[#FA4616]/10 p-3 rounded-xl">
+                              <Trophy className="h-6 w-6 text-[#FA4616]" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-bold text-2xl text-gray-900 dark:text-white">${Math.round(pool.amount)}</p>
+                                <Badge className={`${statusInfo.color} border-0 text-xs`}>
+                                  {statusInfo.icon} {statusInfo.label}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                                <span className="capitalize font-medium">{pool.period_type}</span>
+                                <span className="text-gray-400">•</span>
+                                {startDate && endDate && (
+                                  <span>
+                                    {startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Progress Bar for Active Pools */}
+                        {statusInfo.label === 'Active' && daysUntilEnd > 0 && (
+                          <div className="mb-4 p-3 bg-green-50 dark:bg-green-950/20 rounded-xl">
+                            <div className="flex items-center justify-between text-xs text-green-700 dark:text-green-400 mb-2">
+                              <div className="flex items-center gap-1.5">
+                                <Clock className="h-3.5 w-3.5" />
+                                <span className="font-medium">Time remaining</span>
+                              </div>
+                              <span className="font-bold">{daysUntilEnd} {daysUntilEnd === 1 ? 'day' : 'days'}</span>
+                            </div>
+                            <div className="w-full bg-green-200 dark:bg-green-900/30 rounded-full h-2">
+                              <div 
+                                className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all" 
+                                style={{ width: `${Math.max(10, Math.min(100, (daysUntilEnd / 7) * 100))}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Scheduled Info */}
+                        {statusInfo.label === 'Scheduled' && startDate && (
+                          <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-xl border border-yellow-200 dark:border-yellow-800">
+                            <div className="flex items-center gap-2 text-xs text-yellow-700 dark:text-yellow-400">
+                              <Calendar className="h-3.5 w-3.5" />
+                              <span className="font-medium">Starts in {Math.ceil((startDate - now) / (1000 * 60 * 60 * 24))} days</span>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Action Buttons */}
+                        <div className="flex gap-2">
+                          {statusInfo.label === 'Ended - Ready for Payout' && (
+                            <Button
+                              size="sm"
+                              className="flex-1 bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-medium"
+                              onClick={() => {
+                                setSelectedPool(pool);
+                                setConfirmDialogOpen(true);
+                              }}
+                              disabled={payoutLoading}
+                            >
+                              {payoutLoading && selectedPool?.whop_payment_id === pool.whop_payment_id ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  Processing...
+                                </>
+                              ) : (
+                                <>
+                                  <Coins className="h-4 w-4 mr-2" />
+                                  Distribute to Winners
+                                </>
+                              )}
+                            </Button>
+                          )}
+
+                          {/* TEMPORARY: Test Payout button for active pools */}
+                          {statusInfo.label === 'Active' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 border-orange-300 text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950/20 font-medium"
+                              onClick={() => {
+                                setSelectedPool(pool);
+                                setConfirmDialogOpen(true);
+                              }}
+                              disabled={payoutLoading}
+                            >
+                              <TestTube className="h-4 w-4 mr-2" />
+                              Test Payout
+                            </Button>
+                          )}
+                          
+                          {statusInfo.canDelete && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/20 font-medium"
+                              onClick={() => handleDeletePool(pool.id)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Delete
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="bg-gray-100 dark:bg-gray-900 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <DollarSign className="h-8 w-8 text-gray-400 dark:text-gray-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No prize pools yet</h3>
+                  <p className="text-gray-500 dark:text-gray-400 mb-6">Create your first prize pool to reward top contributors</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Payouts */}
+          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="bg-[#FA4616]/10 p-2.5 rounded-xl">
+                  <Trophy className="h-5 w-5 text-[#FA4616]" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl text-gray-900 dark:text-white">Recent Payouts</CardTitle>
+                  <CardDescription>Distribution history</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              {payouts && payouts.length > 0 ? (
+                <div className="space-y-3">
+                  {payouts.map((payout, i) => (
+                    <div key={i} className="flex items-center gap-4 p-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-[#FA4616]/20 dark:hover:border-[#FA4616]/20 transition-all">
+                      {/* Rank Icon */}
+                      <div className="flex-shrink-0">
+                        {payout.rank === 1 && (
+                          <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-2.5 rounded-xl">
+                            <Crown className="h-5 w-5 text-white" />
+                          </div>
+                        )}
+                        {payout.rank === 2 && (
+                          <div className="bg-gradient-to-br from-gray-300 to-gray-500 p-2.5 rounded-xl">
+                            <Medal className="h-5 w-5 text-white" />
+                          </div>
+                        )}
+                        {payout.rank === 3 && (
+                          <div className="bg-gradient-to-br from-amber-600 to-amber-800 p-2.5 rounded-xl">
+                            <Medal className="h-5 w-5 text-white" />
+                          </div>
+                        )}
+                        {payout.rank > 3 && (
+                          <div className="bg-gray-200 dark:bg-gray-800 p-2.5 rounded-xl w-10 h-10 flex items-center justify-center">
+                            <span className="text-sm font-bold text-gray-600 dark:text-gray-400">#{payout.rank}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* User Info */}
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Avatar className="h-10 w-10 ring-2 ring-gray-100 dark:ring-gray-800">
+                          <AvatarImage src={payout.avatar_url} />
+                          <AvatarFallback className="bg-[#FA4616] text-white text-sm font-semibold">
+                            {payout.username?.slice(0, 2).toUpperCase() || '??'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-gray-900 dark:text-white truncate">
+                            {payout.username || 'Unknown User'}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Rank #{payout.rank}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Amount */}
+                      <div className="text-right flex-shrink-0">
+                        <p className="font-bold text-lg text-[#FA4616]">
+                          ${typeof payout.amount === 'number' ? payout.amount.toFixed(2) : parseFloat(payout.amount || 0).toFixed(2)}
+                        </p>
+                        <Badge variant="outline" className="border-green-300 text-green-700 dark:border-green-700 dark:text-green-400 text-xs">
+                          <Check className="h-3 w-3 mr-1" />
+                          Completed
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="bg-gray-100 dark:bg-gray-900 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Trophy className="h-8 w-8 text-gray-400 dark:text-gray-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No payouts yet</h3>
+                  <p className="text-gray-500 dark:text-gray-400">Payouts will appear here once prize pools are distributed</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white gap-2">
