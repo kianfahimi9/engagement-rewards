@@ -94,7 +94,7 @@ export async function POST(request) {
       success: true,
       checkoutUrl: checkoutConfig.purchase_url,
       checkoutConfigId: checkoutConfig.id,
-      prizePoolId: prizePool.id,
+      prizePoolId: prizePool.whop_checkout_id,
     });
 
   } catch (error) {
