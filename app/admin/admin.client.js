@@ -28,6 +28,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
   const [payoutDialogOpen, setPayoutDialogOpen] = useState(false);
   const [selectedPool, setSelectedPool] = useState(null);
   const [payoutLoading, setPayoutLoading] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   
   const iframeSdk = useIframeSdk();
 
