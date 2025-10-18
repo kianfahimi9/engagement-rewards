@@ -131,7 +131,18 @@ export async function PUT(request) {
     }
 
     if (!winners || winners.length === 0) {
-      throw new Error(`No winners found for ${prizePool.period_type} leaderboard. Make sure users have earned points!`);
+      // Check if there are ANY leaderboard entries for this company
+      const { data: anyEntries } = await supabase
+        .from('leaderboard_entries')
+        .select('id')
+        .eq('whop_company_id', companyId)
+        .limit(1);
+      
+      if (!anyEntries || anyEntries.length === 0) {
+        throw new Error(`No leaderboard data found. Users need to interact (post, reply, react) to earn points before payouts can be distributed.`);
+      } else {
+        throw new Error(`No winners found for "${prizePool.period_type}" period. Try syncing the leaderboard or check if users have earned points in this period.`);
+      }
     }
 
     // Get ledger account - following exact Whop documentation
