@@ -600,14 +600,12 @@ export default function AdminView({ experienceId, userId, companyId }) {
               )}
             </CardContent>
           </Card>
+        </div>
+      </div>
 
-                <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white gap-2">
-                      <Plus className="h-4 w-4" />
-                      Create Pool
-                    </Button>
-                  </DialogTrigger>
+      {/* Create Prize Pool Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Create Prize Pool</DialogTitle>
