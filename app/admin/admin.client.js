@@ -53,6 +53,13 @@ export default function AdminView({ experienceId, userId, companyId }) {
         throw new Error('Please enter a valid amount');
       }
 
+      // Get current user from iframe SDK
+      const currentUser = await iframeSdk.getCurrentUser();
+      
+      if (!currentUser?.id) {
+        throw new Error('User not found');
+      }
+
       // Calculate period dates for weekly pool (default)
       const now = new Date();
       const periodStart = new Date(now);
@@ -60,8 +67,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
       const periodEnd = new Date(periodStart);
       periodEnd.setDate(periodStart.getDate() + 6); // End of week (Saturday)
 
-      // Create checkout configuration via our API
-      // Using latest Whop API (2025)
+      // Create charge using official Whop API method
       const response = await fetch('/api/payments/create-charge', {
         method: 'POST',
         headers: {
@@ -69,35 +75,39 @@ export default function AdminView({ experienceId, userId, companyId }) {
         },
         body: JSON.stringify({
           amount: amount,
+          userId: currentUser.id,
           companyId: companyId,
           experienceId: experienceId,
-          periodType: 'weekly', // Can be made configurable later
+          periodType: 'weekly',
           periodStart: periodStart.toISOString().split('T')[0],
           periodEnd: periodEnd.toISOString().split('T')[0],
-          title: `Prize Pool - $${amount}`,
         }),
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || data.details || 'Failed to create checkout');
+        throw new Error(data.error || data.details || 'Failed to create charge');
       }
 
-      // Open checkout URL in the iframe
-      // The checkout URL is returned from the checkout configuration
-      const checkoutResult = await iframeSdk.openUrl(data.checkoutUrl);
+      // Open payment modal using official iframe SDK method
+      const result = await iframeSdk.inAppPurchase(data.inAppPurchase);
       
-      console.log('Checkout opened:', checkoutResult);
+      console.log('Payment result:', result);
       
-      // Close dialog and refresh
-      setDialogOpen(false);
-      setNewPoolAmount('');
-      
-      // Refresh admin data after a short delay (allow for payment processing)
-      setTimeout(() => {
-        fetchAdminData();
-      }, 2000);
+      if (result.status === 'ok') {
+        console.log('✅ Payment successful:', result.data.receipt_id);
+        // Close dialog and refresh
+        setDialogOpen(false);
+        setNewPoolAmount('');
+        
+        // Refresh admin data after a short delay
+        setTimeout(() => {
+          fetchAdminData();
+        }, 2000);
+      } else {
+        throw new Error(result.error || 'Payment failed');
+      }
       
     } catch (error) {
       console.error('Error creating prize pool:', error);
