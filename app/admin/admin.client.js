@@ -44,6 +44,39 @@ export default function AdminView({ experienceId, userId, companyId }) {
     fetchAdminData();
   }, []);
 
+  const handleDistributePrizePool = async (pool) => {
+    if (!confirm(`Distribute $${pool.amount} prize pool to top 10 winners?`)) {
+      return;
+    }
+
+    setPayoutLoading(true);
+    try {
+      const response = await fetch('/api/admin/payout', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prizePoolId: pool.whop_payment_id,
+          companyId: companyId,
+          experienceId: experienceId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`✅ Successfully distributed to ${data.payouts.length} winners!\nTotal: $${data.totalPaid.toFixed(2)}`);
+        fetchAdminData(); // Refresh
+      } else {
+        alert(`❌ Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Distribution error:', error);
+      alert(`❌ Error: ${error.message}`);
+    } finally {
+      setPayoutLoading(false);
+    }
+  };
+
   const fetchAdminData = async () => {
     setLoading(true);
     try {
