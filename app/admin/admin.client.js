@@ -45,6 +45,13 @@ export default function AdminView({ experienceId, userId, companyId }) {
       if (data.success) {
         setPrizePools(data.prizePools || []);
         setCompanyBalance(data.companyBalance);
+        setStats(data.stats || {
+          totalMembers: 0,
+          activePool: '0.00',
+          totalPaidOut: '0.00',
+          engagementRate: 0
+        });
+        setPayouts(data.payouts || []);
       }
     } catch (error) {
       console.error('Error fetching prize pools:', error);
