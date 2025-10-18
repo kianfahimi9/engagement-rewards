@@ -148,8 +148,9 @@ export async function POST(request) {
         whop_company_id: companyId,
         amount: amount,
         period_type: periodType,
-        end_date: endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Default 7 days
-        status: 'active',
+        start_date: startDate.toISOString(),
+        end_date: poolEndDate.toISOString(),
+        status: 'pending', // Will become 'active' when payment succeeds
         created_by: userId
       })
       .select()
