@@ -230,6 +230,18 @@ export default function AdminView({ experienceId, userId, companyId }) {
 
       const data = await response.json();
 
+      // Handle overlap error specifically
+      if (response.status === 409) {
+        const suggestion = data.details?.suggestion || 'Please choose different dates';
+        toast.error('Schedule Conflict', {
+          description: data.error + '. ' + suggestion,
+          duration: 6000,
+        });
+        setPaymentError(data.error);
+        setPaymentLoading(false);
+        return;
+      }
+
       if (!data.success) {
         throw new Error(data.error || data.details || 'Failed to create charge');
       }
