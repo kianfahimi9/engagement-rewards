@@ -160,8 +160,9 @@ export async function PUT(request) {
 
     // Get ledger account - following exact Whop documentation
     // https://docs.whop.com/apps/features/payments-and-payouts
+    // NOTE: getCompanyLedgerAccount is in @whop/api (whopApiClient), not @whop/sdk
     const experience = await whopSdk.experiences.retrieve(experienceId);
-    const ledgerAccount = await whopSdk.companies.getCompanyLedgerAccount({
+    const ledgerAccount = await whopApiClient.companies.getCompanyLedgerAccount({
       companyId: experience.company.id,
     });
 
