@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { whopSdk } from '@/lib/whop-sdk';
+import { whopApiClient } from '@/lib/whop-sdk';
 import { supabase } from '@/lib/supabase';
 
 export async function POST(request) {
@@ -30,8 +30,8 @@ export async function POST(request) {
       periodType: poolPeriodType
     });
 
-    // Create charge using official Whop API method
-    const result = await whopSdk.payments.chargeUser({
+    // Create charge using @whop/api client (has chargeUser method)
+    const result = await whopApiClient.payments.chargeUser({
       amount: amountFloat,
       currency: "usd",
       userId: userId,
