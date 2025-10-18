@@ -258,3 +258,38 @@ agent_communication:
       AUTHENTICATION: Use existing Whop authentication flow - user should already be authenticated
       
       Please focus on backend API testing first, especially the sync endpoint to ensure Whop API integration is working correctly.
+
+  - agent: "main"
+    message: |
+      **NEW IMPLEMENTATION: Proportional Prize Pool Distribution**
+      
+      Problem Solved: Previously, with fixed percentages, if a community had fewer than 10 winners, a portion of the prize pool would remain undistributed.
+      
+      Example of OLD issue:
+      - $100 prize pool with 2 winners
+      - 1st place: $40 (40%)
+      - 2nd place: $18 (18%)
+      - **Undistributed: $42** ❌
+      
+      Solution Implemented:
+      - Proportional distribution that divides the FULL prize pool among however many winners exist
+      - Uses original fixed percentages [40, 18, 12, 8, 6, 5, 4, 3, 2, 2] as weights
+      - Normalizes to 100% based on actual winner count
+      
+      Example with NEW logic:
+      - $100 prize pool with 2 winners
+      - 1st place: $69.23 (69.23%)
+      - 2nd place: $30.77 (30.77%)
+      - **Undistributed: $0** ✅
+      
+      Files Modified:
+      1. /app/lib/whop-payments.js - Updated distributePrizePool() function
+      2. /app/app/api/admin/payout/route.js - Updated PUT endpoint (auto-distribution)
+      
+      TESTING REQUIREMENTS:
+      - Test payout calculation logic for different winner counts (1, 2, 3, 5, 10 winners)
+      - Verify that percentages always sum to 100%
+      - Verify relative ratios are maintained (1st place always gets more than 2nd, etc.)
+      - Check edge cases: 1 winner gets 100%, 10 winners get normalized fixed percentages
+      
+      NOTE: This is a PURE LOGIC change - no external API calls needed for testing the calculation itself. The Whop payment APIs remain the same.
