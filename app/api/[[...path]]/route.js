@@ -572,20 +572,30 @@ async function getAdminDashboard(request) {
       })
     );
 
-    // Calculate community engagement metrics
-    const { data: allPosts } = await supabase
-      .from('posts')
-      .select('likes_count, reply_count, view_count, poll_votes_count, whop_user_id')
-      .eq('whop_company_id', companyId);
+    // Calculate community engagement metrics using Whop SDK
+    // Fetch forum posts from Whop SDK
+    const forumPosts = [];
+    try {
+      for await (const post of whopSdk.forumPosts.list({ company_id: companyId })) {
+        forumPosts.push(post);
+      }
+    } catch (error) {
+      console.warn('Could not fetch forum posts from Whop:', error.message);
+    }
 
-    const totalPostCount = allPosts?.filter(p => p.post_type === 'forum').length || 0;
-    const totalReplies = allPosts?.reduce((sum, p) => sum + (p.reply_count || 0), 0) || 0;
-    const totalReactions = allPosts?.reduce((sum, p) => sum + (p.likes_count || 0) + (p.poll_votes_count || 0), 0) || 0;
-    const totalViews = allPosts?.reduce((sum, p) => sum + (p.view_count || 0), 0) || 0;
+    const totalPostCount = forumPosts.length;
+    const totalViews = forumPosts.reduce((sum, p) => sum + (p.view_count || 0), 0);
+    const totalReplies = forumPosts.reduce((sum, p) => sum + (p.comment_count || 0), 0);
+    const totalReactions = forumPosts.reduce((sum, p) => sum + (p.like_count || 0), 0);
 
-    // Get active members (users who posted/commented)
-    const uniqueActiveUsers = new Set(allPosts?.map(p => p.whop_user_id).filter(Boolean));
-    const activeMembers = uniqueActiveUsers.size;
+    // Get active members from leaderboard
+    const { data: leaderboardData } = await supabase
+      .from('leaderboard_entries')
+      .select('whop_user_id')
+      .eq('whop_company_id', companyId)
+      .gt('points', 0);
+
+    const activeMembers = leaderboardData?.length || 0;
 
     // Calculate engagement rate
     const totalInteractions = totalReplies + totalReactions;
