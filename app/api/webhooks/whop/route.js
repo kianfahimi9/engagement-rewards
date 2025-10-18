@@ -86,7 +86,7 @@ async function handlePaymentSucceeded(data) {
         whop_payment_id: data.id,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', prizePool.id);
+      .eq('whop_checkout_id', prizePool.whop_checkout_id);
 
     if (updateError) {
       console.error('❌ Database update error:', updateError);
