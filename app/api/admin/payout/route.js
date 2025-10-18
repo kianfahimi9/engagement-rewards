@@ -207,8 +207,8 @@ export async function PUT(request) {
 
       try {
         // Pay user following exact Whop documentation
-        // https://docs.whop.com/apps/features/payments-and-payouts
-        const payoutResult = await whopSdk.payments.payUser({
+        // NOTE: payUser is in @whop/api (whopApiClient), not @whop/sdk
+        const payoutResult = await whopApiClient.payments.payUser({
           amount: amount,
           currency: "usd",
           destinationId: winner.whop_user_id,
