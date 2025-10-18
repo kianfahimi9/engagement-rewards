@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DollarSign, TrendingUp, Users, Activity, ArrowLeft, Plus, Trophy, Clock, CheckCircle, XCircle, BarChart3, Award } from 'lucide-react';
+import { DollarSign, TrendingUp, Users, Activity, ArrowLeft, Plus, Trophy, Clock, CheckCircle, XCircle, BarChart3, Award, Calendar, Wallet } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,75 +9,141 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useIframeSdk } from "@whop/react";
 import Link from 'next/link';
 
 export default function AdminView({ experienceId, userId, companyId }) {
-  const [stats, setStats] = useState(null);
   const [prizePools, setPrizePools] = useState([]);
-  const [payouts, setPayouts] = useState([]);
+  const [companyBalance, setCompanyBalance] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [newPoolAmount, setNewPoolAmount] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [paymentLoading, setPaymentLoading] = useState(false);
-  const [paymentError, setPaymentError] = useState('');
+  const [creating, setCreating] = useState(false);
+  const [payoutLoading, setPayoutLoading] = useState({});
+  
+  // Form state
+  const [newPoolAmount, setNewPoolAmount] = useState('');
+  const [periodType, setPeriodType] = useState('weekly');
+  const [endDate, setEndDate] = useState('');
   
   const iframeSdk = useIframeSdk();
 
   useEffect(() => {
-    fetchAdminData();
+    fetchPrizePools();
   }, []);
 
-  const fetchAdminData = async () => {
+  const fetchPrizePools = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/dashboard');
+      const response = await fetch(`/api/admin/prize-pools?experienceId=${experienceId}&companyId=${companyId}&userId=${userId}`);
       const data = await response.json();
-      setStats(data.stats);
-      setPrizePools(data.prizePools || []);
-      setPayouts(data.payouts || []);
+      
+      if (data.success) {
+        setPrizePools(data.prizePools || []);
+        setCompanyBalance(data.companyBalance);
+      }
     } catch (error) {
-      console.error('Error fetching admin data:', error);
+      console.error('Error fetching prize pools:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleCreatePrizePool = async () => {
-    setPaymentLoading(true);
-    setPaymentError('');
+    setCreating(true);
     
     try {
-      // Get current user from iframe SDK
-      const currentUser = await iframeSdk.getCurrentUser();
-      
-      if (!currentUser?.id) {
-        throw new Error('User not found');
-      }
-
       const amount = parseFloat(newPoolAmount);
       if (isNaN(amount) || amount <= 0) {
-        throw new Error('Please enter a valid amount');
+        alert('Please enter a valid amount');
+        return;
       }
 
-      // Create charge via our API
-      const response = await fetch('/api/payments/create-charge', {
+      const response = await fetch('/api/admin/prize-pools', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: currentUser.id,
-          amount: amount,
-          description: `Prize Pool - ${new Date().toLocaleDateString()}`,
-        }),
+          amount,
+          periodType,
+          endDate: endDate || null,
+          experienceId,
+          companyId,
+          userId
+        })
       });
 
       const data = await response.json();
 
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to create charge');
+      // If insufficient balance, trigger Whop checkout
+      if (data.needsPayment) {
+        alert(`Insufficient balance! You have $${data.currentBalance}, but need $${data.required}. Adding funds...`);
+        
+        // Trigger Whop checkout modal
+        const checkoutResult = await iframeSdk.showCheckout({
+          experienceId: experienceId,
+          successUrl: window.location.href,
+          cancelUrl: window.location.href
+        });
+        
+        console.log('Checkout result:', checkoutResult);
+        
+        // Refresh balance after checkout
+        await fetchPrizePools();
+        return;
       }
+
+      if (data.success) {
+        alert('Prize pool created successfully!');
+        setDialogOpen(false);
+        setNewPoolAmount('');
+        setPeriodType('weekly');
+        setEndDate('');
+        fetchPrizePools();
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error creating prize pool:', error);
+      alert(`Error: ${error.message}`);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handlePayout = async (prizePoolId) => {
+    if (!confirm('Are you sure you want to distribute this prize pool to the top 10 winners?')) {
+      return;
+    }
+
+    setPayoutLoading(prev => ({ ...prev, [prizePoolId]: true }));
+
+    try {
+      const response = await fetch('/api/admin/payout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prizePoolId,
+          experienceId,
+          companyId,
+          userId
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`✅ Successfully paid out ${data.payouts.length} winners! Total: $${data.totalPaid.toFixed(2)}`);
+        fetchPrizePools();
+      } else {
+        alert(`❌ Payout failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error during payout:', error);
+      alert(`Error: ${error.message}`);
+    } finally {
+      setPayoutLoading(prev => ({ ...prev, [prizePoolId]: false }));
+    }
+  };
 
       // Open checkout in iframe
       const checkoutResult = await iframeSdk.openCheckout(data.checkoutSessionUrl);
