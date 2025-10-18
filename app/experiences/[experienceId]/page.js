@@ -29,29 +29,46 @@ export default async function ExperiencePage({ params }) {
     // Fetch community from DB to get latest settings and level names
     const { data: community } = await supabase
       .from('communities')
-      .select('whop_company_id, name, settings, level_names')
+      .select('whop_company_id, name, settings, level_names, last_synced_at')
       .eq('whop_company_id', companyContext.company.companyId)
       .single();
 
-    // Auto-sync on every page load - fetch fresh community data from DB (like /api/sync-whop does)
-    try {
-      console.log('🔄 Auto-syncing leaderboard data...');
-      
-      if (community) {
-        const forumExperiences = community.settings?.forumExperiences || [];
-        const chatExperiences = community.settings?.chatExperiences || [];
+    // Smart caching: Only sync if data is stale (older than 3 minutes)
+    const CACHE_DURATION_MS = 3 * 60 * 1000; // 3 minutes
+    const now = new Date();
+    const lastSynced = community?.last_synced_at ? new Date(community.last_synced_at) : null;
+    const isCacheValid = lastSynced && (now - lastSynced) < CACHE_DURATION_MS;
+
+    // Auto-sync leaderboard data (only if cache is stale)
+    if (!isCacheValid) {
+      try {
+        console.log('🔄 Cache stale - syncing data...');
         
-        console.log('📊 Syncing with experiences:', { forumExperiences, chatExperiences });
-        
-        await syncCommunityEngagement(
-          community.whop_company_id,
-          forumExperiences,
-          chatExperiences
-        );
-        console.log('✅ Auto-sync completed');
+        if (community) {
+          const forumExperiences = community.settings?.forumExperiences || [];
+          const chatExperiences = community.settings?.chatExperiences || [];
+          
+          console.log('📊 Syncing with experiences:', { forumExperiences, chatExperiences });
+          
+          await syncCommunityEngagement(
+            community.whop_company_id,
+            forumExperiences,
+            chatExperiences
+          );
+
+          // Update cache timestamp
+          await supabase
+            .from('communities')
+            .update({ last_synced_at: now })
+            .eq('whop_company_id', community.whop_company_id);
+
+          console.log('✅ Auto-sync completed and cache updated');
+        }
+      } catch (syncError) {
+        console.error('❌ Auto-sync failed:', syncError);
       }
-    } catch (syncError) {
-      console.error('❌ Auto-sync failed:', syncError);
+    } else {
+      console.log(`✅ Using cached data (synced ${Math.round((now - lastSynced) / 1000)}s ago)`);
     }
     
     // Pass auth info and company context to client component
