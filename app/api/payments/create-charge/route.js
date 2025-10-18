@@ -56,6 +56,7 @@ export async function POST(request) {
         type: 'prize_pool_deposit',
         companyId: companyId,
         experienceId: experienceId,
+        checkoutConfigId: checkoutConfig?.id, // Will be undefined on first create, but helps for tracking
         periodStart: periodStart,
         periodEnd: periodEnd,
         amount: amountFloat
