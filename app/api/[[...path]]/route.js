@@ -606,7 +606,7 @@ async function getAdminDashboard(request) {
     // Get top contributor
     const { data: topContributor } = await supabase
       .from('leaderboard_entries')
-      .select('whop_user_id, points, users(username)')
+      .select('whop_user_id, points, users(username, avatar_url, level)')
       .eq('whop_company_id', companyId)
       .order('points', { ascending: false })
       .limit(1)
@@ -625,9 +625,10 @@ async function getAdminDashboard(request) {
           totalReactions: totalReactions,
           totalViews: totalViews,
           activeMembers: activeMembers,
-          engagementRate: engagementRate,
           topContributor: topContributor ? {
             username: topContributor.users?.username || 'N/A',
+            avatar_url: topContributor.users?.avatar_url,
+            level: topContributor.users?.level || 1,
             points: topContributor.points || 0
           } : null
         }
