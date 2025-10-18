@@ -93,9 +93,13 @@ export default function AdminView({ experienceId, userId, companyId }) {
       
       if (result.status === 'ok') {
         console.log('✅ Payment successful:', result.data.receipt_id);
-        // Close dialog and refresh
+        // Close dialog and reset form
         setDialogOpen(false);
         setNewPoolAmount('');
+        setPeriodType('weekly');
+        setPeriodStart('');
+        setPeriodEnd('');
+        setPaymentError('');
         
         // Refresh admin data after a short delay
         setTimeout(() => {
