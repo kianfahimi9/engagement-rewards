@@ -32,6 +32,62 @@ export default function AdminView({ experienceId, userId, companyId }) {
   
   const iframeSdk = useIframeSdk();
 
+  // Helper: Get status info with icon and color
+  const getStatusInfo = (pool) => {
+    const now = new Date();
+    const start = new Date(pool.start_date);
+    const end = new Date(pool.end_date);
+
+    if (pool.status === 'paid_out') {
+      return { 
+        label: 'Paid Out', 
+        color: 'bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400',
+        icon: '✅',
+        canEdit: false,
+        canDelete: false
+      };
+    }
+
+    if (pool.status === 'active') {
+      if (now > end) {
+        return { 
+          label: 'Ended - Ready for Payout', 
+          color: 'bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400',
+          icon: '⏰',
+          canEdit: false,
+          canDelete: false
+        };
+      }
+      return { 
+        label: 'Active', 
+        color: 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400',
+        icon: '🟢',
+        canEdit: false,
+        canDelete: false
+      };
+    }
+
+    if (pool.status === 'pending') {
+      if (now < start) {
+        return { 
+          label: 'Scheduled', 
+          color: 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400',
+          icon: '📅',
+          canEdit: true,
+          canDelete: true
+        };
+      }
+    }
+
+    return { 
+      label: pool.status || 'Pending', 
+      color: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400',
+      icon: '⏸️',
+      canEdit: false,
+      canDelete: false
+    };
+  };
+
   // Auto-calculate end date based on period type and start date
   const calculateEndDate = (startDate, type) => {
     if (!startDate) return null;
