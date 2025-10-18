@@ -31,7 +31,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/admin/dashboard');
+      const response = await fetch(`/api/admin/dashboard?companyId=${companyId}`);
       const data = await response.json();
       setStats(data.stats);
       setPrizePools(data.prizePools || []);
