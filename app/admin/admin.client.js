@@ -48,45 +48,46 @@ export default function AdminView({ experienceId, userId, companyId }) {
     setPaymentError('');
     
     try {
-      // Get current user from iframe SDK
-      const currentUser = await iframeSdk.getCurrentUser();
-      
-      if (!currentUser?.id) {
-        throw new Error('User not found');
-      }
-
       const amount = parseFloat(newPoolAmount);
       if (isNaN(amount) || amount <= 0) {
         throw new Error('Please enter a valid amount');
       }
 
-      // Create charge via our API
+      // Create checkout configuration via our API
+      // Using latest Whop API (2025)
       const response = await fetch('/api/payments/create-charge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: currentUser.id,
           amount: amount,
-          description: `Prize Pool - ${new Date().toLocaleDateString()}`,
+          companyId: companyId,
+          title: `Prize Pool - $${amount}`,
         }),
       });
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to create charge');
+        throw new Error(data.error || 'Failed to create checkout');
       }
 
-      // Open checkout in iframe
-      const checkoutResult = await iframeSdk.openCheckout(data.checkoutSessionUrl);
+      // Open checkout URL in the iframe
+      // The checkout URL is returned from the checkout configuration
+      const checkoutResult = await iframeSdk.openUrl(data.checkoutUrl);
       
-      if (checkoutResult) {
-        setDialogOpen(false);
-        setNewPoolAmount('');
+      console.log('Checkout opened:', checkoutResult);
+      
+      // Close dialog and refresh
+      setDialogOpen(false);
+      setNewPoolAmount('');
+      
+      // Refresh admin data after a short delay (allow for payment processing)
+      setTimeout(() => {
         fetchAdminData();
-      }
+      }, 2000);
+      
     } catch (error) {
       console.error('Error creating prize pool:', error);
       setPaymentError(error.message);
