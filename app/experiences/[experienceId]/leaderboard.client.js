@@ -20,11 +20,49 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
   const [prizePool, setPrizePool] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const [hasSyncedOnLoad, setHasSyncedOnLoad] = useState(false);
 
+  // Auto-sync on initial page load
   useEffect(() => {
-    // Fetch data immediately when period changes (no delay)
-    fetchLeaderboardData();
-  }, [selectedPeriod, experienceId, companyId]);
+    if (companyId && !hasSyncedOnLoad) {
+      triggerAutoSync();
+      setHasSyncedOnLoad(true);
+    }
+  }, [companyId]);
+
+  // Fetch data when period changes
+  useEffect(() => {
+    if (hasSyncedOnLoad) {
+      fetchLeaderboardData();
+    }
+  }, [selectedPeriod, experienceId, companyId, hasSyncedOnLoad]);
+
+  const triggerAutoSync = async () => {
+    try {
+      console.log('🔄 Auto-syncing leaderboard on page load for company:', companyId);
+      
+      // Trigger sync
+      await fetch('/api/sync-whop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          communityId: companyId
+        })
+      });
+      
+      // Wait for sync to complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Fetch updated data
+      await fetchLeaderboardData();
+    } catch (error) {
+      console.error('Error during auto-sync:', error);
+      // Still fetch data even if sync fails
+      await fetchLeaderboardData();
+    }
+  };
 
   const fetchLeaderboardData = async () => {
     setLoading(true);
