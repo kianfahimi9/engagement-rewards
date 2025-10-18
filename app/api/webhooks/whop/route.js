@@ -41,35 +41,57 @@ export async function POST(request) {
 
 /**
  * Handle successful payment
+ * Updated for 2025 Whop API - checkout configurations
  */
 async function handlePaymentSucceeded(data) {
   console.log('✅ Payment succeeded:', {
     id: data.id,
     user_id: data.user_id,
     amount: data.amount,
+    checkout_session_id: data.checkout_session_id,
     metadata: data.metadata,
   });
 
   const { metadata } = data;
 
-  // Check if this is a prize pool creation
-  if (metadata?.type === 'prize_pool_creation') {
-    const { communityId } = metadata;
+  // Check if this is a prize pool deposit (new metadata type)
+  if (metadata?.type === 'prize_pool_deposit' || metadata?.type === 'prize_pool_creation') {
+    const { companyId, experienceId } = metadata;
+
+    console.log('💰 Prize pool payment detected:', { companyId, experienceId });
+
+    // Find prize pool by checkout_session_id (new API) or payment ID (fallback)
+    // The checkout_session_id links to our whop_checkout_id column
+    const { data: prizePool, error: fetchError } = await supabase
+      .from('prize_pools')
+      .select('*')
+      .eq('whop_checkout_id', data.checkout_session_id || data.id)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('❌ Error finding prize pool:', fetchError);
+      return;
+    }
+
+    if (!prizePool) {
+      console.warn('⚠️ No prize pool found for checkout session:', data.checkout_session_id);
+      return;
+    }
 
     // Update prize pool status to active
-    const { error } = await supabase
+    const { error: updateError } = await supabase
       .from('prize_pools')
       .update({
         status: 'active',
         whop_payment_id: data.id,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       })
-      .eq('whop_charge_id', data.id);
+      .eq('id', prizePool.id);
 
-    if (error) {
-      console.error('Database update error:', error);
+    if (updateError) {
+      console.error('❌ Database update error:', updateError);
     } else {
-      console.log('✅ Prize pool activated');
+      console.log('✅ Prize pool activated:', prizePool.id);
     }
   }
 }
