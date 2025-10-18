@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown } from 'lucide-react';
+import { Trophy, Flame, Award, DollarSign, TrendingUp, Zap, ArrowLeft, Target, Star, Crown, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
