@@ -422,6 +422,57 @@ export default function AdminView({ experienceId, userId, companyId }) {
           </Card>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Prize Distribution</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to distribute this prize pool?
+            </DialogDescription>
+          </DialogHeader>
+          {selectedPool && (
+            <div className="py-4 space-y-3">
+              <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Prize Pool Amount</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">${selectedPool.amount}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Distribution Breakdown:</p>
+                <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                  <p>🥇 1st Place: ${(selectedPool.amount * 0.40).toFixed(2)} (40%)</p>
+                  <p>🥈 2nd Place: ${(selectedPool.amount * 0.18).toFixed(2)} (18%)</p>
+                  <p>🥉 3rd Place: ${(selectedPool.amount * 0.12).toFixed(2)} (12%)</p>
+                  <p>📍 4th-10th: Remaining ${(selectedPool.amount * 0.30).toFixed(2)} (30%)</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                This will distribute funds to the top 10 users on the leaderboard for this period.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setConfirmDialogOpen(false);
+                setSelectedPool(null);
+              }}
+              disabled={payoutLoading}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
+              onClick={handleDistributePrizePool}
+              disabled={payoutLoading}
+            >
+              {payoutLoading ? 'Processing...' : 'Confirm Distribution'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
