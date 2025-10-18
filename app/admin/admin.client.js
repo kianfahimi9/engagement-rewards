@@ -63,6 +63,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
         body: JSON.stringify({
           amount: amount,
           companyId: companyId,
+          experienceId: experienceId, // Pass experienceId for redirect URL
           title: `Prize Pool - $${amount}`,
         }),
       });
@@ -70,7 +71,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to create checkout');
+        throw new Error(data.error || data.details || 'Failed to create checkout');
       }
 
       // Open checkout URL in the iframe
