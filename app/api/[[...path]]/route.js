@@ -418,7 +418,7 @@ async function getUserStats(request) {
       },
       earnings: (earningsData || []).map(earning => ({
         whop_payout_id: earning.whop_payment_id,
-        amount: parseFloat(earning.amount),
+        amount: Math.round(parseFloat(earning.amount) * 100) / 100, // Round to 2 decimal places
         rank: earning.rank,
         date: earning.created_at,
         period: 'Weekly', // TODO: Get from prize pool
