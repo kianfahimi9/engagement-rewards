@@ -164,6 +164,9 @@ export async function PUT(request) {
           currency: "usd",
           destinationId: winner.whop_user_id,
           ledgerAccountId: ledgerAccountId,
+          idempotenceKey: `${prizePoolId}-${winner.whop_user_id}-${i}`,
+          notes: `Prize #${i + 1} - ${prizePool.period_type}`,
+          reason: "content_reward_payout"
         });
 
         const { data: payout } = await supabase
