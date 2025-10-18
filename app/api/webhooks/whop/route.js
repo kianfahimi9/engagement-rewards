@@ -41,99 +41,51 @@ export async function POST(request) {
 
 /**
  * Handle successful payment
- * Updated for 2025 Whop API - checkout configurations
+ * Following official Whop documentation exactly
  */
 async function handlePaymentSucceeded(data) {
   console.log('✅ Payment succeeded:', {
     id: data.id,
     user_id: data.user_id,
-    amount: data.amount,
-    checkout_session_id: data.checkout_session_id,
+    subtotal: data.subtotal,
+    amount_after_fees: data.amount_after_fees,
     metadata: data.metadata,
   });
 
-  const { metadata } = data;
+  const { id, user_id, metadata } = data;
 
-  // Check if this is a prize pool deposit (new metadata type)
-  if (metadata?.type === 'prize_pool_deposit' || metadata?.type === 'prize_pool_creation') {
-    const { companyId, experienceId } = metadata;
+  // Check if this is a prize pool deposit
+  if (metadata?.type === 'prize_pool_deposit') {
+    const { companyId, experienceId, periodStart, periodEnd, periodType, amount } = metadata;
 
-    console.log('💰 Prize pool payment detected:', { companyId, experienceId });
+    console.log('💰 Prize pool payment detected:', {
+      paymentId: id,
+      userId: user_id,
+      companyId,
+      amount
+    });
 
-    // According to Whop docs, the payment webhook includes plan_id in metadata
-    // We can match by plan_id, checkout_id, or even metadata fields
-    const planId = metadata.plan_id || data.plan_id;
-    const checkoutId = data.checkout_session_id || metadata.checkout_session_id;
-    
-    console.log('🔍 Matching prize pool:', { planId, checkoutId, companyId });
-
-    // Try to find prize pool by plan_id (most reliable), then checkout_id, then by metadata match
-    let prizePool = null;
-    let fetchError = null;
-
-    // Strategy 1: Match by plan_id (most reliable with checkout configurations)
-    if (planId) {
-      const result = await supabase
-        .from('prize_pools')
-        .select('*')
-        .eq('whop_plan_id', planId)
-        .maybeSingle();
-      prizePool = result.data;
-      fetchError = result.error;
-    }
-
-    // Strategy 2: Fallback to checkout_id
-    if (!prizePool && checkoutId) {
-      const result = await supabase
-        .from('prize_pools')
-        .select('*')
-        .eq('whop_checkout_id', checkoutId)
-        .maybeSingle();
-      prizePool = result.data;
-      fetchError = result.error;
-    }
-
-    // Strategy 3: Last resort - match by amount + company + recent creation (last 5 minutes)
-    if (!prizePool && metadata.amount && companyId) {
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-      const result = await supabase
-        .from('prize_pools')
-        .select('*')
-        .eq('whop_company_id', companyId)
-        .eq('amount', metadata.amount)
-        .eq('status', 'pending')
-        .gte('created_at', fiveMinutesAgo)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      prizePool = result.data;
-      fetchError = result.error;
-    }
-
-    if (fetchError) {
-      console.error('❌ Error finding prize pool:', fetchError);
-      return;
-    }
-
-    if (!prizePool) {
-      console.warn('⚠️ No prize pool found for checkout session:', data.checkout_session_id);
-      return;
-    }
-
-    // Update prize pool status to active
-    const { error: updateError } = await supabase
+    // Create prize pool record (official pattern - create on webhook, not before)
+    const { data: prizePool, error: insertError } = await supabase
       .from('prize_pools')
-      .update({
-        status: 'active',
-        whop_payment_id: data.id,
-        updated_at: new Date().toISOString(),
+      .insert({
+        whop_payment_id: id,
+        whop_company_id: companyId,
+        whop_user_id: user_id,
+        amount: parseFloat(amount),
+        currency: 'usd',
+        period_type: periodType || 'weekly',
+        period_start: periodStart || null,
+        period_end: periodEnd || null,
+        status: 'active', // Active immediately since payment succeeded
       })
-      .eq('whop_checkout_id', prizePool.whop_checkout_id);
+      .select()
+      .single();
 
-    if (updateError) {
-      console.error('❌ Database update error:', updateError);
+    if (insertError) {
+      console.error('❌ Database insert error:', insertError);
     } else {
-      console.log('✅ Prize pool activated:', prizePool.id);
+      console.log('✅ Prize pool created and activated:', prizePool.whop_payment_id);
     }
   }
 }
