@@ -18,6 +18,9 @@ export default function AdminView({ experienceId, userId, companyId }) {
   const [payouts, setPayouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newPoolAmount, setNewPoolAmount] = useState('');
+  const [periodType, setPeriodType] = useState('weekly');
+  const [periodStart, setPeriodStart] = useState('');
+  const [periodEnd, setPeriodEnd] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState('');
