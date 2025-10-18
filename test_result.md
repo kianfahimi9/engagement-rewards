@@ -233,12 +233,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Add database columns for engagement metrics"
-    - "Update point calculation for forum posts"
-    - "Update point calculation for chat messages"
-    - "Update forum post sync to use Whop API metrics"
-    - "Update chat message sync to calculate reactions and poll votes"
-    - "Sync API endpoint"
+    - "Proportional prize pool distribution"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
