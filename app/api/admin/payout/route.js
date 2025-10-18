@@ -204,19 +204,31 @@ export async function PUT(request) {
       }
     }
 
-    // Update prize pool
-    await supabase
-      .from('prize_pools')
-      .update({
-        status: 'paid_out',
-        paid_out_at: new Date().toISOString(),
-        winners_count: payouts.length,
-      })
-      .eq('whop_payment_id', prizePoolId);
+    // Update prize pool status - only if at least one payout succeeded
+    if (payouts.length > 0) {
+      await supabase
+        .from('prize_pools')
+        .update({
+          status: 'paid_out',
+          paid_out_at: new Date().toISOString(),
+          winners_count: payouts.length,
+        })
+        .eq('whop_payment_id', prizePoolId);
+    } else {
+      // All payouts failed - mark as failed
+      await supabase
+        .from('prize_pools')
+        .update({
+          status: 'failed',
+        })
+        .eq('whop_payment_id', prizePoolId);
+    }
 
     return NextResponse.json({
-      success: true,
-      message: `Distributed to ${payouts.length} winners`,
+      success: payouts.length > 0,
+      message: payouts.length > 0 
+        ? `Distributed to ${payouts.length} winners` 
+        : 'All payouts failed',
       payouts,
       errors,
       totalPaid: payouts.reduce((sum, p) => sum + parseFloat(p.amount), 0)
