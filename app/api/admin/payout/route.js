@@ -23,24 +23,27 @@ export async function POST(request) {
 
     console.log('🎁 Manual test payout:', { userId, username, amount });
 
-    // Get company ledger account using whopApiClient
+    // Get company ledger account - following exact Whop documentation
+    // https://docs.whop.com/apps/features/payments-and-payouts
     const experience = await whopSdk.experiences.retrieve(experienceId);
-    const ledgerAccountResponse = await whopApiClient.companies.getCompanyLedgerAccount({
+    const ledgerAccount = await whopSdk.companies.getCompanyLedgerAccount({
       companyId: experience.company.id,
     });
 
-    const ledgerAccountId = ledgerAccountResponse.company?.ledgerAccount?.id;
+    const ledgerAccountId = ledgerAccount.company?.ledgerAccount?.id;
+    const transferFee = ledgerAccount.company?.ledgerAccount?.transferFee;
 
     if (!ledgerAccountId) {
       throw new Error('Company ledger account not found');
     }
 
-    // Pay user using official Whop API
-    const payoutResult = await whopApiClient.payments.payUser({
+    // Pay user following exact Whop documentation
+    const payoutResult = await whopSdk.payments.payUser({
       amount: parseFloat(amount),
       currency: "usd",
       destinationId: userId,
       ledgerAccountId: ledgerAccountId,
+      transferFee: transferFee,
       idempotenceKey: `manual-${userId}-${Date.now()}`,
       notes: `Manual test payout`,
       reason: "content_reward_payout"
