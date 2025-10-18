@@ -53,6 +53,13 @@ export default function AdminView({ experienceId, userId, companyId }) {
         throw new Error('Please enter a valid amount');
       }
 
+      // Calculate period dates for weekly pool (default)
+      const now = new Date();
+      const periodStart = new Date(now);
+      periodStart.setDate(now.getDate() - now.getDay()); // Start of week (Sunday)
+      const periodEnd = new Date(periodStart);
+      periodEnd.setDate(periodStart.getDate() + 6); // End of week (Saturday)
+
       // Create checkout configuration via our API
       // Using latest Whop API (2025)
       const response = await fetch('/api/payments/create-charge', {
@@ -63,7 +70,10 @@ export default function AdminView({ experienceId, userId, companyId }) {
         body: JSON.stringify({
           amount: amount,
           companyId: companyId,
-          experienceId: experienceId, // Pass experienceId for redirect URL
+          experienceId: experienceId,
+          periodType: 'weekly', // Can be made configurable later
+          periodStart: periodStart.toISOString().split('T')[0],
+          periodEnd: periodEnd.toISOString().split('T')[0],
           title: `Prize Pool - $${amount}`,
         }),
       });
