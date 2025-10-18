@@ -36,8 +36,8 @@ export default function AdminView({ experienceId, userId, companyId }) {
   // Helper: Get status info with icon and color
   const getStatusInfo = (pool) => {
     const now = new Date();
-    const start = new Date(pool.start_date);
-    const end = new Date(pool.end_date);
+    const start = new Date(pool.start_date || pool.period_start);
+    const end = new Date(pool.end_date || pool.period_end);
 
     if (pool.status === 'paid_out') {
       return { 
