@@ -608,6 +608,134 @@ export default function AdminView({ experienceId, userId, companyId }) {
             </CardContent>
           </Card>
         </div>
+
+        {/* Community Engagement Analytics */}
+        <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="bg-[#FA4616]/10 p-2.5 rounded-xl">
+                <BarChart3 className="h-5 w-5 text-[#FA4616]" />
+              </div>
+              <div>
+                <CardTitle className="text-xl text-gray-900 dark:text-white">Community Analytics</CardTitle>
+                <CardDescription>Engagement insights & metrics</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Total Posts */}
+              <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-blue-500 p-1.5 rounded-lg">
+                    <MessageSquare className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <p className="text-xs font-medium text-blue-700 dark:text-blue-400">Forum Posts</p>
+                </div>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                  {stats?.communityEngagement?.totalPosts || 0}
+                </p>
+                <p className="text-xs text-blue-600 dark:text-blue-500 mt-1">Total created</p>
+              </div>
+
+              {/* Total Replies */}
+              <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-green-500 p-1.5 rounded-lg">
+                    <MessageCircle className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <p className="text-xs font-medium text-green-700 dark:text-green-400">Replies</p>
+                </div>
+                <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                  {stats?.communityEngagement?.totalReplies || 0}
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-500 mt-1">Total comments</p>
+              </div>
+
+              {/* Total Reactions */}
+              <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-purple-500 p-1.5 rounded-lg">
+                    <Zap className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <p className="text-xs font-medium text-purple-700 dark:text-purple-400">Reactions</p>
+                </div>
+                <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                  {stats?.communityEngagement?.totalReactions || 0}
+                </p>
+                <p className="text-xs text-purple-600 dark:text-purple-500 mt-1">Likes & votes</p>
+              </div>
+
+              {/* Total Views */}
+              <div className="p-4 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/30 dark:to-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-orange-500 p-1.5 rounded-lg">
+                    <TrendingUp className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <p className="text-xs font-medium text-orange-700 dark:text-orange-400">Views</p>
+                </div>
+                <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                  {stats?.communityEngagement?.totalViews || 0}
+                </p>
+                <p className="text-xs text-orange-600 dark:text-orange-500 mt-1">Content views</p>
+              </div>
+            </div>
+
+            {/* Engagement Breakdown */}
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">User Activity</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Active Members */}
+                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Active Members</p>
+                    <Users className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
+                    {stats?.communityEngagement?.activeMembers || 0}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {stats?.communityEngagement?.activeMembers && stats?.totalMembers 
+                      ? `${Math.round((stats.communityEngagement.activeMembers / stats.totalMembers) * 100)}% of total`
+                      : 'Posted or commented'
+                    }
+                  </p>
+                </div>
+
+                {/* Engagement Rate */}
+                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Engagement Rate</p>
+                    <Activity className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
+                    {stats?.communityEngagement?.engagementRate || '0'}%
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Interactions per user
+                  </p>
+                </div>
+
+                {/* Top Contributor */}
+                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Top Contributor</p>
+                    <Crown className="h-4 w-4 text-yellow-500" />
+                  </div>
+                  <p className="text-xl font-bold text-gray-900 dark:text-white truncate">
+                    {stats?.communityEngagement?.topContributor?.username || 'N/A'}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {stats?.communityEngagement?.topContributor?.points 
+                      ? `${Math.round(stats.communityEngagement.topContributor.points)} points`
+                      : 'No activity yet'
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Create Prize Pool Dialog */}
