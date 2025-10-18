@@ -603,14 +603,30 @@ async function getAdminDashboard(request) {
       ? Math.round((totalInteractions / totalMembers)) 
       : 0;
 
-    // Get top contributor
+    // Get top contributor (matching leaderboard implementation exactly)
     const { data: topContributor } = await supabase
       .from('leaderboard_entries')
-      .select('whop_user_id, points, users(username, avatar_url, level)')
+      .select(`
+        whop_user_id,
+        points,
+        users (
+          whop_user_id,
+          username,
+          avatar_url
+        )
+      `)
       .eq('whop_company_id', companyId)
       .order('points', { ascending: false })
       .limit(1)
       .single();
+
+    // Format top contributor with calculated level (same as leaderboard)
+    const formattedTopContributor = topContributor ? {
+      username: topContributor.users?.username || 'N/A',
+      avatar_url: topContributor.users?.avatar_url,
+      level: calculateLevel(topContributor.points || 0), // Calculate from points, same as leaderboard
+      points: topContributor.points || 0
+    } : null;
 
     return NextResponse.json({
       success: true,
@@ -625,12 +641,7 @@ async function getAdminDashboard(request) {
           totalReactions: totalReactions,
           totalViews: totalViews,
           activeMembers: activeMembers,
-          topContributor: topContributor ? {
-            username: topContributor.users?.username || 'N/A',
-            avatar_url: topContributor.users?.avatar_url,
-            level: topContributor.users?.level || 1,
-            points: topContributor.points || 0
-          } : null
+          topContributor: formattedTopContributor
         }
       },
       prizePools: prizePools || [],
