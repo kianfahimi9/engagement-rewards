@@ -302,7 +302,10 @@ export default function AdminView({ experienceId, userId, companyId }) {
                         <div>
                           <p className="font-semibold text-lg text-gray-900 dark:text-white">${pool.amount}</p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {pool.period_start} - {pool.period_end}
+                            {pool.period_type && <span className="capitalize">{pool.period_type}</span>}
+                            {pool.period_start && pool.period_end && (
+                              <span> • {pool.period_start} to {pool.period_end}</span>
+                            )}
                           </p>
                         </div>
                         <Badge className={pool.status === 'active' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 border-0'}>
