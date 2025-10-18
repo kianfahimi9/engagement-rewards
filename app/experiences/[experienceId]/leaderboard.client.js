@@ -22,12 +22,8 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    // Add delay on initial load to let sync complete (same as stats page)
-    const timer = setTimeout(() => {
-      fetchLeaderboardData();
-    }, 2000);
-    
-    return () => clearTimeout(timer);
+    // Fetch data immediately when period changes (no delay)
+    fetchLeaderboardData();
   }, [selectedPeriod, experienceId, companyId]);
 
   const fetchLeaderboardData = async () => {
