@@ -328,7 +328,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
                 <div className="space-y-3">
                   {prizePools.map((pool, i) => (
                     <div key={i} className="p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3">
                         <div>
                           <p className="font-semibold text-lg text-gray-900 dark:text-white">${pool.amount}</p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -342,6 +342,16 @@ export default function AdminView({ experienceId, userId, companyId }) {
                           {pool.status}
                         </Badge>
                       </div>
+                      {pool.status === 'active' && (
+                        <Button
+                          size="sm"
+                          className="w-full bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
+                          onClick={() => handleDistributePrizePool(pool)}
+                          disabled={payoutLoading}
+                        >
+                          {payoutLoading ? 'Processing...' : '💰 Distribute to Top 10'}
+                        </Button>
+                      )}
                     </div>
                   ))}
                 </div>
