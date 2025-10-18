@@ -106,6 +106,30 @@ const mockPrizePool = {
   status: 'active'
 };
 
+// Helper function to calculate current period_start based on period type
+function getCurrentPeriodStart(periodType) {
+  const now = new Date();
+  let periodStart;
+  
+  if (periodType === 'weekly') {
+    // Start of current week (Monday)
+    const dayOfWeek = now.getDay();
+    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Sunday is 0, Monday is 1
+    periodStart = new Date(now);
+    periodStart.setDate(now.getDate() + diff);
+    periodStart.setHours(0, 0, 0, 0);
+  } else if (periodType === 'monthly') {
+    // Start of current month
+    periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  } else {
+    // all_time: use a fixed start date (Jan 1, 2025) that never changes
+    periodStart = new Date(2025, 0, 1); // Month is 0-indexed, so 0 = January
+  }
+  
+  // Convert to date string (YYYY-MM-DD) to match database format
+  return periodStart.toISOString().split('T')[0];
+}
+
 // GET /api/leaderboard
 async function getLeaderboard(request) {
   try {
@@ -128,6 +152,9 @@ async function getLeaderboard(request) {
       );
     }
     
+    // Calculate the current period_start for this period type
+    const currentPeriodStart = getCurrentPeriodStart(period);
+    
     // Fetch leaderboard entries with user data
     const { data: leaderboardData, error: leaderboardError } = await supabase
       .from('leaderboard_entries')
@@ -144,6 +171,7 @@ async function getLeaderboard(request) {
       `)
       .eq('whop_company_id', companyId)
       .eq('period_type', period)
+      .eq('period_start', currentPeriodStart)
       .order('points', { ascending: false })
       .limit(10);
 
@@ -165,6 +193,7 @@ async function getLeaderboard(request) {
       `)
       .eq('whop_company_id', companyId)
       .eq('period_type', period)
+      .eq('period_start', currentPeriodStart)
       .eq('whop_user_id', currentUserId)
       .single();
 
