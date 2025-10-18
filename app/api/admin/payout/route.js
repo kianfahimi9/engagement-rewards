@@ -23,9 +23,9 @@ export async function POST(request) {
 
     console.log('🎁 Manual test payout:', { userId, username, amount });
 
-    // Get company ledger account
+    // Get company ledger account using whopApiClient
     const experience = await whopSdk.experiences.retrieve(experienceId);
-    const ledgerAccountResponse = await whopSdk.companies.getCompanyLedgerAccount({
+    const ledgerAccountResponse = await whopApiClient.companies.getCompanyLedgerAccount({
       companyId: experience.company.id,
     });
 
