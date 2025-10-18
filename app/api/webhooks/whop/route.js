@@ -60,12 +60,21 @@ async function handlePaymentSucceeded(data) {
 
     console.log('💰 Prize pool payment detected:', { companyId, experienceId });
 
-    // Find prize pool by checkout_session_id (new API) or payment ID (fallback)
-    // The checkout_session_id links to our whop_checkout_id column
+    // Get checkout ID from various possible locations in the webhook payload
+    const checkoutId = data.checkout_session_id || metadata.checkout_session_id || metadata.checkoutConfigId;
+    
+    if (!checkoutId) {
+      console.error('⚠️ No checkout ID found in webhook payload:', data);
+      return;
+    }
+
+    console.log('🔍 Looking for prize pool with checkout ID:', checkoutId);
+
+    // Find prize pool by checkout_session_id (new API)
     const { data: prizePool, error: fetchError } = await supabase
       .from('prize_pools')
       .select('*')
-      .eq('whop_checkout_id', data.checkout_session_id || data.id)
+      .eq('whop_checkout_id', checkoutId)
       .maybeSingle();
 
     if (fetchError) {
