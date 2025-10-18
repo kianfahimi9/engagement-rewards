@@ -115,6 +115,12 @@ export async function PUT(request) {
 
     // Get top 10 from leaderboard
     // Simplified query: just get top users by points for this company and period type
+    console.log(`🔍 Searching for winners with:`, {
+      companyId,
+      period_type: prizePool.period_type,
+      prize_pool_id: prizePool.whop_payment_id
+    });
+
     const { data: winners, error: winnersError } = await supabase
       .from('leaderboard_entries')
       .select('whop_user_id, points, rank, users(username)')
@@ -123,7 +129,14 @@ export async function PUT(request) {
       .order('points', { ascending: false })
       .limit(10);
 
-    console.log(`📊 Found ${winners?.length || 0} potential winners`);
+    console.log(`📊 Query result: Found ${winners?.length || 0} winners`);
+    if (winners && winners.length > 0) {
+      console.log('Winners:', winners.map(w => ({
+        user: w.whop_user_id,
+        points: w.points,
+        username: w.users?.username
+      })));
+    }
 
     if (winnersError) {
       console.error('Error fetching winners:', winnersError);
