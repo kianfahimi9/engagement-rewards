@@ -568,14 +568,14 @@ export default function AdminView({ experienceId, userId, companyId }) {
                       {/* User Info */}
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <Avatar className="h-10 w-10 ring-2 ring-gray-100 dark:ring-gray-800">
-                          <AvatarImage src={payout.avatar_url} />
+                          <AvatarImage src={payout.users?.avatar_url} />
                           <AvatarFallback className="bg-[#FA4616] text-white text-sm font-semibold">
-                            {payout.username?.slice(0, 2).toUpperCase() || '??'}
+                            {payout.users?.username?.slice(0, 2).toUpperCase() || '??'}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1">
                           <p className="font-semibold text-gray-900 dark:text-white truncate">
-                            {payout.username || 'Unknown User'}
+                            {payout.users?.username || 'Unknown User'}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             Rank #{payout.rank}
