@@ -228,6 +228,83 @@ export default function AdminView({ experienceId, userId, companyId }) {
                 Create Prize Pool
               </Button>
             </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Create New Prize Pool</DialogTitle>
+                <DialogDescription>
+                  Set up a prize pool for your community. Top 10 winners will receive payouts.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Prize Pool Amount (USD)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    placeholder="100.00"
+                    value={newPoolAmount}
+                    onChange={(e) => setNewPoolAmount(e.target.value)}
+                    min="1"
+                    step="0.01"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="period">Period Type</Label>
+                  <Select value={periodType} onValueChange={setPeriodType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weekly">Weekly</SelectItem>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="all_time">All Time</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">End Date (Optional)</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500">Leave empty for 7 days from now</p>
+                </div>
+
+                <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg text-sm">
+                  <p className="font-semibold mb-1">Prize Distribution:</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    1st: 40% • 2nd: 18% • 3rd: 12% • 4th: 8% • 5th: 6%
+                    <br />
+                    6th: 5% • 7th: 4% • 8th: 3% • 9th: 2% • 10th: 2%
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setDialogOpen(false)}
+                  className="flex-1"
+                  disabled={creating}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleCreatePrizePool}
+                  className="flex-1 bg-[#FA4616] hover:bg-[#FA4616]/90"
+                  disabled={creating}
+                >
+                  {creating ? 'Creating...' : 'Create Prize Pool'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         {/* Prize Pools List */}
         <div className="grid gap-4">
           {prizePools.length === 0 ? (
