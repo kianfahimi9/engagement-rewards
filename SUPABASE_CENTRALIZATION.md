@@ -107,10 +107,23 @@ export const supabase = new Proxy({}, {
 ✅ No duplicate client creation found in codebase
 
 ## Deployment Impact
-This change fixes the deployment error:
+This change fixes two types of deployment errors:
+
+**1. Missing Module Error (Initial):**
 ```
 Module not found: Can't resolve '@/lib/supabase'
 Module not found: Can't resolve './supabase.js'
 ```
 
-The app will now build successfully on Vercel and other deployment platforms.
+**2. Environment Variables Error (Build-time):**
+```
+Error: Missing Supabase environment variables
+```
+
+**Solution:** Lazy initialization pattern ensures:
+- Module imports succeed at build time
+- Environment variables are only checked at runtime
+- Client creation is deferred until first actual use
+- Works seamlessly with Vercel's environment variable injection
+
+The app will now build successfully on Vercel and other deployment platforms regardless of when environment variables become available.
