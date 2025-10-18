@@ -122,9 +122,9 @@ export async function PUT(request) {
       throw new Error('No winners found');
     }
 
-    // Get ledger account
+    // Get ledger account using whopApiClient
     const experience = await whopSdk.experiences.retrieve(experienceId);
-    const ledgerAccountResponse = await whopSdk.companies.getCompanyLedgerAccount({
+    const ledgerAccountResponse = await whopApiClient.companies.getCompanyLedgerAccount({
       companyId: experience.company.id,
     });
 
