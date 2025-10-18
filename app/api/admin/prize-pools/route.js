@@ -76,6 +76,58 @@ export async function POST(request) {
       );
     }
 
+    // Parse start and end dates
+    const startDate = new Date(body.startDate || Date.now());
+    const poolEndDate = new Date(endDate);
+
+    // Validate dates
+    if (poolEndDate <= startDate) {
+      return NextResponse.json(
+        { success: false, error: 'End date must be after start date' },
+        { status: 400 }
+      );
+    }
+
+    // Check for overlapping prize pools (Option A: Strict - only ONE active pool at a time)
+    const { data: existingPools, error: checkError } = await supabase
+      .from('prize_pools')
+      .select('id, period_type, start_date, end_date, status, amount')
+      .eq('whop_company_id', companyId)
+      .in('status', ['pending', 'active'])
+      .order('start_date', { ascending: true });
+
+    if (checkError) throw checkError;
+
+    // Check if any existing pool overlaps with the new pool's date range
+    if (existingPools && existingPools.length > 0) {
+      for (const pool of existingPools) {
+        const existingStart = new Date(pool.start_date);
+        const existingEnd = new Date(pool.end_date);
+
+        // Check for any overlap
+        const hasOverlap = 
+          (startDate >= existingStart && startDate < existingEnd) || // New starts during existing
+          (poolEndDate > existingStart && poolEndDate <= existingEnd) || // New ends during existing
+          (startDate <= existingStart && poolEndDate >= existingEnd); // New encompasses existing
+
+        if (hasOverlap) {
+          return NextResponse.json({
+            success: false,
+            error: `Prize pool overlaps with existing ${pool.period_type} pool ($${pool.amount})`,
+            details: {
+              existingPool: {
+                period: pool.period_type,
+                start: pool.start_date,
+                end: pool.end_date,
+                amount: pool.amount
+              },
+              suggestion: `Schedule your pool to start after ${new Date(existingEnd).toLocaleDateString()}`
+            }
+          }, { status: 409 }); // 409 Conflict
+        }
+      }
+    }
+
     // Check company balance
     const balance = await getCompanyBalance(companyId);
     
