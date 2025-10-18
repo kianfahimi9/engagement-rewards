@@ -5,12 +5,7 @@
 
 import { NextResponse } from 'next/server';
 import { makeWebhookValidator } from "@whop/api";
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
+import { supabase } from '@/lib/supabase';
 
 const validateWebhook = makeWebhookValidator({
   webhookSecret: process.env.WHOP_WEBHOOK_SECRET || 'temp_secret',
