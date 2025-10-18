@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { amount, companyId, experienceId, periodStart, periodEnd, title } = body;
+    const { amount, companyId, experienceId, periodStart, periodEnd, periodType, title } = body;
 
     if (!amount || !companyId) {
       return NextResponse.json(
@@ -21,11 +21,13 @@ export async function POST(request) {
     }
 
     const amountFloat = parseFloat(amount);
+    const poolPeriodType = periodType || 'weekly'; // Default to weekly
 
     console.log('Creating prize pool checkout configuration:', {
       amount: amountFloat,
       companyId,
-      experienceId
+      experienceId,
+      periodType: poolPeriodType
     });
 
     // Build redirect URL - use experienceId if provided, otherwise companyId
