@@ -182,41 +182,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
           </div>
         </div>
 
-        {/* Company Balance Card */}
-        <Card className="mb-6 border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-white dark:from-green-950/30 dark:to-gray-950">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-green-600" />
-              Company Balance
-            </CardTitle>
-            <CardDescription>Available funds for prize pools</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline gap-2">
-              <span className="text-5xl font-bold text-green-600 dark:text-green-400">
-                ${companyBalance?.availableBalance?.toFixed(2) || '0.00'}
-              </span>
-              <span className="text-xl text-gray-500">USD</span>
-            </div>
-            {companyBalance && (
-              <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
-                <div>
-                  <p className="text-gray-500">Total Balance</p>
-                  <p className="font-semibold">${companyBalance.balance?.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Pending</p>
-                  <p className="font-semibold">${companyBalance.pendingBalance?.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-gray-500">Reserved</p>
-                  <p className="font-semibold">${companyBalance.reserveBalance?.toFixed(2)}</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
         {/* Create Prize Pool Section */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Prize Pools</h2>
