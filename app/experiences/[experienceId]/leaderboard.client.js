@@ -183,9 +183,14 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                         : 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
                     }`}
                   >
-                    {/* Rank */}
-                    <div className="flex items-center justify-center w-6 md:w-10 flex-shrink-0">
-                      {getRankIcon(user.rank)}
+                    {/* Rank Icon and Number */}
+                    <div className="flex flex-col items-center justify-center w-10 md:w-12 flex-shrink-0">
+                      <div className="flex items-center justify-center">
+                        {getRankIcon(user.rank)}
+                      </div>
+                      <div className="text-[10px] md:text-xs font-bold text-gray-600 dark:text-gray-400 mt-0.5">
+                        #{user.rank}
+                      </div>
                     </div>
 
                     {/* Avatar */}
