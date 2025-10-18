@@ -183,7 +183,7 @@ export default function LeaderboardView({ experienceId, userId, isAdmin, company
                       <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500 dark:text-gray-400">
                         <span className="flex items-center gap-1">
                           <Award className="h-3 w-3 md:h-3.5 md:w-3.5" />
-                          <strong className="text-gray-900 dark:text-white">Lvl {Math.floor(user.points / 100)}</strong>
+                          <strong className="text-gray-900 dark:text-white">Lvl {user.level || 1}</strong>
                         </span>
                         <Separator orientation="vertical" className="h-3 md:h-4 hidden sm:block" />
                         <span className="flex items-center gap-1">
