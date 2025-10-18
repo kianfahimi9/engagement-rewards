@@ -1,46 +1,198 @@
-import { NextResponse } from 'next/server';
-import { verifyUser } from '@/lib/authentication';
-import { distributePrizePool } from '@/lib/whop-payments';
+/**
+ * Admin Payout API
+ * POST = Manual test payout (single user)
+ * PUT = Automatic distribution to top 10
+ */
 
-// POST /api/admin/payout - Distribute prize pool to winners
+import { NextResponse } from 'next/server';
+import { whopSdk, whopApiClient } from '@/lib/whop-sdk';
+import { supabase } from '@/lib/supabase';
+
+// POST /api/admin/payout - Manual test payout to single user
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { prizePoolId, experienceId, companyId, userId } = body;
+    const { userId, username, amount, companyId, experienceId, prizePoolId } = body;
 
-    console.log('🏆 Payout request:', { prizePoolId, companyId, userId });
-
-    // Verify user is admin
-    const authResult = await verifyUser(userId, experienceId);
-    if (!authResult.isOwner) {
+    if (!userId || !amount || !companyId || !experienceId) {
       return NextResponse.json(
-        { success: false, error: 'Unauthorized - Admin only' },
-        { status: 403 }
+        { error: 'Missing required fields' },
+        { status: 400 }
       );
     }
 
-    // Distribute prize pool
-    const result = await distributePrizePool(prizePoolId, companyId);
+    console.log('🎁 Manual test payout:', { userId, username, amount });
 
-    if (!result.success) {
-      return NextResponse.json({
-        success: false,
-        error: 'Payout failed',
-        details: result.errors
-      }, { status: 500 });
+    // Get company ledger account
+    const experience = await whopSdk.experiences.retrieve(experienceId);
+    const ledgerAccountResponse = await whopSdk.companies.getCompanyLedgerAccount({
+      companyId: experience.company.id,
+    });
+
+    const ledgerAccountId = ledgerAccountResponse.company?.ledgerAccount?.id;
+
+    if (!ledgerAccountId) {
+      throw new Error('Company ledger account not found');
     }
+
+    // Pay user using official Whop API
+    const payoutResult = await whopApiClient.payments.payUser({
+      amount: parseFloat(amount),
+      currency: "usd",
+      destinationId: userId,
+      ledgerAccountId: ledgerAccountId,
+    });
+
+    console.log('✅ Test payout successful');
+
+    // Record in database
+    const { data: payout } = await supabase
+      .from('payouts')
+      .insert({
+        whop_payout_id: payoutResult.id || `test_${Date.now()}`,
+        whop_payment_id: prizePoolId || 'manual_test',
+        whop_user_id: userId,
+        whop_company_id: companyId,
+        amount: parseFloat(amount),
+        rank: 0,
+        status: 'completed',
+        points_earned: 0,
+      })
+      .select()
+      .single();
 
     return NextResponse.json({
       success: true,
-      message: `Successfully paid out ${result.payouts.length} winners`,
-      payouts: result.payouts,
-      totalPaid: result.totalPaid,
-      errors: result.errors
+      message: `Paid $${amount} to ${username || userId}`,
+      payout: payoutResult,
+      record: payout
     });
+
   } catch (error) {
-    console.error('❌ Payout error:', error);
+    console.error('❌ Manual payout error:', error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/admin/payout - Automatic distribution to top 10
+export async function PUT(request) {
+  try {
+    const body = await request.json();
+    const { prizePoolId, companyId, experienceId } = body;
+
+    if (!prizePoolId || !companyId || !experienceId) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    console.log('🏆 Auto-distributing prize pool:', prizePoolId);
+
+    // Get prize pool
+    const { data: prizePool } = await supabase
+      .from('prize_pools')
+      .select('*')
+      .eq('whop_payment_id', prizePoolId)
+      .single();
+
+    if (!prizePool) {
+      throw new Error('Prize pool not found');
+    }
+
+    if (prizePool.status === 'paid_out') {
+      throw new Error('Already paid out');
+    }
+
+    // Get top 10 from leaderboard
+    const { data: winners } = await supabase
+      .from('leaderboard_entries')
+      .select('whop_user_id, points, rank, users(username)')
+      .eq('whop_company_id', companyId)
+      .eq('period_type', prizePool.period_type)
+      .gte('period_start', prizePool.period_start)
+      .lte('period_start', prizePool.period_end)
+      .order('points', { ascending: false })
+      .limit(10);
+
+    if (!winners || winners.length === 0) {
+      throw new Error('No winners found');
+    }
+
+    // Get ledger account
+    const experience = await whopSdk.experiences.retrieve(experienceId);
+    const ledgerAccountResponse = await whopSdk.companies.getCompanyLedgerAccount({
+      companyId: experience.company.id,
+    });
+
+    const ledgerAccountId = ledgerAccountResponse.company?.ledgerAccount?.id;
+
+    // Distribution percentages
+    const percentages = [40, 18, 12, 8, 6, 5, 4, 3, 2, 2];
+    const payouts = [];
+    const errors = [];
+
+    for (let i = 0; i < winners.length && i < 10; i++) {
+      const winner = winners[i];
+      const amount = (prizePool.amount * percentages[i]) / 100;
+
+      try {
+        const payoutResult = await whopApiClient.payments.payUser({
+          amount: amount,
+          currency: "usd",
+          destinationId: winner.whop_user_id,
+          ledgerAccountId: ledgerAccountId,
+        });
+
+        const { data: payout } = await supabase
+          .from('payouts')
+          .insert({
+            whop_payout_id: payoutResult.id || `auto_${Date.now()}_${i}`,
+            whop_payment_id: prizePoolId,
+            whop_user_id: winner.whop_user_id,
+            whop_company_id: companyId,
+            amount: amount,
+            rank: i + 1,
+            status: 'completed',
+            points_earned: winner.points,
+          })
+          .select()
+          .single();
+
+        payouts.push(payout);
+        console.log(`✅ Rank ${i + 1}: $${amount.toFixed(2)} to ${winner.users?.username}`);
+
+      } catch (error) {
+        console.error(`❌ Rank ${i + 1} failed:`, error);
+        errors.push({ rank: i + 1, error: error.message });
+      }
+    }
+
+    // Update prize pool
+    await supabase
+      .from('prize_pools')
+      .update({
+        status: 'paid_out',
+        paid_out_at: new Date().toISOString(),
+        winners_count: payouts.length,
+      })
+      .eq('whop_payment_id', prizePoolId);
+
+    return NextResponse.json({
+      success: true,
+      message: `Distributed to ${payouts.length} winners`,
+      payouts,
+      errors,
+      totalPaid: payouts.reduce((sum, p) => sum + parseFloat(p.amount), 0)
+    });
+
+  } catch (error) {
+    console.error('❌ Auto-distribution error:', error);
+    return NextResponse.json(
+      { error: error.message },
       { status: 500 }
     );
   }
