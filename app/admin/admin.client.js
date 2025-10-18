@@ -248,6 +248,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
                         <Input
                           id="periodStart"
                           type="date"
+                          min={new Date().toISOString().split('T')[0]}
                           value={periodStart}
                           onChange={(e) => setPeriodStart(e.target.value)}
                           disabled={paymentLoading}
