@@ -165,8 +165,9 @@ export async function PUT(request) {
       companyId: experience.company.id,
     });
 
-    const ledgerAccountId = ledgerAccount.company?.ledgerAccount?.id;
-    const transferFee = ledgerAccount.company?.ledgerAccount?.transferFee;
+    // Response structure: { ledgerAccount: { id, transferFee, ... } }
+    const ledgerAccountId = ledgerAccount.ledgerAccount?.id;
+    const transferFee = ledgerAccount.ledgerAccount?.transferFee;
 
     // Validate ledger account
     if (!ledgerAccountId) {
@@ -174,7 +175,7 @@ export async function PUT(request) {
       throw new Error('Company ledger account not found. Please ensure the company has a ledger account set up.');
     }
 
-    console.log(`✅ Ledger account found: ${ledgerAccountId}`);
+    console.log(`✅ Ledger account found: ${ledgerAccountId} (transferFee: ${transferFee})`);
 
     // Proportional distribution - ensures FULL prize pool is distributed
     // Maintains relative ratios from original fixed percentages [40, 18, 12, 8, 6, 5, 4, 3, 2, 2]
