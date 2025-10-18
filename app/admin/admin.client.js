@@ -46,12 +46,13 @@ export default function AdminView({ experienceId, userId, companyId }) {
     fetchAdminData();
   }, []);
 
-  const handleDistributePrizePool = async (pool) => {
-    if (!confirm(`Distribute $${pool.amount} prize pool to top 10 winners?`)) {
-      return;
-    }
-
+  const handleDistributePrizePool = async () => {
+    const pool = selectedPool;
+    setConfirmDialogOpen(false);
     setPayoutLoading(true);
+
+    const loadingToast = toast.loading('Processing payouts to top 10 winners...');
+
     try {
       const response = await fetch('/api/admin/payout', {
         method: 'PUT',
@@ -65,17 +66,28 @@ export default function AdminView({ experienceId, userId, companyId }) {
 
       const data = await response.json();
 
+      toast.dismiss(loadingToast);
+
       if (data.success) {
-        alert(`✅ Successfully distributed to ${data.payouts.length} winners!\nTotal: $${data.totalPaid.toFixed(2)}`);
+        toast.success(`Prize pool distributed successfully!`, {
+          description: `Paid ${data.payouts.length} winners • Total: $${data.totalPaid.toFixed(2)}`,
+          duration: 6000,
+        });
         fetchAdminData(); // Refresh
       } else {
-        alert(`❌ Error: ${data.error}`);
+        toast.error('Payout failed', {
+          description: data.error,
+        });
       }
     } catch (error) {
+      toast.dismiss(loadingToast);
       console.error('Distribution error:', error);
-      alert(`❌ Error: ${error.message}`);
+      toast.error('Payout failed', {
+        description: error.message,
+      });
     } finally {
       setPayoutLoading(false);
+      setSelectedPool(null);
     }
   };
 
