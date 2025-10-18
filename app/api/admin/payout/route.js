@@ -114,18 +114,24 @@ export async function PUT(request) {
     }
 
     // Get top 10 from leaderboard
-    const { data: winners } = await supabase
+    // Simplified query: just get top users by points for this company and period type
+    const { data: winners, error: winnersError } = await supabase
       .from('leaderboard_entries')
       .select('whop_user_id, points, rank, users(username)')
       .eq('whop_company_id', companyId)
       .eq('period_type', prizePool.period_type)
-      .gte('period_start', prizePool.period_start)
-      .lte('period_start', prizePool.period_end)
       .order('points', { ascending: false })
       .limit(10);
 
+    console.log(`📊 Found ${winners?.length || 0} potential winners`);
+
+    if (winnersError) {
+      console.error('Error fetching winners:', winnersError);
+      throw new Error(`Failed to fetch winners: ${winnersError.message}`);
+    }
+
     if (!winners || winners.length === 0) {
-      throw new Error('No winners found');
+      throw new Error(`No winners found for ${prizePool.period_type} leaderboard. Make sure users have earned points!`);
     }
 
     // Get ledger account - following exact Whop documentation
