@@ -125,17 +125,19 @@ export async function PUT(request) {
       throw new Error('No winners found');
     }
 
-    // Get ledger account using whopApiClient
+    // Get ledger account - following exact Whop documentation
+    // https://docs.whop.com/apps/features/payments-and-payouts
     const experience = await whopSdk.experiences.retrieve(experienceId);
-    const ledgerAccountResponse = await whopApiClient.companies.getCompanyLedgerAccount({
+    const ledgerAccount = await whopSdk.companies.getCompanyLedgerAccount({
       companyId: experience.company.id,
     });
 
-    const ledgerAccountId = ledgerAccountResponse.company?.ledgerAccount?.id;
+    const ledgerAccountId = ledgerAccount.company?.ledgerAccount?.id;
+    const transferFee = ledgerAccount.company?.ledgerAccount?.transferFee;
 
     // Validate ledger account
     if (!ledgerAccountId) {
-      console.error('Ledger account response:', JSON.stringify(ledgerAccountResponse, null, 2));
+      console.error('Ledger account response:', JSON.stringify(ledgerAccount, null, 2));
       throw new Error('Company ledger account not found. Please ensure the company has a ledger account set up.');
     }
 
