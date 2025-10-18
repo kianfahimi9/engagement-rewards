@@ -21,12 +21,21 @@ export default function AdminView({ experienceId, userId, companyId }) {
   const [newPoolAmount, setNewPoolAmount] = useState('');
   const [periodType, setPeriodType] = useState('weekly');
   const [periodStart, setPeriodStart] = useState('');
-  const [periodEnd, setPeriodEnd] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   
   const iframeSdk = useIframeSdk();
+
+  // Auto-calculate end date based on period type and start date
+  const calculateEndDate = (startDate, type) => {
+    if (!startDate) return null;
+    const start = new Date(startDate);
+    const daysToAdd = type === 'weekly' ? 7 : 30;
+    const end = new Date(start);
+    end.setDate(start.getDate() + daysToAdd);
+    return end.toISOString().split('T')[0];
+  };
 
   useEffect(() => {
     fetchAdminData();
