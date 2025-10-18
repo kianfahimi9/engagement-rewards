@@ -598,21 +598,42 @@ export default function AdminView({ experienceId, userId, companyId }) {
           </DialogHeader>
           {selectedPool && (
             <div className="py-4 space-y-3">
+              {/* Test Payout Warning */}
+              {selectedPool.status === 'active' && new Date(selectedPool.end_date) > new Date() && (
+                <div className="p-3 bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                  <p className="text-sm font-medium text-orange-800 dark:text-orange-400 mb-1">
+                    🧪 Test Mode - Development Only
+                  </p>
+                  <p className="text-xs text-orange-700 dark:text-orange-500">
+                    This pool hasn't ended yet. In production, payouts only happen after the end date. This is for testing purposes only.
+                  </p>
+                </div>
+              )}
+
               <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Prize Pool Amount</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white">${selectedPool.amount}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {selectedPool.period_type} • {selectedPool.start_date && new Date(selectedPool.start_date).toLocaleDateString()} - {selectedPool.end_date && new Date(selectedPool.end_date).toLocaleDateString()}
+                </p>
               </div>
+              
               <div className="space-y-2">
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Distribution Breakdown:</p>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Proportional Distribution:</p>
                 <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                  <p>🥇 1st Place: ${(selectedPool.amount * 0.40).toFixed(2)} (40%)</p>
-                  <p>🥈 2nd Place: ${(selectedPool.amount * 0.18).toFixed(2)} (18%)</p>
-                  <p>🥉 3rd Place: ${(selectedPool.amount * 0.12).toFixed(2)} (12%)</p>
-                  <p>📍 4th-10th: Remaining ${(selectedPool.amount * 0.30).toFixed(2)} (30%)</p>
+                  <p>• Distributes 100% of prize pool to all winners</p>
+                  <p>• Winners get proportional amounts based on their rank</p>
+                  <p>• No funds remain undistributed</p>
+                </div>
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg mt-2">
+                  <p className="text-xs text-blue-700 dark:text-blue-400">
+                    Example with 2 winners: 1st gets ~69%, 2nd gets ~31%
+                  </p>
                 </div>
               </div>
+              
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                This will distribute funds to the top 10 users on the leaderboard for this period.
+                This will distribute funds to the top leaderboard users for this period.
               </p>
             </div>
           )}
