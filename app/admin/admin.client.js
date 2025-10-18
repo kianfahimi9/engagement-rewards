@@ -340,28 +340,82 @@ export default function AdminView({ experienceId, userId, companyId }) {
             </CardHeader>
             <CardContent className="p-6">
               {prizePools.length > 0 ? (
-                <div className="space-y-3">
-                  {prizePools.map((pool, i) => (
-                    <div key={i} className="p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
-                      <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <p className="font-semibold text-lg text-gray-900 dark:text-white">${pool.amount}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {pool.period_start} - {pool.period_end}
-                          </p>
+                <div className="space-y-4">
+                  {prizePools.map((pool) => (
+                    <Card key={pool.id} className="border-2">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <Trophy className="h-6 w-6 text-[#FA4616]" />
+                              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                                ${pool.amount.toFixed(2)} USD
+                              </h3>
+                              <Badge
+                                variant={pool.status === 'active' ? 'default' : pool.status === 'paid_out' ? 'secondary' : 'destructive'}
+                                className={
+                                  pool.status === 'active' ? 'bg-green-500' :
+                                  pool.status === 'paid_out' ? 'bg-blue-500' : 'bg-red-500'
+                                }
+                              >
+                                {pool.status}
+                              </Badge>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                              <div>
+                                <p className="text-sm text-gray-500">Period</p>
+                                <p className="font-semibold capitalize">{pool.period_type}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500">End Date</p>
+                                <p className="font-semibold">
+                                  {new Date(pool.end_date).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500">Created</p>
+                                <p className="font-semibold">
+                                  {new Date(pool.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                              {pool.paid_out_at && (
+                                <div>
+                                  <p className="text-sm text-gray-500">Paid Out</p>
+                                  <p className="font-semibold">
+                                    {new Date(pool.paid_out_at).toLocaleDateString()}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="ml-4">
+                            {pool.status === 'active' && (
+                              <Button
+                                onClick={() => handlePayout(pool.id)}
+                                disabled={payoutLoading[pool.id]}
+                                className="bg-green-600 hover:bg-green-700"
+                              >
+                                {payoutLoading[pool.id] ? 'Processing...' : 'Pay Out Winners'}
+                              </Button>
+                            )}
+                            {pool.status === 'paid_out' && (
+                              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                <CheckCircle className="h-4 w-4 mr-1" />
+                                Completed
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-                        <Badge className={pool.status === 'active' ? 'bg-green-100 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-0' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400 border-0'}>
-                          {pool.status}
-                        </Badge>
-                      </div>
-                    </div>
+                      </CardContent>
+                    </Card>
                   ))}
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <DollarSign className="h-16 w-16 text-gray-300 dark:text-gray-700 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">No prize pools yet</h3>
-                  <p className="text-gray-500 dark:text-gray-400 mb-6">Create your first prize pool to reward contributors</p>
+                  <Trophy className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                  <p className="text-gray-500">No prize pools yet. Create one to get started!</p>
                 </div>
               )}
             </CardContent>
