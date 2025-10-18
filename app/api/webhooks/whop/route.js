@@ -60,22 +60,55 @@ async function handlePaymentSucceeded(data) {
 
     console.log('💰 Prize pool payment detected:', { companyId, experienceId });
 
-    // Get checkout ID from various possible locations in the webhook payload
-    const checkoutId = data.checkout_session_id || metadata.checkout_session_id || metadata.checkoutConfigId;
+    // According to Whop docs, the payment webhook includes plan_id in metadata
+    // We can match by plan_id, checkout_id, or even metadata fields
+    const planId = metadata.plan_id || data.plan_id;
+    const checkoutId = data.checkout_session_id || metadata.checkout_session_id;
     
-    if (!checkoutId) {
-      console.error('⚠️ No checkout ID found in webhook payload:', data);
-      return;
+    console.log('🔍 Matching prize pool:', { planId, checkoutId, companyId });
+
+    // Try to find prize pool by plan_id (most reliable), then checkout_id, then by metadata match
+    let prizePool = null;
+    let fetchError = null;
+
+    // Strategy 1: Match by plan_id (most reliable with checkout configurations)
+    if (planId) {
+      const result = await supabase
+        .from('prize_pools')
+        .select('*')
+        .eq('whop_plan_id', planId)
+        .maybeSingle();
+      prizePool = result.data;
+      fetchError = result.error;
     }
 
-    console.log('🔍 Looking for prize pool with checkout ID:', checkoutId);
+    // Strategy 2: Fallback to checkout_id
+    if (!prizePool && checkoutId) {
+      const result = await supabase
+        .from('prize_pools')
+        .select('*')
+        .eq('whop_checkout_id', checkoutId)
+        .maybeSingle();
+      prizePool = result.data;
+      fetchError = result.error;
+    }
 
-    // Find prize pool by checkout_session_id (new API)
-    const { data: prizePool, error: fetchError } = await supabase
-      .from('prize_pools')
-      .select('*')
-      .eq('whop_checkout_id', checkoutId)
-      .maybeSingle();
+    // Strategy 3: Last resort - match by amount + company + recent creation (last 5 minutes)
+    if (!prizePool && metadata.amount && companyId) {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const result = await supabase
+        .from('prize_pools')
+        .select('*')
+        .eq('whop_company_id', companyId)
+        .eq('amount', metadata.amount)
+        .eq('status', 'pending')
+        .gte('created_at', fiveMinutesAgo)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      prizePool = result.data;
+      fetchError = result.error;
+    }
 
     if (fetchError) {
       console.error('❌ Error finding prize pool:', fetchError);
