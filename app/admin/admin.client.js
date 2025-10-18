@@ -243,7 +243,36 @@ export default function AdminView({ experienceId, userId, companyId }) {
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="amount">Prize Amount (USD)</Label>
+                        <Label htmlFor="periodType">Period Type <span className="text-red-500">*</span></Label>
+                        <Select value={periodType} onValueChange={setPeriodType} disabled={paymentLoading}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select period type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="weekly">Weekly (7 days)</SelectItem>
+                            <SelectItem value="monthly">Monthly (30 days)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="periodStart">Start Date <span className="text-red-500">*</span></Label>
+                        <Input
+                          id="periodStart"
+                          type="date"
+                          value={periodStart}
+                          onChange={(e) => setPeriodStart(e.target.value)}
+                          disabled={paymentLoading}
+                        />
+                        {periodStart && (
+                          <p className="text-xs text-gray-500">
+                            Ends on: {calculateEndDate(periodStart, periodType)}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="amount">Prize Amount (USD) <span className="text-red-500">*</span></Label>
                         <Input
                           id="amount"
                           type="number"
@@ -252,43 +281,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
                           onChange={(e) => setNewPoolAmount(e.target.value)}
                           disabled={paymentLoading}
                         />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="periodType">Period Type</Label>
-                        <Select value={periodType} onValueChange={setPeriodType} disabled={paymentLoading}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select period type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                            <SelectItem value="monthly">Monthly</SelectItem>
-                            <SelectItem value="custom">Custom Period</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="periodStart">Start Date</Label>
-                          <Input
-                            id="periodStart"
-                            type="date"
-                            value={periodStart}
-                            onChange={(e) => setPeriodStart(e.target.value)}
-                            disabled={paymentLoading}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="periodEnd">End Date</Label>
-                          <Input
-                            id="periodEnd"
-                            type="date"
-                            value={periodEnd}
-                            onChange={(e) => setPeriodEnd(e.target.value)}
-                            disabled={paymentLoading}
-                          />
-                        </div>
                       </div>
 
                       {paymentError && (
