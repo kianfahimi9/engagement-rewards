@@ -29,12 +29,15 @@ export async function POST(request) {
       companyId: experience.company.id,
     });
 
-    const ledgerAccountId = ledgerAccount.company?.ledgerAccount?.id;
-    const transferFee = ledgerAccount.company?.ledgerAccount?.transferFee;
+    // Response structure: { ledgerAccount: { id, transferFee, ... } }
+    const ledgerAccountId = ledgerAccount.ledgerAccount?.id;
+    const transferFee = ledgerAccount.ledgerAccount?.transferFee;
 
     if (!ledgerAccountId) {
       throw new Error('Company ledger account not found');
     }
+
+    console.log(`✅ Using ledger account: ${ledgerAccountId}`);
 
     // Pay user - NOTE: using whopApiClient
     const payoutResult = await whopApiClient.payments.payUser({
