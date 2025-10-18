@@ -1,7 +1,7 @@
 /**
- * Create Prize Pool Checkout Configuration
- * Uses latest Whop API (2025) - checkout configurations
- * Community owner pays to deposit funds into OUR app's ledger
+ * Create Prize Pool Charge
+ * Following official Whop documentation exactly
+ * Uses payments.chargeUser() for in-app purchases
  */
 
 import { NextResponse } from 'next/server';
@@ -11,102 +11,63 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { amount, companyId, experienceId, periodStart, periodEnd, periodType, title } = body;
+    const { amount, userId, companyId, experienceId, periodStart, periodEnd, periodType } = body;
 
-    if (!amount || !companyId) {
+    if (!amount || !userId || !companyId) {
       return NextResponse.json(
-        { error: 'Missing required fields: amount, companyId' },
+        { error: 'Missing required fields: amount, userId, companyId' },
         { status: 400 }
       );
     }
 
     const amountFloat = parseFloat(amount);
-    const poolPeriodType = periodType || 'weekly'; // Default to weekly
+    const poolPeriodType = periodType || 'weekly';
 
-    console.log('Creating prize pool checkout configuration:', {
+    console.log('Creating prize pool charge:', {
       amount: amountFloat,
+      userId,
       companyId,
-      experienceId,
       periodType: poolPeriodType
     });
 
-    // Build redirect URL - use experienceId if provided, otherwise companyId
-    const redirectExperienceId = experienceId || companyId;
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rankwards.preview.emergentagent.com';
-    const redirectUrl = `${baseUrl}/admin?experienceId=${redirectExperienceId}&payment=success`;
-    
-    console.log('Redirect URL:', redirectUrl);
-
-    // Create a checkout configuration using the latest Whop API
-    // This creates a one-time payment plan
-    const checkoutConfig = await whopSdk.checkoutConfigurations.create({
-      plan: {
-        company_id: companyId,
-        plan_type: 'one_time',
-        release_method: 'buy_now',
-        currency: 'usd',
-        initial_price: amountFloat,
-        renewal_price: 0,
-        title: title || `Prize Pool - $${amountFloat}`,
-        description: 'Deposit funds for community prize pool rewards',
-        visibility: 'hidden', // Hidden from public, only accessible via link
-      },
-      affiliate_code: '', // Required field - empty string if not using affiliates
+    // Create charge using official Whop API method
+    const result = await whopSdk.payments.chargeUser({
+      amount: amountFloat,
+      currency: "usd",
+      userId: userId,
       metadata: {
         type: 'prize_pool_deposit',
         companyId: companyId,
         experienceId: experienceId,
         periodStart: periodStart,
         periodEnd: periodEnd,
+        periodType: poolPeriodType,
         amount: amountFloat
       },
-      redirect_url: redirectUrl
     });
 
-    if (!checkoutConfig?.purchase_url) {
-      throw new Error("Failed to create checkout configuration");
+    if (!result?.inAppPurchase) {
+      throw new Error("Failed to create charge - no inAppPurchase returned");
     }
 
-    console.log('✅ Checkout configuration created:', {
-      checkoutId: checkoutConfig.id,
-      planId: checkoutConfig.plan?.id,
-      purchaseUrl: checkoutConfig.purchase_url
+    console.log('✅ Charge created:', {
+      inAppPurchaseId: result.inAppPurchase.id
     });
 
-    // Create pending prize pool in database
-    const { data: prizePool, error: dbError } = await supabase
-      .from('prize_pools')
-      .insert({
-        whop_company_id: companyId,
-        amount: amountFloat,
-        currency: 'usd',
-        period_type: poolPeriodType,
-        period_start: periodStart || null,
-        period_end: periodEnd || null,
-        status: 'pending', // Will be updated to 'active' via webhook when payment completes
-        whop_checkout_id: checkoutConfig.id,
-        whop_plan_id: checkoutConfig.plan?.id // Store plan ID for webhook matching
-      })
-      .select()
-      .single();
-
-    if (dbError) {
-      console.error('Database error:', dbError);
-      throw new Error(`Failed to create prize pool in database: ${dbError.message}`);
-    }
+    // Note: We DON'T create database record yet
+    // It will be created by the webhook when payment succeeds
+    // This prevents orphaned pending records
 
     return NextResponse.json({
       success: true,
-      checkoutUrl: checkoutConfig.purchase_url,
-      checkoutConfigId: checkoutConfig.id,
-      prizePoolId: prizePool.whop_checkout_id,
+      inAppPurchase: result.inAppPurchase
     });
 
   } catch (error) {
-    console.error('❌ Error creating checkout configuration:', error);
+    console.error('❌ Error creating charge:', error);
     return NextResponse.json(
       { 
-        error: 'Failed to create prize pool checkout',
+        error: 'Failed to create prize pool charge',
         details: error.message 
       },
       { status: 500 }
