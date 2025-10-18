@@ -166,7 +166,7 @@ export default function AdminView({ experienceId, userId, companyId }) {
 
       <div className="container mx-auto px-4 md:px-6 py-6 md:py-10 max-w-7xl">
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
           <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-2">
@@ -197,18 +197,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
               </div>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
                 ${stats?.totalPaidOut || '0.00'}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg bg-white dark:bg-gray-950">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Engagement Rate</p>
-                <Activity className="h-4 w-4 text-gray-400" />
-              </div>
-              <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats?.engagementRate || '0'}%
               </p>
             </CardContent>
           </Card>
