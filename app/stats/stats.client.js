@@ -188,7 +188,7 @@ export default function StatsView({ experienceId, userId, companyId }) {
                 </h3>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Badge className="bg-[#FA4616] text-white border-0">
-                    Level {Math.floor((stats?.totalPoints || 0) / 100)}
+                    Level {currentLevel}
                   </Badge>
                   <Badge 
                     variant="outline" 
