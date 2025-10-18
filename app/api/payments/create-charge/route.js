@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabase';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { amount, companyId, periodStart, periodEnd, title } = body;
+    const { amount, companyId, experienceId, periodStart, periodEnd, title } = body;
 
     if (!amount || !companyId) {
       return NextResponse.json(
@@ -25,7 +25,15 @@ export async function POST(request) {
     console.log('Creating prize pool checkout configuration:', {
       amount: amountFloat,
       companyId,
+      experienceId
     });
+
+    // Build redirect URL - use experienceId if provided, otherwise companyId
+    const redirectExperienceId = experienceId || companyId;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://rankwards.preview.emergentagent.com';
+    const redirectUrl = `${baseUrl}/admin?experienceId=${redirectExperienceId}&payment=success`;
+    
+    console.log('Redirect URL:', redirectUrl);
 
     // Create a checkout configuration using the latest Whop API
     // This creates a one-time payment plan
@@ -44,11 +52,12 @@ export async function POST(request) {
       metadata: {
         type: 'prize_pool_deposit',
         companyId: companyId,
+        experienceId: experienceId,
         periodStart: periodStart,
         periodEnd: periodEnd,
         amount: amountFloat
       },
-      redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/admin?experienceId=${companyId}&payment=success`
+      redirect_url: redirectUrl
     });
 
     if (!checkoutConfig?.purchase_url) {
