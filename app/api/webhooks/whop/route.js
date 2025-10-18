@@ -130,7 +130,7 @@ async function handlePaymentFailed(data) {
         status: 'failed',
         updated_at: new Date().toISOString(),
       })
-      .eq('id', prizePool.id);
+      .eq('whop_checkout_id', prizePool.whop_checkout_id);
 
     if (updateError) {
       console.error('❌ Database update error:', updateError);
