@@ -37,18 +37,26 @@ export default async function UserStatsPage({ searchParams }) {
     // Pass userId if user is owner to store in DB
     await ensureCommunityExists(companyContext, isOwner ? userId : null);
     
-    // Auto-sync on every page load - fetch fresh community data from DB (like /api/sync-whop does)
+    // Auto-sync stats data with smart caching
     try {
       console.log('🔄 Auto-syncing stats data...');
       
-      // Fetch community from DB to get latest settings
+      // Fetch community from DB to get latest settings and cache timestamp
       const { data: community } = await supabase
         .from('communities')
-        .select('whop_company_id, name, settings')
+        .select('whop_company_id, name, settings, last_synced_at')
         .eq('whop_company_id', companyContext.company.companyId)
         .single();
       
-      if (community) {
+      // Smart caching: Only sync if data is stale (older than 3 minutes)
+      const CACHE_DURATION_MS = 3 * 60 * 1000; // 3 minutes
+      const now = new Date();
+      const lastSynced = community?.last_synced_at ? new Date(community.last_synced_at) : null;
+      const isCacheValid = lastSynced && (now - lastSynced) < CACHE_DURATION_MS;
+
+      if (!isCacheValid && community) {
+        console.log('🔄 Cache stale - syncing data...');
+        
         const forumExperiences = community.settings?.forumExperiences || [];
         const chatExperiences = community.settings?.chatExperiences || [];
         
@@ -59,7 +67,16 @@ export default async function UserStatsPage({ searchParams }) {
           forumExperiences,
           chatExperiences
         );
-        console.log('✅ Auto-sync completed');
+
+        // Update cache timestamp
+        await supabase
+          .from('communities')
+          .update({ last_synced_at: now })
+          .eq('whop_company_id', community.whop_company_id);
+
+        console.log('✅ Auto-sync completed and cache updated');
+      } else {
+        console.log(`✅ Using cached data (synced ${Math.round((now - lastSynced) / 1000)}s ago)`);
       }
     } catch (syncError) {
       console.error('❌ Auto-sync failed:', syncError);
