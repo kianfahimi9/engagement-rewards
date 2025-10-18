@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { whopSdk, whopApiClient } from '@/lib/whop-sdk';
+import { whopSdk } from '@/lib/whop-sdk';
 import { supabase } from '@/lib/supabase';
 
 // POST /api/admin/payout - Manual test payout to single user
