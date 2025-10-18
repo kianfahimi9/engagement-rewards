@@ -145,22 +145,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
     }
   };
 
-      // Open checkout in iframe
-      const checkoutResult = await iframeSdk.openCheckout(data.checkoutSessionUrl);
-      
-      if (checkoutResult) {
-        setDialogOpen(false);
-        setNewPoolAmount('');
-        fetchAdminData();
-      }
-    } catch (error) {
-      console.error('Error creating prize pool:', error);
-      setPaymentError(error.message);
-    } finally {
-      setPaymentLoading(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FCF6F5] dark:bg-[#141212] flex items-center justify-center">
