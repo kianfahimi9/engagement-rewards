@@ -2,6 +2,7 @@ import './globals.css'
 import { WhopThemeScript } from "@whop/react";
 import { Theme } from "@whop/react/components";
 import { WhopProviders } from "@/components/WhopProviders";
+import { Toaster } from 'sonner';
 
 export const metadata = {
   title: "Community Engagement Leaderboard",
@@ -18,6 +19,12 @@ export default function RootLayout({ children }) {
         <Theme accentColor="orange">
           <WhopProviders>
             {children}
+            <Toaster 
+              position="top-right" 
+              richColors 
+              closeButton
+              duration={4000}
+            />
           </WhopProviders>
         </Theme>
       </body>
