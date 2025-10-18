@@ -18,14 +18,38 @@ export default function StatsView({ experienceId, userId, companyId }) {
 
   useEffect(() => {
     if (userId && companyId) {
-      // Add delay on initial load to let sync complete (same as refresh button)
-      const timer = setTimeout(() => {
-        fetchUserStats();
-      }, 2000);
-      
-      return () => clearTimeout(timer);
+      // Trigger sync on initial load, then fetch stats
+      triggerSyncAndFetch();
     }
   }, [userId, companyId]);
+
+  const triggerSyncAndFetch = async () => {
+    setLoading(true);
+    try {
+      // Trigger sync for this community
+      console.log('🔄 Auto-syncing on page load for company:', companyId);
+      
+      await fetch('/api/sync-whop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          communityId: companyId
+        })
+      });
+      
+      // Wait for sync to complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Fetch updated stats
+      await fetchUserStats();
+    } catch (error) {
+      console.error('Error during auto-sync:', error);
+      // Still try to fetch stats even if sync fails
+      await fetchUserStats();
+    }
+  };
 
   const fetchUserStats = async () => {
     setLoading(true);
