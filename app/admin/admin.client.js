@@ -435,32 +435,66 @@ export default function AdminView({ experienceId, userId, companyId }) {
             </CardHeader>
             <CardContent className="p-6">
               {prizePools.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {prizePools.map((pool, i) => {
                     const statusInfo = getStatusInfo(pool);
+                    const startDate = pool.start_date ? new Date(pool.start_date) : null;
+                    const endDate = pool.end_date ? new Date(pool.end_date) : null;
+                    const now = new Date();
+                    const daysUntilEnd = endDate ? Math.ceil((endDate - now) / (1000 * 60 * 60 * 24)) : 0;
+                    
                     return (
-                      <div key={i} className="p-5 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
-                        <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <p className="font-semibold text-lg text-gray-900 dark:text-white">${pool.amount}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              <span className="capitalize">{pool.period_type}</span>
-                              {pool.start_date && pool.end_date && (
-                                <span> • {new Date(pool.start_date).toLocaleDateString()} - {new Date(pool.end_date).toLocaleDateString()}</span>
+                      <div key={i} className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <p className="font-bold text-2xl text-gray-900 dark:text-white">${pool.amount}</p>
+                              <Badge className={`${statusInfo.color} border-0 text-xs px-2 py-1`}>
+                                {statusInfo.icon} {statusInfo.label}
+                              </Badge>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="capitalize font-medium">{pool.period_type}</span>
+                              {startDate && endDate && (
+                                <span className="ml-2">
+                                  {startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                </span>
                               )}
                             </p>
                           </div>
-                          <Badge className={`${statusInfo.color} border-0`}>
-                            {statusInfo.icon} {statusInfo.label}
-                          </Badge>
                         </div>
+
+                        {/* Progress indicator for active pools */}
+                        {statusInfo.label === 'Active' && daysUntilEnd > 0 && (
+                          <div className="mb-4">
+                            <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
+                              <span>Time remaining</span>
+                              <span className="font-medium">{daysUntilEnd} {daysUntilEnd === 1 ? 'day' : 'days'}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                              <div 
+                                className="bg-green-500 h-2 rounded-full transition-all" 
+                                style={{ width: `${Math.max(10, (daysUntilEnd / 7) * 100)}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+
+                        {statusInfo.label === 'Scheduled' && (
+                          <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                            <p className="text-xs text-yellow-700 dark:text-yellow-400">
+                              ⏳ Starts in {Math.ceil((startDate - now) / (1000 * 60 * 60 * 24))} days
+                            </p>
+                          </div>
+                        )}
                         
-                        {/* Action buttons based on status */}
-                        <div className="flex gap-2 mt-3">
+                        {/* Action buttons */}
+                        <div className="flex gap-2">
                           {statusInfo.label === 'Ended - Ready for Payout' && (
                             <Button
                               size="sm"
-                              className="flex-1 bg-[#FA4616] hover:bg-[#FA4616]/90 text-white"
+                              className="flex-1 bg-[#FA4616] hover:bg-[#FA4616]/90 text-white font-medium"
                               onClick={() => {
                                 setSelectedPool(pool);
                                 setConfirmDialogOpen(true);
@@ -470,24 +504,34 @@ export default function AdminView({ experienceId, userId, companyId }) {
                               {payoutLoading && selectedPool?.whop_payment_id === pool.whop_payment_id ? 'Processing...' : '💰 Distribute to Winners'}
                             </Button>
                           )}
+
+                          {/* TEMPORARY: Test Payout button for active pools */}
+                          {statusInfo.label === 'Active' && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 border-orange-300 text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950/20"
+                              onClick={() => {
+                                setSelectedPool(pool);
+                                setConfirmDialogOpen(true);
+                              }}
+                              disabled={payoutLoading}
+                            >
+                              🧪 Test Payout (Dev Only)
+                            </Button>
+                          )}
                           
                           {statusInfo.canDelete && (
                             <Button
                               size="sm"
                               variant="outline"
-                              className="text-red-600 border-red-200 hover:bg-red-50"
+                              className="border-red-200 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950/20"
                               onClick={() => handleDeletePool(pool.id)}
                             >
                               Delete
                             </Button>
                           )}
                         </div>
-
-                        {statusInfo.label === 'Scheduled' && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            ⏳ Starts in {Math.ceil((new Date(pool.start_date) - new Date()) / (1000 * 60 * 60 * 24))} days
-                          </p>
-                        )}
                       </div>
                     );
                   })}
