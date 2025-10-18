@@ -539,22 +539,46 @@ async function getAdminDashboard(request) {
 
     const activeStreaks = streaks?.length || 0;
 
+    // Get recent payouts with user info
+    const { data: recentPayouts } = await supabase
+      .from('payouts')
+      .select(`
+        amount,
+        rank,
+        status,
+        whop_user_id,
+        created_at
+      `)
+      .eq('whop_company_id', companyId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    // Get usernames for recent payouts
+    const payoutsWithUsers = await Promise.all(
+      (recentPayouts || []).map(async (payout) => {
+        const { data: user } = await supabase
+          .from('users')
+          .select('username')
+          .eq('whop_user_id', payout.whop_user_id)
+          .single();
+        
+        return {
+          ...payout,
+          username: user?.username || 'Unknown User'
+        };
+      })
+    );
+
     return NextResponse.json({
       success: true,
       stats: {
         totalMembers: totalMembers || 0,
-        newMembersThisWeek: 0, // TODO: Filter by last 7 days
-        totalPaidOut: totalPaidOut,
-        completedPools: completedPools.length,
-        engagementScore: totalEngagement / (totalMembers || 1),
-        engagementGrowth: 0, // TODO: Calculate growth
-        activeStreaks: activeStreaks,
-        totalPosts: totalPosts,
-        totalChatMessages: totalChatMessages,
-        totalLikes: 0, // Not tracked (Whop limitation)
-        avgEngagement: totalEngagement / (totalPosts || 1)
+        activePool: activePools.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0).toFixed(2),
+        totalPaidOut: totalPaidOut.toFixed(2),
+        engagementRate: Math.round((activeStreaks / (totalMembers || 1)) * 100)
       },
       prizePools: prizePools || [],
+      payouts: payoutsWithUsers || [],
       dataSource: 'real'
     });
   } catch (error) {
