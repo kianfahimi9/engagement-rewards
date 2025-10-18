@@ -77,8 +77,7 @@ export async function POST(request) {
         period_start: periodStart || null,
         period_end: periodEnd || null,
         status: 'pending', // Will be updated to 'active' via webhook when payment completes
-        whop_checkout_id: checkoutConfig.id,
-        title: title || `Prize Pool - $${amountFloat}`
+        whop_checkout_id: checkoutConfig.id
       })
       .select()
       .single();
