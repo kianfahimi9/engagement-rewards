@@ -49,6 +49,7 @@ export async function POST(request) {
         description: 'Deposit funds for community prize pool rewards',
         visibility: 'hidden', // Hidden from public, only accessible via link
       },
+      affiliate_code: '', // Required field - empty string if not using affiliates
       metadata: {
         type: 'prize_pool_deposit',
         companyId: companyId,
