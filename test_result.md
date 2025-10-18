@@ -200,6 +200,18 @@ backend:
         agent: "main"
         comment: "Sync endpoint calls updated whop-sync functions. Need to test full sync cycle with new engagement metrics."
 
+  - task: "Proportional prize pool distribution"
+    implemented: true
+    working: "NA"
+    file: "/app/lib/whop-payments.js, /app/app/api/admin/payout/route.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented proportional distribution algorithm that divides FULL prize pool among however many winners exist (1-10). Uses original fixed percentages [40,18,12,8,6,5,4,3,2,2] as weights, then normalizes to 100% based on actual winner count. Special cases: 1 winner=100%, 2 winners=69.23%/30.77% (maintains ~2.25x ratio), 3 winners=54.55%/25%/20.45%. For 4+ winners, normalizes the first N fixed percentages. This ensures $0 remains undistributed regardless of winner count."
+
 frontend:
   - task: "Update leaderboard point info cards"
     implemented: true
