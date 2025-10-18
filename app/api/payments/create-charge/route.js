@@ -67,7 +67,11 @@ export async function POST(request) {
       throw new Error("Failed to create checkout configuration");
     }
 
-    console.log('✅ Checkout configuration created:', checkoutConfig.id);
+    console.log('✅ Checkout configuration created:', {
+      checkoutId: checkoutConfig.id,
+      planId: checkoutConfig.plan?.id,
+      purchaseUrl: checkoutConfig.purchase_url
+    });
 
     // Create pending prize pool in database
     const { data: prizePool, error: dbError } = await supabase
@@ -80,7 +84,8 @@ export async function POST(request) {
         period_start: periodStart || null,
         period_end: periodEnd || null,
         status: 'pending', // Will be updated to 'active' via webhook when payment completes
-        whop_checkout_id: checkoutConfig.id
+        whop_checkout_id: checkoutConfig.id,
+        whop_plan_id: checkoutConfig.plan?.id // Store plan ID for webhook matching
       })
       .select()
       .single();
