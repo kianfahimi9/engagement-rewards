@@ -92,44 +92,18 @@ async function handlePaymentSucceeded(data) {
 
 /**
  * Handle failed payment
- * Updated for 2025 Whop API
+ * Following official Whop documentation
  */
 async function handlePaymentFailed(data) {
   console.log('❌ Payment failed:', {
     id: data.id,
     user_id: data.user_id,
-    checkout_session_id: data.checkout_session_id,
     metadata: data.metadata,
   });
 
-  const { metadata } = data;
-
-  // Check if this is a prize pool deposit
-  if (metadata?.type === 'prize_pool_deposit' || metadata?.type === 'prize_pool_creation') {
-    // Find and update prize pool status to failed
-    const { data: prizePool, error: fetchError } = await supabase
-      .from('prize_pools')
-      .select('*')
-      .eq('whop_checkout_id', data.checkout_session_id || data.id)
-      .maybeSingle();
-
-    if (fetchError || !prizePool) {
-      console.error('❌ Error finding prize pool:', fetchError);
-      return;
-    }
-
-    const { error: updateError } = await supabase
-      .from('prize_pools')
-      .update({
-        status: 'failed',
-        updated_at: new Date().toISOString(),
-      })
-      .eq('whop_checkout_id', prizePool.whop_checkout_id);
-
-    if (updateError) {
-      console.error('❌ Database update error:', updateError);
-    } else {
-      console.log('✅ Prize pool marked as failed');
-    }
+  // For prize pools, we don't create a record on failure
+  // Just log it for debugging
+  if (data.metadata?.type === 'prize_pool_deposit') {
+    console.log('💸 Prize pool payment failed - no record created');
   }
 }
