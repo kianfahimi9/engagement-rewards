@@ -403,13 +403,20 @@ export default function AdminView({ experienceId, userId, companyId }) {
                                   {statusInfo.icon} {statusInfo.label}
                                 </Badge>
                               </div>
-                              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                                <span className="capitalize font-medium">{pool.period_type}</span>
-                                <span className="text-gray-400">•</span>
-                                {startDate && endDate && (
-                                  <span>
-                                    {startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - {endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                  </span>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="capitalize font-medium">{pool.period_type}</span>
+                                </div>
+                                {startDate && endDate ? (
+                                  <div className="flex items-center gap-1.5 text-xs">
+                                    <Calendar className="h-3.5 w-3.5" />
+                                    <span>{startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} - {endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                                    <Calendar className="h-3.5 w-3.5" />
+                                    <span>No dates set</span>
+                                  </div>
                                 )}
                               </div>
                             </div>
