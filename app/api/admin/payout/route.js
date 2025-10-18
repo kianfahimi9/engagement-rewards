@@ -172,11 +172,14 @@ export async function PUT(request) {
       const amount = (prizePool.amount * percentages[i]) / 100;
 
       try {
-        const payoutResult = await whopApiClient.payments.payUser({
+        // Pay user following exact Whop documentation
+        // https://docs.whop.com/apps/features/payments-and-payouts
+        const payoutResult = await whopSdk.payments.payUser({
           amount: amount,
           currency: "usd",
           destinationId: winner.whop_user_id,
           ledgerAccountId: ledgerAccountId,
+          transferFee: transferFee,
           idempotenceKey: `${prizePoolId}-${winner.whop_user_id}-${i}`,
           notes: `Prize #${i + 1} - ${prizePool.period_type}`,
           reason: "content_reward_payout"
