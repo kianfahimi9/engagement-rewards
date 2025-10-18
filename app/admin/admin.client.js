@@ -606,7 +606,6 @@ export default function AdminView({ experienceId, userId, companyId }) {
       {/* Create Prize Pool Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
-                  <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Create Prize Pool</DialogTitle>
                       <DialogDescription>
