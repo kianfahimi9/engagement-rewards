@@ -130,10 +130,31 @@ export async function PUT(request) {
 
     const ledgerAccountId = ledgerAccountResponse.company?.ledgerAccount?.id;
 
-    // Distribution percentages
-    const percentages = [40, 18, 12, 8, 6, 5, 4, 3, 2, 2];
+    // Proportional distribution based on actual number of winners
+    // This ensures the FULL prize pool is distributed regardless of participant count
+    const calculateProportionalPercentages = (numWinners) => {
+      if (numWinners === 1) return [100];
+      if (numWinners === 2) return [60, 40];
+      if (numWinners === 3) return [50, 30, 20];
+      
+      // For 4+ winners, use declining weights
+      const weights = [];
+      for (let i = 0; i < numWinners; i++) {
+        // Higher ranks get more weight (exponential decay)
+        weights.push(Math.pow(numWinners - i, 1.5));
+      }
+      
+      // Normalize weights to percentages that sum to 100
+      const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+      return weights.map(w => (w / totalWeight) * 100);
+    };
+
+    const percentages = calculateProportionalPercentages(winners.length);
     const payouts = [];
     const errors = [];
+
+    console.log(`📊 Distributing to ${winners.length} winners with proportions:`, 
+      percentages.map((p, i) => `${i+1}: ${p.toFixed(1)}%`));
 
     for (let i = 0; i < winners.length && i < 10; i++) {
       const winner = winners[i];
