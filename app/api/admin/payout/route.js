@@ -23,10 +23,9 @@ export async function POST(request) {
 
     console.log('🎁 Manual test payout:', { userId, username, amount });
 
-    // Get company ledger account - following exact Whop documentation
-    // https://docs.whop.com/apps/features/payments-and-payouts
+    // Get company ledger account - NOTE: using whopApiClient
     const experience = await whopSdk.experiences.retrieve(experienceId);
-    const ledgerAccount = await whopSdk.companies.getCompanyLedgerAccount({
+    const ledgerAccount = await whopApiClient.companies.getCompanyLedgerAccount({
       companyId: experience.company.id,
     });
 
@@ -37,8 +36,8 @@ export async function POST(request) {
       throw new Error('Company ledger account not found');
     }
 
-    // Pay user following exact Whop documentation
-    const payoutResult = await whopSdk.payments.payUser({
+    // Pay user - NOTE: using whopApiClient
+    const payoutResult = await whopApiClient.payments.payUser({
       amount: parseFloat(amount),
       currency: "usd",
       destinationId: userId,
