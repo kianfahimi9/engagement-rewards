@@ -24,6 +24,9 @@ export default function AdminView({ experienceId, userId, companyId }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState('');
+  const [payoutDialogOpen, setPayoutDialogOpen] = useState(false);
+  const [selectedPool, setSelectedPool] = useState(null);
+  const [payoutLoading, setPayoutLoading] = useState(false);
   
   const iframeSdk = useIframeSdk();
 
